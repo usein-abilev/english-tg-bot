@@ -17,6 +17,8 @@ export interface BotSessionData {
     user: BotSessionUser;
     practice?: {
         cards: UserCardEntity[];
+        total: number;
+        loadedCount: number;
         current?: UserCardEntity;
     };
 }

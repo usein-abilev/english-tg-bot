@@ -8,7 +8,7 @@ import initLocalization, { localizeText } from "./localization";
 import { logger } from "../utils/logger.util";
 import { mainMenu, menusComposer } from "./menus";
 import botConversations from "./conversations";
-import dictionaryMenu from "./menus/dictionary.menu";
+import dictionaryMenu, { getDictionaryMenuText } from "./menus/dictionary.menu";
 
 const bot = new Bot<BotContext>(process.env.TG_BOT_TOKEN as string);
 
@@ -40,7 +40,8 @@ export default async function initializeTgBot(api: LanguageBotAPI) {
     });
     bot.callbackQuery("dictionary-menu", async (ctx) => {
         await ctx.conversation.exit();
-        await ctx.editMessageText(localizeText(ctx, "menu.dictionary.text"), {
+        await ctx.editMessageText(await getDictionaryMenuText(ctx), {
+            parse_mode: "HTML",
             reply_markup: dictionaryMenu,
         });
     });

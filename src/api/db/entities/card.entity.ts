@@ -53,13 +53,7 @@ class UserCardEntity {
      * - "гость" is the meaning of the word "guest".
      */
     @Column("jsonb", { nullable: true })
-    meanings!: {
-        partOfSpeech: string;
-        definition: string;
-        example: string;
-        translatedDefinition: string;
-        translatedExample: string;
-    }[];
+    meanings!: Partial<UserCardEntityMeaning>[];
 
     /**
      * The easiness factor is a value from 1.3 that represents how well the user knows the word.

@@ -81,15 +81,18 @@ class LanguageBotAPI {
         card.languageCode = options.sourceLangCode;
         card.translationLanguageCode = options.targetLangCode;
         card.translation = options.translation || "";
-        card.meanings = options.meanings.map((m) => ({
-            audioUrl: m.audioUrl || "",
-            definition: m.definition || "",
-            example: m.example || "",
-            partOfSpeech: m.partOfSpeech || "",
-            phonetic: m.phonetic || "",
-            translatedDefinition: m.translatedDefinition || "",
-            translatedExample: m.translatedExample || "",
-        })) as UserCardEntityMeaning[];
+        card.meanings = options.meanings.map(
+            (m) =>
+                ({
+                    audioUrl: m.audioUrl || "",
+                    definition: m.definition || "",
+                    example: m.example || "",
+                    partOfSpeech: m.partOfSpeech || "",
+                    phonetic: m.phonetic || "",
+                    translatedDefinition: m.translatedDefinition || "",
+                    translatedExample: m.translatedExample || "",
+                }) as UserCardEntityMeaning,
+        );
         card.user = { id: userId } as UserEntity;
         card.nextReviewAt = new Date();
 

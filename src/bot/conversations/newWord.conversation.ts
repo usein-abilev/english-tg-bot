@@ -270,6 +270,10 @@ async function enterNewWord(conversation: Conversation<BotContext>, ctx: BotCont
         break;
     }
 
+    await ctx.reply(localizeText(ctx, "menu.dictionary.messages.loading-word-info", { phrase }), {
+        parse_mode: "HTML",
+    });
+
     const alreadyExists = await conversation.external(() =>
         api.cardExists(ctx.session.user.id, phrase),
     );
