@@ -120,7 +120,7 @@ class LanguageBotAPI {
     async getCardsToReview(userId: number, maxCards: number = 10): Promise<UserCardEntity[]> {
         const cardRepo = this.dataSource.getRepository(UserCardEntity);
         const qb = cardRepo.createQueryBuilder("cards");
-        qb.where("cards.user_id = :id", { id: userId })
+        qb.where("cards.userId = :id", { id: userId })
             .andWhere(`"cards"."nextReviewAt" <= NOW()`)
             .orderBy(`"cards"."nextReviewAt"`, "ASC")
             .limit(maxCards);
