@@ -9,6 +9,17 @@ import {
     RelationId,
 } from "typeorm";
 import UserEntity from "./user.entity";
+import { SupportedLanguageCode } from "../../../utils/lang.util";
+
+export interface UserCardEntityMeaning {
+    phonetic: string;
+    audioUrl: string;
+    partOfSpeech: string;
+    definition: string;
+    example: string;
+    translatedDefinition: string;
+    translatedExample: string;
+}
 
 @Entity("user_cards")
 @Index(["title", "userId"], { unique: true })
@@ -23,21 +34,32 @@ class UserCardEntity {
     @Index()
     title!: string;
 
+    @Column({ default: SupportedLanguageCode.EN })
+    @Index()
+    languageCode!: SupportedLanguageCode;
+
+    @Column({ default: SupportedLanguageCode.EN })
+    @Index()
+    translationLanguageCode!: SupportedLanguageCode;
+
+    @Column()
+    @Index()
+    translation!: string;
+
     /**
-     * The meaning of the word. For example:
+     * The meaning of the word or sentence. For example:
      * - "a person who is present at a meal" is the meaning of the word "guest".
      * or with translation:
      * - "гость" is the meaning of the word "guest".
      */
-    @Column()
-    meaning!: string;
-
-    /**
-     * An example sentence that uses the word. For example:
-     * - "The guest arrived at 8:00 PM."
-     */
-    @Column()
-    example!: string;
+    @Column("jsonb", { nullable: true })
+    meanings!: {
+        partOfSpeech: string;
+        definition: string;
+        example: string;
+        translatedDefinition: string;
+        translatedExample: string;
+    }[];
 
     /**
      * The easiness factor is a value from 1.3 that represents how well the user knows the word.
@@ -68,11 +90,11 @@ class UserCardEntity {
     nextReviewAt!: Date;
 
     @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: "user_id" })
+    @JoinColumn({ name: "userId" })
     user!: UserEntity;
 
-    @Column({ nullable: true })
-    @RelationId((userWord: UserCardEntity) => userWord.user)
+    @Column()
+    @RelationId((card: UserCardEntity) => card.user)
     userId!: number;
 
     @CreateDateColumn()

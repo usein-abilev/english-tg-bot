@@ -1,4 +1,4 @@
-interface DictionaryResponseItem {
+export interface DictionaryResponseItem {
     word: string;
     phonetic?: string;
     phonetics?: {
@@ -48,7 +48,7 @@ interface DictionaryErrorResponse {
 
 type DictionaryResponse = DictionarySuccessResponse | DictionaryErrorResponse;
 
-export default class DictionaryAPI {
+export default class DictionaryService {
     constructor() {}
 
     public async reveal(word: string): Promise<DictionaryResponse> {

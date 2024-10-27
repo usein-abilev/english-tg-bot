@@ -45,14 +45,9 @@ async function getPracticeMenuText(ctx: BotContext) {
 }
 
 async function openPracticeMenu(ctx: BotContext) {
-    try {
-        return await ctx.editMessageText(await getPracticeMenuText(ctx), {
-            parse_mode: "HTML",
-            reply_markup: practiceMenu,
-        });
-    } catch (error) {
-        logger.error("Error opening practice menu: %s", error);
-    }
+    return ctx.editMessageText(await getPracticeMenuText(ctx), {
+        parse_mode: "HTML",
+    });
 }
 
 async function sendPracticeMenu(ctx: BotContext): Promise<void> {
@@ -79,7 +74,7 @@ const startPracticeMenu = new Menu<BotContext>(MENUS.START_PRACTICE)
         }
         const current = ctx.session.practice.current!;
         await ctx.editMessageText(
-            `📚 Word: <b>${current.title}</b>\n📒 Meaning: <b>${current.meaning}</b>\n\nHow well do you now this word?`,
+            `📚 Word: <b>${current.title}</b>\n📒 Translation: <b>${current.translation}</b>\n\nHow well do you now this word?`,
             {
                 parse_mode: "HTML",
                 reply_markup: new InlineKeyboard()
@@ -143,6 +138,7 @@ composer.callbackQuery(/card-rate-(\d)/, async (ctx) => {
     const nextCard = await advancePracticeCard(ctx);
     if (!nextCard) {
         await ctx.editMessageText(localizeText(ctx, "menu.practice.text"), {
+            parse_mode: "HTML",
             reply_markup: practiceMenu,
         });
         return;

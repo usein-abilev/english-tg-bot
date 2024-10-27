@@ -10,21 +10,26 @@ export const logger = winston.createLogger({
         format.splat(),
         format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
         format.printf((info) => {
-            const { timestamp, level, message, ...meta } = info;
+            const { namespace, timestamp, level, message, ...meta } = info;
             const ts = timestamp.slice(0, 19).replace("T", " ");
 
-            const cleanedMeta = Object.keys(meta).reduce(
-                (acc, key) => {
-                    if (!SYMBOLS.includes(key as never)) {
-                        acc[key] = meta[key];
-                    }
-                    return acc;
-                },
-                {} as Record<string, unknown>,
-            );
+            const cleanedMeta = Array.isArray(meta)
+                ? meta
+                : Object.keys(meta).reduce(
+                      (acc, key) => {
+                          if (!SYMBOLS.includes(key as never)) {
+                              acc[key] = meta[key];
+                          }
+                          return acc;
+                      },
+                      {} as Record<string, unknown>,
+                  );
 
             const metaStr = Object.keys(meta).length ? inspect(cleanedMeta, { colors: true }) : "";
-
+            if (namespace) {
+                const colorized = `\x1b[36m${namespace}\x1b[0m`;
+                return `${ts} [${level}] (${colorized}): ${message} ${metaStr}`;
+            }
             return `${ts} [${level}]: ${message} ${metaStr}`;
         }),
     ),
@@ -34,6 +39,6 @@ export const logger = winston.createLogger({
     ],
 });
 
-export function createChildLogger(name: string): winston.Logger {
-    return logger.child({ name });
+export function createChildLogger(namespace: string): winston.Logger {
+    return logger.child({ namespace });
 }

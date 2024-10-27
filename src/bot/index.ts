@@ -19,7 +19,7 @@ export default async function initializeTgBot(api: LanguageBotAPI) {
     bot.use(
         session({
             initial(): BotSessionData {
-                return { user: { id: 0 } };
+                return { user: { id: 0, languageCode: "en" } };
             },
         }),
     );

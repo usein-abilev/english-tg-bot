@@ -8,13 +8,18 @@ export default function initMiddleware() {
             if (!ctx.from || !ctx.from.username) {
                 throw new Error("User must have a username.");
             }
-            const id = await api.createUserIfNotExists({
+            const user = await api.createUserIfNotExists({
                 username: ctx.from.username!,
                 firstName: ctx.from.first_name || "",
                 lastName: ctx.from.last_name || "",
                 languageCode: ctx.from.language_code || "en",
             });
-            ctx.session = { user: { id: id } };
+            ctx.session = {
+                user: {
+                    id: user.id,
+                    languageCode: user.languageCode,
+                },
+            };
         }
         return next();
     };

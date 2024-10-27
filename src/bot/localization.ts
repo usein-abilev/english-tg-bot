@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import fs from "fs/promises";
 import { logger } from "../utils/logger.util";
-import { Context } from "grammy";
+import { BotContext } from "./session";
 
 export default async function initLocalization() {
     await i18next.init({
@@ -17,9 +17,9 @@ export default async function initLocalization() {
     logger.info("Localization initialized", files);
 }
 
-export const localizeText = (ctx: Context, key: string, params?: Record<string, unknown>) => {
+export const localizeText = (ctx: BotContext, key: string, params?: Record<string, unknown>) => {
     return i18next.t(key, {
-        lng: ctx.from?.language_code || "en",
+        lng: ctx.session.user.languageCode,
         fallbackLng: "en",
         ...params,
     });

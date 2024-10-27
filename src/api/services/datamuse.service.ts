@@ -1,6 +1,6 @@
 const BASE_API_URL = "https://api.datamuse.com";
 
-export default class DatamuseAPI {
+export default class DatamuseService {
     async findSuggestions(word: string): Promise<string[]> {
         const url = new URL(`${BASE_API_URL}/sug`);
         url.searchParams.append("s", word);

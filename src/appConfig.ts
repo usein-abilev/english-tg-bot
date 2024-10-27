@@ -11,6 +11,10 @@ const appConfig = {
         username: process.env.DB_USERNAME as string,
         password: process.env.DB_PASSWORD as string,
     },
+    translation: {
+        host: process.env.TRANSLATION_HOST as string,
+        port: parseInt(process.env.TRANSLATION_PORT as string),
+    },
 } as const;
 
 export type AppConfig = typeof appConfig;

@@ -1,10 +1,12 @@
 import { DataSource } from "typeorm";
 import UserEntity from "./db/entities/user.entity";
 import Debug from "./decorators/debug.decorator";
-import UserCardEntity from "./db/entities/card.entity";
-import DictionaryAPI from "./services/dictionary.service";
-import DatamuseAPI from "./services/datamuse.service";
+import UserCardEntity, { UserCardEntityMeaning } from "./db/entities/card.entity";
+import DictionaryService from "./services/dictionary.service";
+import DatamuseService from "./services/datamuse.service";
 import calcSuperMemo2 from "../utils/calcSM2.util";
+import TranslationService from "./services/translation.service";
+import { SupportedLanguageCode } from "../utils/lang.util";
 
 export interface ICreateUserOptions {
     username: string;
@@ -15,16 +17,21 @@ export interface ICreateUserOptions {
 
 export interface IAddCardOptions {
     text: string;
-    meaning: string;
+    sourceLangCode: SupportedLanguageCode;
+    targetLangCode: SupportedLanguageCode;
+    translation?: string;
+    meanings: UserCardEntityMeaning[];
 }
 
 class LanguageBotAPI {
-    public dictionaryAPI: DictionaryAPI;
-    public datamuseAPI: DatamuseAPI;
+    public dictionaryAPI: DictionaryService;
+    public datamuseAPI: DatamuseService;
+    public translation: TranslationService;
 
     constructor(private dataSource: DataSource) {
-        this.dictionaryAPI = new DictionaryAPI();
-        this.datamuseAPI = new DatamuseAPI();
+        this.dictionaryAPI = new DictionaryService();
+        this.datamuseAPI = new DatamuseService();
+        this.translation = new TranslationService();
     }
 
     /**
@@ -32,7 +39,7 @@ class LanguageBotAPI {
      * @returns - the user id.
      */
     @Debug()
-    async createUserIfNotExists(options: ICreateUserOptions): Promise<number> {
+    async createUserIfNotExists(options: ICreateUserOptions): Promise<UserEntity> {
         if (!options.username || !options.firstName) {
             throw new Error("Username and first name are required.");
         }
@@ -47,10 +54,10 @@ class LanguageBotAPI {
             user.lastName = options.lastName || "";
             user.languageCode = options.languageCode || "en";
 
-            return userRepository.save(user).then((user) => user.id);
+            return userRepository.save(user);
         }
 
-        return existingUser.id;
+        return existingUser;
     }
 
     async getUserByUsername(username: string): Promise<UserEntity | null> {
@@ -71,8 +78,18 @@ class LanguageBotAPI {
         const cardRepo = this.dataSource.getRepository(UserCardEntity);
         const card = new UserCardEntity();
         card.title = options.text;
-        card.meaning = options.meaning;
-        card.example = "";
+        card.languageCode = options.sourceLangCode;
+        card.translationLanguageCode = options.targetLangCode;
+        card.translation = options.translation || "";
+        card.meanings = options.meanings.map((m) => ({
+            audioUrl: m.audioUrl || "",
+            definition: m.definition || "",
+            example: m.example || "",
+            partOfSpeech: m.partOfSpeech || "",
+            phonetic: m.phonetic || "",
+            translatedDefinition: m.translatedDefinition || "",
+            translatedExample: m.translatedExample || "",
+        })) as UserCardEntityMeaning[];
         card.user = { id: userId } as UserEntity;
         card.nextReviewAt = new Date();
 
