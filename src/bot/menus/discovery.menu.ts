@@ -3,7 +3,7 @@ import { logger } from "../../utils/logger.util";
 import { localizeText } from "../localization";
 import { getAPIProvider } from "../provider";
 import { BotContext } from "../session";
-import WordEntity from "../../api/db/entities/word.entity";
+import WordMeaningEntity from "../../api/db/entities/meaning.entity";
 
 async function advanceDiscoveryWord(ctx: BotContext) {
     if (!ctx.session.discovery) {
@@ -30,10 +30,10 @@ async function openDiscoveryMenu(ctx: BotContext) {
     });
 }
 
-const getQuizWordMessageText = (ctx: BotContext, word: WordEntity) => {
+const getQuizWordMessageText = (ctx: BotContext, word: WordMeaningEntity) => {
     return localizeText(ctx, "menu.discovery.messages.how-to-translate", {
         word: word.name.toLowerCase(),
-        phonetic: word.metadata?.phonetic,
+        phonetic: word.word.metadata?.phonetic,
     });
 };
 
@@ -47,9 +47,13 @@ async function loadDiscoveryWords(ctx: BotContext) {
     ctx.session.discovery = { words, loadedCount: words.length };
 }
 
-async function createWordDistractions(ctx: BotContext, word: WordEntity) {
+async function createWordDistractions(ctx: BotContext, word: WordMeaningEntity) {
     const api = getAPIProvider();
-    const words = await api.getRandomWords({ limit: 2, exclude: [word.name] });
+    const words = await api.getRandomWords({
+        limit: 2,
+        exclude: [word.name],
+        partOfSpeech: word.partOfSpeech, // filter distractions by part of speech
+    });
     const translated = await api.translation.translateBatch(
         [word.name, ...words.map((w) => w.name)],
         {

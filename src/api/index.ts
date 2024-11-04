@@ -7,8 +7,7 @@ import DatamuseService from "./services/datamuse.service";
 import calcSuperMemo2 from "../utils/calcSM2.util";
 import TranslationService from "./services/translation.service";
 import SentenceEntity from "./db/entities/sentence.entity";
-import WordEntity from "./db/entities/word.entity";
-import { CardCEFRLevel, CardPartOfSpeech } from "./db/entities/meaning.entity";
+import WordMeaningEntity, { CardCEFRLevel, CardPartOfSpeech } from "./db/entities/meaning.entity";
 
 export interface ICreateUserOptions {
     username: string;
@@ -85,34 +84,31 @@ class LanguageBotAPI {
             .getOne();
     }
 
-    async getRandomWords(options: IGetRandomWordsOptions = {}): Promise<WordEntity[]> {
-        const wordRepo = this.dataSource.getRepository(WordEntity);
-        const query = wordRepo.createQueryBuilder("words");
-        const meaningsConditions = [];
+    @Debug({ name: "LanguageBotAPI.getRandomWords" })
+    async getRandomWords(options: IGetRandomWordsOptions = {}): Promise<WordMeaningEntity[]> {
+        const wordRepo = this.dataSource.getRepository(WordMeaningEntity);
+        const query = wordRepo.createQueryBuilder("meanings");
 
         if (options.partOfSpeech) {
-            meaningsConditions.push(`"meanings"."partOfSpeech" = :partOfSpeech`);
+            query.andWhere(`"meanings"."partOfSpeech" = :partOfSpeech`, {
+                partOfSpeech: options.partOfSpeech,
+            });
         }
 
         if (options.level) {
-            meaningsConditions.push(`"meanings"."level" = :level`);
+            query.andWhere(`"meanings"."level" = :level`, {
+                level: options.level,
+            });
         }
 
         if (Array.isArray(options.exclude) && options.exclude.length > 0) {
-            query.andWhere(`words.name NOT IN (:...exclude)`, { exclude: options.exclude });
-        }
-
-        if (meaningsConditions.length > 0) {
-            query.innerJoin("words.meanings", "meanings");
-            query.where(meaningsConditions.join(" AND "), {
-                partOfSpeech: options.partOfSpeech,
-                level: options.level,
-            });
+            query.andWhere(`meanings.name NOT IN (:...exclude)`, { exclude: options.exclude });
         }
 
         return query
             .orderBy("RANDOM()")
             .limit(options.limit || 10)
+            .leftJoinAndSelect("meanings.word", "word")
             .getMany();
     }
 

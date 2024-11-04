@@ -1,8 +1,8 @@
 import { Context, SessionFlavor } from "grammy";
 import type { ConversationFlavor } from "@grammyjs/conversations";
 import UserCardEntity from "../api/db/entities/userCard.entity";
-import WordEntity from "../api/db/entities/word.entity";
 import { HydrateFlavor } from "@grammyjs/hydrate";
+import WordMeaningEntity from "../api/db/entities/meaning.entity";
 
 interface BotSessionUser {
     /**
@@ -24,10 +24,10 @@ export interface BotSessionData {
         current?: UserCardEntity;
     };
     discovery?: {
-        current?: WordEntity;
+        current?: WordMeaningEntity;
         distractions?: { correct: boolean; text: string }[];
         loadedCount: number;
-        words: WordEntity[];
+        words: WordMeaningEntity[];
     };
 }
 
