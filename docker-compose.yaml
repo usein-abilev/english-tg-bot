@@ -14,3 +14,17 @@ services:
       POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
+
+  # libretranslate:
+  #   container_name: libretranslate
+  #   image: libretranslate/libretranslate:v1.6.1
+  #   ports:
+  #     - "5000:5000"
+  #   restart: unless-stopped
+  #   # by default, no python packages are installed
+  #   # if it your first time running, you need to install the required packages
+  #   # command: pip install -e . && python ./main.py
+  #   environment:
+  #     - LT_UPDATE_MODELS=1
+  #     - LT_DEBUG=1
+  #     - LT_LOAD_ONLY=ru,en
