@@ -1,12 +1,14 @@
-import { DataSource } from "typeorm";
+import { DataSource, ILike } from "typeorm";
 import UserEntity from "./db/entities/user.entity";
 import Debug from "./decorators/debug.decorator";
-import UserCardEntity, { UserCardEntityMeaning } from "./db/entities/card.entity";
+import UserCardEntity from "./db/entities/userCard.entity";
 import DictionaryService from "./services/dictionary.service";
 import DatamuseService from "./services/datamuse.service";
 import calcSuperMemo2 from "../utils/calcSM2.util";
 import TranslationService from "./services/translation.service";
-import { SupportedLanguageCode } from "../utils/lang.util";
+import SentenceEntity from "./db/entities/sentence.entity";
+import WordEntity from "./db/entities/word.entity";
+import { CardCEFRLevel, CardPartOfSpeech } from "./db/entities/meaning.entity";
 
 export interface ICreateUserOptions {
     username: string;
@@ -16,11 +18,26 @@ export interface ICreateUserOptions {
 }
 
 export interface IAddCardOptions {
-    text: string;
-    sourceLangCode: SupportedLanguageCode;
-    targetLangCode: SupportedLanguageCode;
-    translation?: string;
-    meanings: UserCardEntityMeaning[];
+    name: string;
+    // sourceLangCode: SupportedLanguageCode;
+    // targetLangCode: SupportedLanguageCode;
+    // translation?: string;
+    // meanings: UserCardEntityMeaning[];
+}
+
+export interface IGetRandomWordsOptions {
+    /**
+     * Words to exclude from the result.
+     */
+    exclude?: string[];
+
+    /**
+     * The number of words to return.
+     * Minimum is 1. Default is 10.
+     */
+    limit?: number;
+    level?: CardCEFRLevel;
+    partOfSpeech?: CardPartOfSpeech;
 }
 
 class LanguageBotAPI {
@@ -68,33 +85,76 @@ class LanguageBotAPI {
             .getOne();
     }
 
-    async cardExists(userId: number, title: string): Promise<boolean> {
+    async getRandomWords(options: IGetRandomWordsOptions = {}): Promise<WordEntity[]> {
+        const wordRepo = this.dataSource.getRepository(WordEntity);
+        const query = wordRepo.createQueryBuilder("words");
+        const meaningsConditions = [];
+
+        if (options.partOfSpeech) {
+            meaningsConditions.push(`"meanings"."partOfSpeech" = :partOfSpeech`);
+        }
+
+        if (options.level) {
+            meaningsConditions.push(`"meanings"."level" = :level`);
+        }
+
+        if (Array.isArray(options.exclude) && options.exclude.length > 0) {
+            query.andWhere(`words.name NOT IN (:...exclude)`, { exclude: options.exclude });
+        }
+
+        if (meaningsConditions.length > 0) {
+            query.innerJoin("words.meanings", "meanings");
+            query.where(meaningsConditions.join(" AND "), {
+                partOfSpeech: options.partOfSpeech,
+                level: options.level,
+            });
+        }
+
+        return query
+            .orderBy("RANDOM()")
+            .limit(options.limit || 10)
+            .getMany();
+    }
+
+    async getSentencesWithWord(word: string): Promise<SentenceEntity[]> {
+        const sentenceRepo = this.dataSource.getRepository(SentenceEntity);
+        const items = await sentenceRepo.find({
+            where: {
+                text: ILike(`%${word}%`),
+            },
+        });
+
+        return items;
+    }
+
+    async cardExists(userId: number, name: string): Promise<boolean> {
         const cardRepo = this.dataSource.getRepository(UserCardEntity);
-        const exists = await cardRepo.existsBy({ user: { id: userId }, title });
+        const exists = await cardRepo.existsBy({ user: { id: userId }, word: { name } });
         return exists;
     }
 
+    // TODO: Refactor addCard method
     async addCard(userId: number, options: IAddCardOptions): Promise<UserCardEntity> {
         const cardRepo = this.dataSource.getRepository(UserCardEntity);
         const card = new UserCardEntity();
-        card.title = options.text;
-        card.languageCode = options.sourceLangCode;
-        card.translationLanguageCode = options.targetLangCode;
-        card.translation = options.translation || "";
-        card.meanings = options.meanings.map(
-            (m) =>
-                ({
-                    audioUrl: m.audioUrl || "",
-                    definition: m.definition || "",
-                    example: m.example || "",
-                    partOfSpeech: m.partOfSpeech || "",
-                    phonetic: m.phonetic || "",
-                    translatedDefinition: m.translatedDefinition || "",
-                    translatedExample: m.translatedExample || "",
-                }) as UserCardEntityMeaning,
-        );
-        card.user = { id: userId } as UserEntity;
-        card.nextReviewAt = new Date();
+        // card.title = options.name;
+        // card.languageCode = options.sourceLangCode;
+        // card.translationLanguage = options.targetLangCode;
+        // card.translation = options.translation || "";
+        // card.meanings = options.meanings.map(
+        //     (m) =>
+        //         ({
+        //             audioUrl: m.audioUrl || "",
+        //             definition: m.definition || "",
+        //             example: m.example || "",
+        //             partOfSpeech: m.partOfSpeech || "",
+        //             phonetic: m.phonetic || "",
+        //             translatedDefinition: m.translatedDefinition || "",
+        //             translatedExample: m.translatedExample || "",
+        //         }) as UserCardEntityMeaning,
+        // );
+        // card.user = { id: userId } as UserEntity;
+        // card.nextReviewAt = new Date();
 
         return cardRepo.save(card);
     }
@@ -122,10 +182,11 @@ class LanguageBotAPI {
 
     async getCardsToReview(userId: number, maxCards: number = 10): Promise<UserCardEntity[]> {
         const cardRepo = this.dataSource.getRepository(UserCardEntity);
-        const qb = cardRepo.createQueryBuilder("cards");
-        qb.where("cards.userId = :id", { id: userId })
-            .andWhere(`"cards"."nextReviewAt" <= NOW()`)
-            .orderBy(`"cards"."nextReviewAt"`, "ASC")
+        const qb = cardRepo.createQueryBuilder("user_cards");
+        qb.where("user_cards.userId = :id", { id: userId })
+            .leftJoinAndSelect("user_cards.words", "words")
+            .andWhere(`"user_cards"."nextReviewAt" <= NOW()`)
+            .orderBy(`"user_cards"."nextReviewAt"`, "ASC")
             .limit(maxCards);
 
         return await qb.getMany();
