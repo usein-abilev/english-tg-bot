@@ -1,6 +1,8 @@
 import { Context, SessionFlavor } from "grammy";
 import type { ConversationFlavor } from "@grammyjs/conversations";
-import UserCardEntity from "../api/db/entities/card.entity";
+import UserCardEntity from "../api/db/entities/userCard.entity";
+import WordEntity from "../api/db/entities/word.entity";
+import { HydrateFlavor } from "@grammyjs/hydrate";
 
 interface BotSessionUser {
     /**
@@ -21,6 +23,14 @@ export interface BotSessionData {
         loadedCount: number;
         current?: UserCardEntity;
     };
+    discovery?: {
+        current?: WordEntity;
+        distractions?: { correct: boolean; text: string }[];
+        loadedCount: number;
+        words: WordEntity[];
+    };
 }
 
-export type BotContext = Context & SessionFlavor<BotSessionData> & ConversationFlavor;
+export type BotContext = HydrateFlavor<
+    Context & SessionFlavor<BotSessionData> & ConversationFlavor
+>;

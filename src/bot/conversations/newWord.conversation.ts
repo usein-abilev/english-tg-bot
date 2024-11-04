@@ -343,49 +343,49 @@ async function enterNewWord(conversation: Conversation<BotContext>, ctx: BotCont
     await confirmCtx.answerCallbackQuery();
     const confirmed = confirmCtx.callbackQuery.data === "confirm";
 
-    let text: string;
-    if (confirmed) {
-        const result = await conversation.external(() => {
-            return api
-                .addCard(ctx.session.user.id, {
-                    text: phrase,
-                    sourceLangCode: detectedLanguage,
-                    targetLangCode: collected.targetLanguage,
-                    translation: collected.translatedPhrase,
-                    meanings:
-                        collected.dictionary?.meanings?.map((m) => ({
-                            example: m.example,
-                            audioUrl: collected.dictionary?.audioURL || "",
-                            phonetic: collected.dictionary?.phonetic || "",
-                            definition: m.definition,
-                            partOfSpeech: m.partOfSpeech,
-                            translatedDefinition: m.translatedDefinition || "",
-                            translatedExample: m.translatedExample || "",
-                        })) || [],
-                })
-                .catch(() => null);
-        });
-        if (!result) {
-            text = localizeText(ctx, "menu.dictionary.messages.card-failed");
-        } else {
-            text = localizeText(ctx, "menu.dictionary.messages.card-added", {
-                phrase,
-            });
-        }
-    } else {
-        text = localizeText(ctx, "menu.dictionary.messages.card-cancelled", {
-            phrase,
-        });
-    }
+    // let text: string;
+    // if (confirmed) {
+    //     const result = await conversation.external(() => {
+    //         return api
+    //             .addCard(ctx.session.user.id, {
+    //                 name: phrase,
+    //                 sourceLangCode: detectedLanguage,
+    //                 targetLangCode: collected.targetLanguage,
+    //                 translation: collected.translatedPhrase,
+    //                 meanings:
+    //                     collected.dictionary?.meanings?.map((m) => ({
+    //                         example: m.example,
+    //                         audioUrl: collected.dictionary?.audioURL || "",
+    //                         phonetic: collected.dictionary?.phonetic || "",
+    //                         definition: m.definition,
+    //                         partOfSpeech: m.partOfSpeech,
+    //                         translatedDefinition: m.translatedDefinition || "",
+    //                         translatedExample: m.translatedExample || "",
+    //                     })) || [],
+    //             })
+    //             .catch(() => null);
+    //     });
+    //     if (!result) {
+    //         text = localizeText(ctx, "menu.dictionary.messages.card-failed");
+    //     } else {
+    //         text = localizeText(ctx, "menu.dictionary.messages.card-added", {
+    //             phrase,
+    //         });
+    //     }
+    // } else {
+    //     text = localizeText(ctx, "menu.dictionary.messages.card-cancelled", {
+    //         phrase,
+    //     });
+    // }
 
-    await confirmCtx.deleteMessage();
-    await confirmCtx.reply(text, {
-        parse_mode: "HTML",
-        reply_markup: new InlineKeyboard().text(
-            localizeText(ctx, "buttons.back"),
-            "dictionary-menu",
-        ),
-    });
+    // await confirmCtx.deleteMessage();
+    // await confirmCtx.reply(text, {
+    //     parse_mode: "HTML",
+    //     reply_markup: new InlineKeyboard().text(
+    //         localizeText(ctx, "buttons.back"),
+    //         "dictionary-menu",
+    //     ),
+    // });
 }
 
 export default {

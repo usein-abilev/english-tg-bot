@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@grammyjs/conversations": "^1.2.0",
+    "@grammyjs/hydrate": "^1.4.1",
     "@grammyjs/menu": "^1.2.2",
     "compromise": "^14.14.2",
     "gramma": "^1.6.0",

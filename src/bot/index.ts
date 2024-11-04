@@ -9,6 +9,7 @@ import { logger } from "../utils/logger.util";
 import { mainMenu, menusComposer } from "./menus";
 import botConversations from "./conversations";
 import dictionaryMenu, { getDictionaryMenuText } from "./menus/dictionary.menu";
+import { hydrateContext } from "@grammyjs/hydrate";
 
 const bot = new Bot<BotContext>(process.env.TG_BOT_TOKEN as string);
 
@@ -24,6 +25,7 @@ export default async function initializeTgBot(api: LanguageBotAPI) {
         }),
     );
     bot.use(initMiddleware());
+    bot.use(hydrateContext());
     bot.use(conversations());
 
     bot.use(
@@ -50,3 +52,13 @@ export default async function initializeTgBot(api: LanguageBotAPI) {
 
     return bot.start();
 }
+
+// graceful shutdown
+process.once("SIGINT", () => {
+    console.log("SIGINT received, stopping bot...");
+    return bot.stop();
+});
+process.once("SIGTERM", () => {
+    console.log("SIGTERM received, stopping bot...");
+    return bot.stop();
+});

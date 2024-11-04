@@ -8,11 +8,18 @@ import practiceMenu, {
     getPracticeMenuText,
     onCardRateCallbackQuery,
 } from "./practice.menu";
+import discoveryMenu, { DISCOVERY_MENU_ID, getDiscoveryMenuText } from "./discovery.menu";
 
 const composer = new Composer<BotContext>();
 
 export const MAIN_MENU_ID = "main";
 const mainMenu = new Menu<BotContext>(MAIN_MENU_ID)
+    .submenu(
+        (ctx) => localizeText(ctx, "menu.start.buttons.discovery"),
+        DISCOVERY_MENU_ID,
+        async (ctx) => ctx.editMessageText(await getDiscoveryMenuText(ctx), { parse_mode: "HTML" }),
+    )
+    .row()
     .submenu(
         (ctx) => localizeText(ctx, "menu.start.buttons.practice"),
         PRACTICE_MENU_ID,
@@ -27,6 +34,7 @@ const mainMenu = new Menu<BotContext>(MAIN_MENU_ID)
 
 mainMenu.register(practiceMenu);
 mainMenu.register(dictionaryMenu);
+mainMenu.register(discoveryMenu);
 
 composer.use(mainMenu);
 composer.callbackQuery(/card-rate-(\d)/, async (ctx) => {

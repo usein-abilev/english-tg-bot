@@ -4,7 +4,7 @@ import { logger } from "../../utils/logger.util";
 import { localizeText } from "../localization";
 import { getAPIProvider } from "../provider";
 import { BotContext } from "../session";
-import UserCardEntity from "../../api/db/entities/card.entity";
+import UserCardEntity from "../../api/db/entities/userCard.entity";
 
 async function advancePracticeCard(ctx: BotContext) {
     if (!ctx.session.practice) {
@@ -73,32 +73,32 @@ const startPracticeMenu = new Menu<BotContext>(START_PRACTICE_MENU_ID)
 
 export const PRACTICE_MENU_ID = "practice";
 
-const getCardMessageText = (ctx: BotContext, card: UserCardEntity, reveal = false) => {
+const getCardMessageText = (ctx: BotContext, userCard: UserCardEntity, reveal = false) => {
     const question = reveal ? "Слово:" : "Как переводится:";
-    let message = `📚 ${question} <b>${card.title}</b>`;
-    const phonetic = card.meanings.find((m) => m.phonetic)?.phonetic;
+    let message = `📚 ${question} <b>${userCard.word.name}</b>`;
+    const phonetic = userCard.word.metadata?.phonetic;
     if (phonetic) message += ` <i>[${phonetic}]</i>`;
     if (reveal) {
-        message += ` - ${card.translation}`;
+        message += ` - ${userCard.word.metadata?.translationRu}`;
     }
-    if (card.meanings.length > 0) {
-        const meanings = card.meanings.map((m) => {
-            let text = `🟢 <b>[${m.partOfSpeech}]</b> ${m.definition}`;
-            if (reveal && m.translatedDefinition) {
-                const label = localizeText(ctx, "menu.dictionary.terms.phrase-definition");
-                text += `\n🔵 <b>${label}</b> ${m.translatedDefinition}`;
-            }
-            if (m.example) {
-                const label = localizeText(ctx, "menu.dictionary.terms.phrase-usage");
-                text += `\n🔵 <b>${label}</b> ${m.example}`;
-                if (reveal && m.translatedExample) {
-                    text += ` (${m.translatedExample})`;
-                }
-            }
-            return text;
-        });
-        message += `\n\n${meanings.join("\n\n")}`;
-    }
+    // if (userCard.card.meanings.length > 0) {
+    //     const meanings = userCard.meanings.map((m) => {
+    //         let text = `🟢 <b>[${m.partOfSpeech}]</b> ${m.definition}`;
+    //         if (reveal && m.translatedDefinition) {
+    //             const label = localizeText(ctx, "menu.dictionary.terms.phrase-definition");
+    //             text += `\n🔵 <b>${label}</b> ${m.translatedDefinition}`;
+    //         }
+    //         if (m.example) {
+    //             const label = localizeText(ctx, "menu.dictionary.terms.phrase-usage");
+    //             text += `\n🔵 <b>${label}</b> ${m.example}`;
+    //             if (reveal && m.translatedExample) {
+    //                 text += ` (${m.translatedExample})`;
+    //             }
+    //         }
+    //         return text;
+    //     });
+    //     message += `\n\n${meanings.join("\n\n")}`;
+    // }
     return message;
 };
 
@@ -140,11 +140,15 @@ export async function onCardRateCallbackQuery(ctx: BotContext, rate: number) {
         return;
     }
     const card = ctx.session.practice.current;
-    logger.debug("Rate word '%s' with %d", card.title, rate);
 
     const api = getAPIProvider();
-    const rated = await api.rateCard(ctx.session.user.id, card.id, rate);
-    logger.debug("Word '%s' rated with %d: %o", rated.title, rate, rated);
+    try {
+        await api.rateCard(ctx.session.user.id, card.id, rate);
+    } catch (error) {
+        logger.error("Failed to rate card", error);
+        await ctx.answerCallbackQuery("Failed to rate the card.");
+        return;
+    }
 
     const nextCard = await advancePracticeCard(ctx);
     if (!nextCard) {
