@@ -2,3 +2,6 @@
 .env.example
 build/
 node_modules/
+
+# Libretranslate session files
+db/sessions/ 
