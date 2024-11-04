@@ -40,6 +40,8 @@ type TranslateServiceResponse<TSuccess, TError = TranslateDefaultErrorObject> =
     | TranslateServiceSuccess<TSuccess>
     | TranslateServiceError<TError>;
 
+const BATCH_DELIMITER = "\n";
+
 export default class TranslationService {
     constructor() {}
 
@@ -64,6 +66,38 @@ export default class TranslationService {
         });
     }
 
+    public async translateBatch(
+        texts: string[],
+        options: TranslateOptions = {
+            source: "auto",
+            target: "en",
+            format: "text",
+            alternatives: 0,
+        },
+    ): Promise<TranslateServiceResponse<TranslateResultData[]>> {
+        const query = texts.join(BATCH_DELIMITER);
+        const response = await this.fetch<TranslateResultData>("translate", {
+            q: query,
+            ...options,
+        });
+
+        if (response.ok) {
+            const translations = response.data.translatedText.split(BATCH_DELIMITER);
+            return {
+                ok: true,
+                data: translations.map((word) => {
+                    return {
+                        translatedText: word.trim(),
+                        alternatives: [],
+                        detectedLanguage: response.data.detectedLanguage,
+                    };
+                }),
+            };
+        }
+
+        return response;
+    }
+
     private async fetch<TSuccess, TError = TranslateDefaultErrorObject>(
         path: APIPath,
         params: Record<string, unknown> = {},
@@ -84,6 +118,9 @@ export default class TranslationService {
                     },
                 };
             });
+
+        if (response.error) return response;
+
         return {
             ok: true,
             data: response,
