@@ -2,40 +2,21 @@
   "name": "eng-bot",
   "version": "1.0.0",
   "description": "The Telegram Bot for learning and practicing English",
-  "main": "index.ts",
+  "private": true,
+  "packageManager": "pnpm@9.15.3",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "npx nodemon --watch src -e ts,js,json,mjs --exec \"tsc --outdir ./build && node --env-file .env ./build/index.js\"",
-    "start": "npm run build && npx run start",
-    "build": "tsc --outdir ./build",
-    "build:run": "node --env-file .env ./build/index.js"
-  },
-  "author": "usein_abilev",
-  "license": "ISC",
-  "volta": {
-    "node": "20.18.0"
+    "serve": "turbo dev",
+    "serve:api": "turbo dev --filter=@eng-bot/api",
+    "serve:web": "turbo dev --filter=@eng-bot/web",
+    "build": "turbo build"
   },
   "devDependencies": {
-    "@eslint/js": "^9.12.0",
-    "@types/node": "^22.7.6",
-    "eslint": "^9.12.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "globals": "^15.11.0",
-    "prettier": "^3.3.3",
-    "typescript-eslint": "^8.9.0"
+    "turbo": "^2.3.4"
   },
-  "dependencies": {
-    "@grammyjs/conversations": "^1.2.0",
-    "@grammyjs/hydrate": "^1.4.1",
-    "@grammyjs/menu": "^1.2.2",
-    "compromise": "^14.14.2",
-    "gramma": "^1.6.0",
-    "grammy": "^1.30.0",
-    "i18next": "^23.16.2",
-    "pg": "^8.13.0",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.20",
-    "typescript": "^5.6.3",
-    "winston": "^3.15.0"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "volta": {
+    "node": "22.13.0"
   }
 }
