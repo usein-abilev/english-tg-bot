@@ -29,6 +29,7 @@ const StyledDeckReview = styled.div`
         .deck-controls {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 1rem;
         }
     }
@@ -75,6 +76,12 @@ function DeckReview() {
         setAddCardModal(true);
     };
 
+    const handlePractice = () => {
+        navigate(ROUTES.DECK_PRACTICE.replace(":id", deck.id), {
+            state: { cards },
+        });
+    };
+
     if (!location.state || !id) {
         return <Navigate to={ROUTES.DECKS} replace />;
     }
@@ -89,7 +96,10 @@ function DeckReview() {
                 </div>
                 <div className="deck-controls">
                     <Button className="deck-control" size="m" mode="bezeled" onClick={handleAddCard}>
-                        Add
+                        Add Card
+                    </Button>
+                    <Button className="deck-control" size="m" mode="bezeled" onClick={handlePractice}>
+                        Practice
                     </Button>
                     <Button className="deck-control" size="m" mode="bezeled">
                         Edit

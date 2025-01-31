@@ -9,6 +9,7 @@ import { MainLayout } from "../components/layouts";
 import { ErrorRecoveryScreen } from "./screens/error";
 import { DeckReview, NewDeckForm } from "./screens/deck";
 import Home from "./screens/Home";
+import CardPractice from "./screens/CardPractice/CardPractice";
 
 const loader = async () => {
     return queryClient.ensureQueryData(userQuery());
@@ -31,6 +32,16 @@ const router = createBrowserRouter([
         element: (
             <MainLayout>
                 <DeckReview />
+            </MainLayout>
+        ),
+        errorElement: <ErrorRecoveryScreen />,
+    },
+    {
+        path: ROUTES.DECK_PRACTICE,
+        loader,
+        element: (
+            <MainLayout>
+                <CardPractice />
             </MainLayout>
         ),
         errorElement: <ErrorRecoveryScreen />,
