@@ -2,6 +2,8 @@ import { Button, Input, LargeTitle, List, Section, Textarea, Title } from "@tele
 import React from "react";
 import styled from "styled-components";
 import { useCreateDeckMutation } from "../../../features/api/decks";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../constants/routes";
 
 const FullSizeButton = styled(Button)`
     width: 100%;
@@ -13,13 +15,15 @@ function NewDeckForm(props) {
         description: "",
     });
     const createDeckMutation = useCreateDeckMutation();
+    const navigate = useNavigate();
 
     const handleCreateDeck = () => {
         if (createDeckMutation.isPending) return;
         createDeckMutation.mutate(form, {
             onError: (error) => console.log("Error happened:", error),
-            onSuccess: () => {
-                console.log("success form created");
+            onSuccess: (data) => {
+                console.log("[NewDeckForm]: Deck created", data);
+                navigate(`${ROUTES.DECK_REVIEW}/${data.deck.id}`);
             },
         });
     };

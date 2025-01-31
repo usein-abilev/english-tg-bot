@@ -1,28 +1,15 @@
 import React, { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Button, InlineButtons, List, Modal, Placeholder, Section } from "@telegram-apps/telegram-ui";
-import { Icon24Chat } from "@telegram-apps/telegram-ui/dist/icons/24/chat";
-import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
+import { Button, List, Section } from "@telegram-apps/telegram-ui";
 import { useQuery } from "@tanstack/react-query";
 import { userQuery } from "../../features/api/user";
 import { ROUTES } from "../../constants/routes";
 import { DeckListBlock } from "../../components/deck";
+import { DeckSchema } from "../../features/types/deck.types";
+import SectionHeader from "../../components/SectionHeader/SectionHeader";
 
-const ListStyled = styled(List)`
-    background: transparent;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    .footer {
-        background: var(--tgui--bg_color);
-        display: flex;
-        justify-content: center;
-        border-radius: 48px;
-    }
-`;
+const ListStyled = styled(List)``;
 
 const DeckSectionStyled = styled.div`
     .decks-header-content {
@@ -41,60 +28,31 @@ const DeckSectionStyled = styled.div`
  * MiniApp Main Screen
  */
 export default function Home() {
-    const navigation = useNavigate();
+    const navigate = useNavigate();
     const [addModalOpen, setAddModalOpen] = React.useState(false);
     const { data: userResult } = useQuery(userQuery());
 
     const handleAddDeck = () => {
-        navigation(ROUTES.NEW_DECK);
+        navigate(ROUTES.NEW_DECK);
+    };
+
+    const handleViewAllDecks = () => {};
+
+    const handleDeckClick = (deck: DeckSchema) => {
+        navigate(ROUTES.DECK_REVIEW.replace(":id", String(deck.id)), { state: { deck } });
     };
 
     return (
         <ListStyled>
-            <Modal
-                header={<ModalHeader>Only iOS header</ModalHeader>}
-                open={addModalOpen}
-                onOpenChange={(open) => setAddModalOpen(open)}
-            >
-                <Placeholder description="Description" header="Title">
-                    <img
-                        alt="Telegram sticker"
-                        src="https://xelene.me/telegram.gif"
-                        style={{
-                            display: "block",
-                            height: "144px",
-                            width: "144px",
-                        }}
-                    />
-                </Placeholder>
-            </Modal>
             <DeckSectionStyled>
-                <Section.Header className="decks-header">
-                    <div className="decks-header-content">
-                        <span>My Decks</span>
-                        <Button size="s" mode="plain">
-                            View all
-                        </Button>
-                    </div>
-                </Section.Header>
-                {userResult?.decks && <DeckListBlock decks={userResult.decks} />}
+                <SectionHeader title="My decks" onViewAllClick={handleViewAllDecks} />
+                {userResult?.decks && <DeckListBlock decks={userResult.decks} onDeckClick={handleDeckClick} />}
                 <Section.Footer className="decks-footer">
                     <Button onClick={handleAddDeck} size="m" mode="bezeled">
                         Add Deck
                     </Button>
                 </Section.Footer>
             </DeckSectionStyled>
-            <div className="footer">
-                <InlineButtons.Item mode="plain" text="Home">
-                    <Icon24Chat />
-                </InlineButtons.Item>
-                <InlineButtons.Item mode="plain" text="Add" onClick={() => setAddModalOpen(true)}>
-                    <Icon24Chat />
-                </InlineButtons.Item>
-                <InlineButtons.Item mode="plain" text="Profile">
-                    <Icon24Chat />
-                </InlineButtons.Item>
-            </div>
         </ListStyled>
     );
 }

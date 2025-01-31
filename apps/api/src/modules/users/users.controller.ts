@@ -18,7 +18,7 @@ export class UsersController {
     async getUser(@Request() request) {
         const { user: telegramUser } = request.initData as TgInitData;
         const user = await this.usersService.getOrCreateFromApp(telegramUser);
-        const userDecks = await this.decksService.getByUserId(user.id);
+        const userDecks = await this.decksService.getUserDecks(user.id);
         this.logger.debug(`User ${user.id} requested his data`, user);
         return { user, decks: userDecks };
     }

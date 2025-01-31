@@ -2,3 +2,69 @@ body {
     margin: 0;
     padding: 0;
 }
+
+:root {
+    --tg-theme-bg-color: #212121;
+    --tg-theme-text-color: #e8e8e8;
+    --tg-theme-hint-color: #aaa;
+    --tg-theme-link-color: #2990ff;
+    --tg-theme-button-color: #2990ff;
+    --tg-theme-button-text-color: #fff;
+    --tg-theme-secondary-bg-color: #1a1a1a;
+    --tg-theme-header-bg-color: #1a1a1a;
+    --tg-theme-accent-text-color: #007aff;
+
+    --tgui--card_bg_color: #242424;
+    --tgui--secondary_hint_color: #78797e;
+    --tgui--secondary_fill: rgba(41, 144, 255, .15);
+    --tgui--green: #32e55e;
+    --tgui--destructive_background: rgba(255, 35, 35, .02);
+    --tgui--primary_code_highlight: #2990ff;
+    --tgui--secondary_code_highlight: #e937ed;
+    --tgui--tertiary_code_highlight: #5ae536;
+    --tgui--plain_background: hsla(0, 0%, 100%, .08);
+    --tgui--plain_foreground: hsla(0, 0%, 100%, .95);
+
+    --tgui--large_title--line_height: 41px;
+    --tgui--title1--line_height: 34px;
+    --tgui--title2--line_height: 28px;
+    --tgui--title3--line_height: 25px;
+    --tgui--headline--line_height: 24px;
+    --tgui--text--line_height: 22px;
+    --tgui--subheadline1--line_height: 21px;
+    --tgui--subheadline2--line_height: 20px;
+    --tgui--caption1--line_height: 16px;
+    --tgui--caption2--line_height: 13px;
+
+    --tgui--bg_color: var(--tg-theme-bg-color, #212121);
+    --tgui--text_color: var(--tg-theme-text-color, #FFFFFF);
+    --tgui--hint_color: var(--tg-theme-hint-color, #AAAAAA);
+    --tgui--link_color: var(--tg-theme-link-color, #2990FF);
+    --tgui--button_color: var(--tg-theme-button-color, #2990FF);
+    --tgui--button_text_color: var(--tg-theme-button-text-color, #FFFFFF);
+    --tgui--secondary_bg_color: var(--tg-theme-secondary-bg-color, #0F0F0F);
+    --tgui--header_bg_color: var(--tg-theme-header-bg-color, #212121);
+    --tgui--accent_text_color: var(--tg-theme-accent-text-color, #007AFF);
+    --tgui--section_bg_color: var(--tg-theme-section-bg-color, #212121);
+    --tgui--section_header_text_color: var(--tg-theme-section-header-text-color, #AAAAAA);
+    --tgui--subtitle_text_color: var(--tg-theme-subtitle-text-color, #AAAAAA);
+    --tgui--destructive_text_color: var(--tg-theme-destructive-text-color, #E53935);
+
+    --tgui--skeleton: rgba(255, 255, 255, .03);
+    --tgui--divider: rgba(255, 255, 255, .05);
+    --tgui--outline: rgba(255, 255, 255, .10);
+    --tgui--surface_primary: rgba(23, 23, 23, .95);
+    --tgui--tertiary_bg_color: #2A2A2A;
+    --tgui--quartenary_bg_color: #2F2F2F;
+    --tgui--segmented_control_active_bg: #2F2F2F;
+    --tgui--card_bg_color: #242424;
+    --tgui--secondary_hint_color: #78797E;
+    --tgui--secondary_fill: rgba(41, 144, 255, .15);
+    --tgui--green: #32E55E;
+    --tgui--destructive_background: rgba(255, 35, 35, .02);
+    --tgui--primary_code_highlight: #2990FF;
+    --tgui--secondary_code_highlight: #E937ED;
+    --tgui--tertiary_code_highlight: #5AE536;
+    --tgui--plain_background: rgba(255, 255, 255, .08);
+    --tgui--plain_foreground: rgba(255, 255, 255, .95);
+}

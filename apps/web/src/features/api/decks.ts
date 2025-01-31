@@ -10,7 +10,6 @@ export interface CreateDeckParams {
     title: string;
     description: string;
 }
-
 const createDeck = async (params: CreateDeckParams) => {
     const res = await fetchAPI(`${API_URL}/decks`, {
         method: "POST",

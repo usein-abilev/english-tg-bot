@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { CardEntity } from "./card.entity";
 import { UserEntity } from "./user.entity";
+import { UserDeckEntity } from "./userDeck.entity";
 
 @Entity({ name: "decks" })
 export class DeckEntity {
@@ -27,6 +28,9 @@ export class DeckEntity {
 
     @ManyToOne(() => UserEntity, (user) => user.id)
     author: UserEntity;
+
+    @OneToMany(() => UserDeckEntity, (userDeck) => userDeck.deck)
+    users: UserDeckEntity[];
 
     @CreateDateColumn()
     createdAt!: Date;

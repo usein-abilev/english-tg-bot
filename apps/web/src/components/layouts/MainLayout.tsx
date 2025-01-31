@@ -1,19 +1,30 @@
-// import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
 import styled from "styled-components";
+import NavigationBar from "../NavigationBar/NavigationBar";
 
-const StyledContainer = styled.div``;
+const StyledContainer = styled.div`
+    background: transparent;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--tgui--secondary_bg_color);
+
+    .scrollable-container {
+        height: 100%;
+        overflow-y: auto;
+    }
+`;
 
 function MainLayout({ children }: { children: React.ReactNode }) {
-    // // useSuspenseQuery to throw error for test
-    // const { data, error } = useSuspenseQuery({
-    //     queryKey: ["test"],
-    //     queryFn: async () => {
-    //         throw new Error("test error");
-    //     },
-    // });
+    return (
+        <StyledContainer>
+            <div className="scrollable-container">{children}</div>
 
-    return <StyledContainer>{children}</StyledContainer>;
+            <NavigationBar />
+        </StyledContainer>
+    );
 }
 
 export default MainLayout;
