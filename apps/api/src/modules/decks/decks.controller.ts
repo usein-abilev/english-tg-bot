@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Post,
     Query,
@@ -27,6 +28,11 @@ export class DecksController {
             ...body,
             userId: request.initData.user.id,
         });
+    }
+
+    @Delete("/:id")
+    async deleteDeck(@Request() request: ClientRequest) {
+        return this.decksService.deleteDeck(+request.params.id, request.initData.user.id);
     }
 
     @Get("/:id/cards")

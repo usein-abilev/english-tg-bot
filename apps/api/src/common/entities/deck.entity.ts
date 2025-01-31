@@ -6,6 +6,7 @@ import {
     Column,
     Index,
     ManyToOne,
+    JoinColumn,
 } from "typeorm";
 import { CardEntity } from "./card.entity";
 import { UserEntity } from "./user.entity";
@@ -23,13 +24,21 @@ export class DeckEntity {
     @Column()
     description!: string;
 
-    @OneToMany(() => CardEntity, (card) => card.deck)
+    @OneToMany(() => CardEntity, (card) => card.deck, {
+        cascade: true,
+    })
     cards!: CardEntity[];
 
     @ManyToOne(() => UserEntity, (user) => user.id)
+    @JoinColumn({ name: "authorId" })
     author: UserEntity;
 
-    @OneToMany(() => UserDeckEntity, (userDeck) => userDeck.deck)
+    @Column()
+    authorId!: number;
+
+    @OneToMany(() => UserDeckEntity, (userDeck) => userDeck.deck, {
+        cascade: true,
+    })
     users: UserDeckEntity[];
 
     @CreateDateColumn()

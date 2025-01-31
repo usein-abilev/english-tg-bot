@@ -6,6 +6,7 @@ import {
     UpdateDateColumn,
     Index,
     Column,
+    JoinColumn,
 } from "typeorm";
 import { DeckEntity } from "./deck.entity";
 
@@ -43,8 +44,14 @@ export class CardEntity {
     @Column("jsonb", { nullable: true })
     meta?: object;
 
-    @ManyToOne(() => DeckEntity, (deck) => deck.id)
+    @ManyToOne(() => DeckEntity, (deck) => deck.id, {
+        onDelete: "CASCADE",
+    })
+    @JoinColumn({ name: "deckId" })
     deck!: DeckEntity;
+
+    @Column()
+    deckId!: number;
 
     @CreateDateColumn()
     createdAt!: Date;

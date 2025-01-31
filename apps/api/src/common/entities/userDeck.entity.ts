@@ -20,6 +20,8 @@ export class UserDeckEntity {
     @ManyToOne(() => UserEntity, (user) => user.id)
     user: UserEntity;
 
-    @ManyToOne(() => DeckEntity, (deck) => deck.id)
+    @ManyToOne(() => DeckEntity, (deck) => deck.id, {
+        onDelete: "CASCADE",
+    })
     deck: DeckEntity;
 }

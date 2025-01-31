@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeckEntity } from "../../common/entities/deck.entity";
@@ -56,6 +56,23 @@ export class DecksService {
         } finally {
             await queryRunner.release();
         }
+    }
+
+    /**
+     * Deletes a deck and all its cards
+     */
+    async deleteDeck(deckId: number, userId: number) {
+        const deck = await this.decksRepository.findOne({
+            where: { id: deckId },
+            relations: { author: true },
+        });
+        if (!deck) {
+            throw new NotFoundException("Deck not found");
+        }
+        if (deck.author.id !== userId) {
+            throw new ForbiddenException("You are not allowed to delete this deck");
+        }
+        await this.decksRepository.delete({ id: deckId });
     }
 
     async addCard(deckId: number, params: AddCardQueryDto) {
