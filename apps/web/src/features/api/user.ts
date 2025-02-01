@@ -11,11 +11,10 @@ interface UserQueryResponse {
 }
 
 const getUserInfo = async (): Promise<UserQueryResponse> => {
-    const res = await fetchAPI(`${API_URL}/users/me`);
-    const data = await res.json();
+    const data = await fetchAPI(`${API_URL}/users/me`);
     return {
         ...data,
-        decks: data.decks.map((relation) => ({
+        decks: data.decks.map((relation: any) => ({
             ...relation.deck,
             lastReviewAt: new Date(relation.lastReviewAt),
         })),

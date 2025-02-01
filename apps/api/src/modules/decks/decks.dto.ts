@@ -1,11 +1,12 @@
 import { Transform } from "class-transformer";
-import { IsNumber, IsOptional, IsString, MaxLength } from "class-validator";
+import { IsNumber, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 /**
  * CreateDeckDto - Data transfer object for creating a deck
  */
 export class CreateDeckQueryDto {
     @IsString()
+    @MinLength(3)
     title: string;
 
     @IsString()

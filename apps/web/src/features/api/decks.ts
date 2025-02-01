@@ -16,7 +16,24 @@ const createDeck = async (params: CreateDeckParams) => {
         body: JSON.stringify(params),
         headers: { "content-type": "application/json" },
     });
-    return res.json();
+    return res;
+};
+
+const deleteDeck = async (deckId: number) => {
+    const res = await fetchAPI(`${API_URL}/decks/${deckId}`, {
+        method: "DELETE",
+    });
+    return res;
+};
+
+export const useDeleteDeckMutation = () => {
+    return useMutation({
+        mutationKey: ["deleteDeck"],
+        mutationFn: deleteDeck,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
+        },
+    });
 };
 
 export const useCreateDeckMutation = () => {

@@ -16,12 +16,11 @@ export interface CreateCardParams {
 }
 
 const createCard = async (params: CreateCardParams) => {
-    const res = await fetchAPI(`${API_URL}/decks/${params.deckId}/cards`, {
+    return fetchAPI(`${API_URL}/decks/${params.deckId}/cards`, {
         method: "POST",
         body: JSON.stringify(params),
         headers: { "content-type": "application/json" },
     });
-    return res.json();
 };
 
 export interface GetDeckCardsParams {
@@ -35,7 +34,7 @@ const getDeckCards = async (params: GetDeckCardsParams): Promise<GetElementsResp
     url.searchParams.append("limit", params.limit.toString());
     url.searchParams.append("page", params.page.toString());
     const response = await fetchAPI(url);
-    return response.json();
+    return response;
 };
 
 export const getDecksCardsInfinityQuery = (params: GetDeckCardsParams) => {
