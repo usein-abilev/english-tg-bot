@@ -8,7 +8,9 @@
     "serve": "turbo dev",
     "serve:api": "turbo dev --filter=@eng-bot/api",
     "serve:web": "turbo dev --filter=@eng-bot/web",
-    "build": "turbo build"
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "lint:fix": "turbo lint -- --fix"
   },
   "devDependencies": {
     "turbo": "^2.3.4"
