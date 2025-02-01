@@ -9,7 +9,7 @@
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
     "build": "nest build",
-    "lint": "prettier --write \"src/**/*.ts\""
+    "lint": "eslint ."
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
