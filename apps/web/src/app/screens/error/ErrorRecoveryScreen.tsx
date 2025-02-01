@@ -13,6 +13,7 @@ const ErrorRecoveryScreenStyled = styled.div`
     align-items: center;
     height: 100vh;
     padding: 28px;
+    box-sizing: border-box;
 
     .inner-block {
         max-width: 350px;
@@ -24,7 +25,7 @@ const ErrorRecoveryScreenStyled = styled.div`
     }
 `;
 
-function ErrorRecoveryScreen(props) {
+function ErrorRecoveryScreen() {
     const navigate = useNavigate();
 
     const handleRetry = () => {

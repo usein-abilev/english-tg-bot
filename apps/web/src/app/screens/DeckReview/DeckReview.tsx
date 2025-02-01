@@ -1,4 +1,4 @@
-import { Button } from "@telegram-apps/telegram-ui";
+import { Button, InlineButtons } from "@telegram-apps/telegram-ui";
 import React, { useMemo } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -6,44 +6,58 @@ import { ROUTES } from "../../../constants/routes";
 import { AddCardModal, DeckCardBlock } from "../../../components/deck";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getDecksCardsInfinityQuery } from "../../../features/api/cards";
+import CenterInfoFallback from "../../../components/CenterInfoFallback/CenterInfoFallback";
+// import { InlineButtonsItem } from "@telegram-apps/telegram-ui/dist/components/Blocks/InlineButtons/components/InlineButtonsItem/InlineButtonsItem";
+// import { IconAdd } from "../../../components/icons";
 
 const StyledDeckReview = styled.div`
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
     .deck-header {
         background: #222;
         color: #fff;
-        padding: 24px;
+        padding: 16px;
 
         .deck-info {
             text-align: center;
             font-family: var(--tgui--font-family);
 
             .deck-title {
-                font-size: var(--tgui--title1--font_size);
-                line-height: var(--tgui--title1--line_height);
+                font-size: var(--tgui--title2--font_size);
+                line-height: var(--tgui--title2--line_height);
             }
 
             .deck-description {
+                margin-top: 8px;
                 color: var(--tgui--subtitle_text_color);
             }
         }
+
         .deck-controls {
+            margin-top: 16px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 8px;
         }
     }
 
     .deck-main {
         margin-top: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding: 16px;
+        margin-bottom: 16px;
+        padding: 0 8px;
 
         height: 100%;
         overflow-y: auto;
-        max-height: 480px;
+
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
     }
 `;
 
@@ -89,17 +103,17 @@ function DeckReview() {
     return (
         <StyledDeckReview className="deck-container">
             <AddCardModal deckId={deck.id} open={addCardModal} setOpen={setAddCardModal} />
-            <header className="deck-header">
+            <div className="deck-header">
                 <div className="deck-info">
-                    <p className="deck-title">{deck.title}</p>
-                    <p className="deck-description">{deck.description}</p>
+                    <div className="deck-title">{deck.title}</div>
+                    <div className="deck-description">{deck.description}</div>
                 </div>
                 <div className="deck-controls">
-                    <Button className="deck-control" size="m" mode="bezeled" onClick={handleAddCard}>
-                        Add Card
-                    </Button>
                     <Button className="deck-control" size="m" mode="bezeled" onClick={handlePractice}>
                         Practice
+                    </Button>
+                    <Button className="deck-control" size="m" mode="bezeled" onClick={handleAddCard}>
+                        Add
                     </Button>
                     <Button className="deck-control" size="m" mode="bezeled">
                         Edit
@@ -108,11 +122,17 @@ function DeckReview() {
                         Delete
                     </Button>
                 </div>
-            </header>
+            </div>
             <main className="deck-main">
-                {cards.map((item) => {
-                    return <DeckCardBlock key={item.id} card={item} onCardClick={() => {}} />;
-                })}
+                {cards.length > 0 ? (
+                    <div className="cards-list">
+                        {cards.map((item) => {
+                            return <DeckCardBlock key={item.id} card={item} onCardClick={() => {}} />;
+                        })}
+                    </div>
+                ) : (
+                    <CenterInfoFallback text="No cards in this deck. Please add one" />
+                )}
             </main>
         </StyledDeckReview>
     );

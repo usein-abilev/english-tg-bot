@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import NavigationBar from "../NavigationBar/NavigationBar";
+import { useBackButton } from "../../hooks/useBackButton";
+import { useLoaderData } from "react-router-dom";
 
 const StyledContainer = styled.div`
     background: transparent;
@@ -18,6 +20,9 @@ const StyledContainer = styled.div`
 `;
 
 function MainLayout({ children }: { children: React.ReactNode }) {
+    useLoaderData();
+    useBackButton();
+
     return (
         <StyledContainer>
             <div className="scrollable-container">{children}</div>

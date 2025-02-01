@@ -1,7 +1,9 @@
 import { InlineButtons } from "@telegram-apps/telegram-ui";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as Icons from "../icons";
+import { ROUTES } from "../../constants/routes";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const NavigationBarStyled = styled.div`
     background: var(--tgui--bg_color);
@@ -20,6 +22,7 @@ const NavigationBarStyled = styled.div`
             background: transparent;
             color: var(--tgui--text_color);
             fill: var(--tgui--text_color);
+            stroke: var(--tgui--text_color);
             cursor: pointer;
 
             color: var(--tgui--section_header_text_color);
@@ -35,61 +38,102 @@ const NavigationBarStyled = styled.div`
             align-items: center;
             gap: 6px;
 
-            &.nav-profile {
-                stroke: var(--tgui--text_color);
-            }
-
-            &:hover {
-                opacity: 0.7;
-            }
+            transition: all 0.1s;
 
             &.active {
                 opacity: 1;
                 color: var(--tgui--link_color);
                 fill: var(--tgui--link_color);
-
-                &.nav-profile {
-                    stroke: var(--tgui--link_color);
-                }
+                stroke: var(--tgui--link_color);
+            }
+            &:hover {
+                opacity: 0.7;
+            }
+            &:active {
+                opacity: 0.8;
             }
         }
     }
 `;
 
-function NavigationBar(props) {
-    const activeElementRef = React.useRef<any>(null);
+const NAVIGATION_ROUTES = {
+    home: ROUTES.HOME,
+    search: "/search",
+    library: "/library",
+    profile: "/profile",
+};
 
-    const handleMenuClick = (event) => {
-        if (activeElementRef.current) {
-            activeElementRef.current.classList.remove("active");
+type NavigationTabs = "home" | "search" | "library" | "profile";
+
+function NavigationBar({}) {
+    const [activeTab, setActiveTab] = useState<NavigationTabs | null>(null);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (location.pathname === NAVIGATION_ROUTES.home) {
+            setActiveTab("home");
+        } else if (location.pathname === NAVIGATION_ROUTES.search) {
+            setActiveTab("search");
+        } else if (location.pathname === NAVIGATION_ROUTES.library) {
+            setActiveTab("library");
+        } else if (location.pathname === NAVIGATION_ROUTES.profile) {
+            setActiveTab("profile");
+        } else {
+            setActiveTab(null);
         }
-        activeElementRef.current = event.currentTarget;
-        activeElementRef.current.classList.add("active");
-        console.log("Menu id:", event.currentTarget.dataset.id);
-    };
+    }, [location]);
+
+    const getActiveTabClass = useCallback(
+        (tab: NavigationTabs) => {
+            return activeTab === tab ? "active" : "";
+        },
+        [activeTab],
+    );
+
+    const handleMenuClick = useCallback(
+        (event: any) => {
+            const tab = event.currentTarget.dataset.id as NavigationTabs;
+            setActiveTab(tab);
+            navigate(NAVIGATION_ROUTES[tab]);
+        },
+        [navigate, setActiveTab],
+    );
 
     return (
         <NavigationBarStyled className="footer">
             <div className="nav-buttons">
-                <button className="nav-button" data-id="home" onClick={handleMenuClick}>
+                <button
+                    className={`nav-button ${getActiveTabClass("home")}`}
+                    data-id="home"
+                    onClick={handleMenuClick}
+                >
                     <Icons.IconHome />
-                    <span>Home</span>
                 </button>
-                <button className="nav-button" data-id="search" onClick={handleMenuClick}>
+                <button
+                    className={`nav-button ${getActiveTabClass("search")}`}
+                    data-id="search"
+                    onClick={handleMenuClick}
+                >
                     <Icons.IconSearch />
-                    <span>Search</span>
                 </button>
                 <button className="nav-button">
                     <Icons.IconAdd />
                 </button>
-                <button className="nav-button" data-id="library" onClick={handleMenuClick}>
-                    {/* <IconProfile /> */}
-                    <Icons.IconSearch />
-                    <span>Library</span>
+                <button
+                    className={`nav-button ${getActiveTabClass("library")}`}
+                    data-id="library"
+                    onClick={handleMenuClick}
+                >
+                    <Icons.IconLibrary />
                 </button>
-                <button className="nav-button nav-profile" data-id="profile" onClick={handleMenuClick}>
+                <button
+                    className={`nav-button ${getActiveTabClass("profile")}`}
+                    data-id="profile"
+                    onClick={handleMenuClick}
+                >
                     <Icons.IconProfile />
-                    <span>Profile</span>
                 </button>
             </div>
         </NavigationBarStyled>

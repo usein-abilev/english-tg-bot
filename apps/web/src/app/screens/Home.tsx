@@ -46,7 +46,9 @@ export default function Home() {
         <ListStyled>
             <DeckSectionStyled>
                 <SectionHeader title="My decks" onViewAllClick={handleViewAllDecks} />
-                {userResult?.decks && <DeckListBlock decks={userResult.decks} onDeckClick={handleDeckClick} />}
+                {userResult?.decks && (
+                    <DeckListBlock decks={userResult.decks} onDeckClick={handleDeckClick} />
+                )}
                 <Section.Footer className="decks-footer">
                     <Button onClick={handleAddDeck} size="m" mode="bezeled">
                         Add Deck

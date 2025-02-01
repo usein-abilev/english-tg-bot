@@ -7,9 +7,10 @@ import { userQuery } from "../features/api/user";
 import { ROUTES } from "../constants/routes";
 import { MainLayout } from "../components/layouts";
 import { ErrorRecoveryScreen } from "./screens/error";
-import { DeckReview, NewDeckForm } from "./screens/deck";
 import Home from "./screens/Home";
 import CardPractice from "./screens/CardPractice/CardPractice";
+import DeckReview from "./screens/DeckReview/DeckReview";
+import NewDeckForm from "./screens/NewDeckForm/NewDeckForm";
 
 const loader = async () => {
     return queryClient.ensureQueryData(userQuery());

@@ -1,8 +1,3 @@
-body {
-    margin: 0;
-    padding: 0;
-}
-
 :root {
     --tg-theme-bg-color: #212121;
     --tg-theme-text-color: #e8e8e8;
@@ -13,6 +8,41 @@ body {
     --tg-theme-secondary-bg-color: #1a1a1a;
     --tg-theme-header-bg-color: #1a1a1a;
     --tg-theme-accent-text-color: #007aff;
+
+    --tgui--font-family: system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Apple Color Emoji", "Helvetica Neue", sans-serif;
+
+    --tgui--font_weight--accent1: 700;
+    --tgui--font_weight--accent2: 600;
+    --tgui--font_weight--accent3: 400;
+
+    --tgui--large_title--font_size: 34px;
+    --tgui--large_title--line_height: 42px;
+
+    --tgui--title1--font_size: 28px;
+    --tgui--title1--line_height: 36px;
+    --tgui--title2--font_size: 24px;
+    --tgui--title2--line_height: 32px;
+    --tgui--title3--font_size: 20px;
+    --tgui--title3--line_height: 24px;
+
+    --tgui--headline--font_size: 19px;
+    --tgui--headline--line_height: 28px;
+
+    --tgui--text--font_size: 17px;
+    --tgui--text--line_height: 26px;
+
+    --tgui--subheadline1--font_size: 16px;
+    --tgui--subheadline1--line_height: 24px;
+    --tgui--subheadline2--font_size: 15px;
+    --tgui--subheadline2--line_height: 22px;
+
+    --tgui--caption1--font_size: 13px;
+    --tgui--caption1--line_height: 20px;
+    --tgui--caption2--font_size: 11px;
+    --tgui--caption2--line_height: 16px;
+
+    --tgui--border--width: 1px;
+    --tgui--base--section--box_shadow: 0 1px 2px 0 rgba(0, 0, 0, .10);
 
     --tgui--card_bg_color: #242424;
     --tgui--secondary_hint_color: #78797e;
@@ -36,19 +66,19 @@ body {
     --tgui--caption1--line_height: 16px;
     --tgui--caption2--line_height: 13px;
 
-    --tgui--bg_color: var(--tg-theme-bg-color, #212121);
-    --tgui--text_color: var(--tg-theme-text-color, #FFFFFF);
-    --tgui--hint_color: var(--tg-theme-hint-color, #AAAAAA);
-    --tgui--link_color: var(--tg-theme-link-color, #2990FF);
-    --tgui--button_color: var(--tg-theme-button-color, #2990FF);
-    --tgui--button_text_color: var(--tg-theme-button-text-color, #FFFFFF);
-    --tgui--secondary_bg_color: var(--tg-theme-secondary-bg-color, #0F0F0F);
-    --tgui--header_bg_color: var(--tg-theme-header-bg-color, #212121);
-    --tgui--accent_text_color: var(--tg-theme-accent-text-color, #007AFF);
-    --tgui--section_bg_color: var(--tg-theme-section-bg-color, #212121);
-    --tgui--section_header_text_color: var(--tg-theme-section-header-text-color, #AAAAAA);
-    --tgui--subtitle_text_color: var(--tg-theme-subtitle-text-color, #AAAAAA);
-    --tgui--destructive_text_color: var(--tg-theme-destructive-text-color, #E53935);
+    --tgui--bg_color: #212121;
+    --tgui--text_color: #FFFFFF;
+    --tgui--hint_color: #AAAAAA;
+    --tgui--link_color: #2990FF;
+    --tgui--button_color: #2990FF;
+    --tgui--button_text_color: #FFFFFF;
+    --tgui--secondary_bg_color: #0F0F0F;
+    --tgui--header_bg_color: #212121;
+    --tgui--accent_text_color: #007AFF;
+    --tgui--section_bg_color: #212121;
+    --tgui--section_header_text_color: #AAAAAA;
+    --tgui--subtitle_text_color: #AAAAAA;
+    --tgui--destructive_text_color: #E53935;
 
     --tgui--skeleton: rgba(255, 255, 255, .03);
     --tgui--divider: rgba(255, 255, 255, .05);
@@ -67,4 +97,10 @@ body {
     --tgui--tertiary_code_highlight: #5AE536;
     --tgui--plain_background: rgba(255, 255, 255, .08);
     --tgui--plain_foreground: rgba(255, 255, 255, .95);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--tgui--font-family);
 }

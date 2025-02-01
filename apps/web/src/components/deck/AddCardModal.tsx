@@ -60,7 +60,13 @@ const AddCardModal: FC<AddCardModalProps> = ({ deckId, open, setOpen }) => {
                         onChange={(event) => setForm((form) => ({ ...form, definition: event.target.value }))}
                     />
                 </Section>
-                <Button loading={loading} mode="white" size="m" style={{ width: "100%" }} onClick={handleAddCard}>
+                <Button
+                    loading={loading}
+                    mode="white"
+                    size="m"
+                    style={{ width: "100%" }}
+                    onClick={handleAddCard}
+                >
                     Add
                 </Button>
             </List>
