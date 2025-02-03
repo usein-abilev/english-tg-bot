@@ -1,5 +1,7 @@
-const MAX_GRADE = 4;
+import { MAX_RATE_CARD_GRADE as MAX_GRADE } from "../constants/practice.constants";
+
 const ONE_MINUTE = 60_000;
+const START_INTERVAL_MS = ONE_MINUTE * 60 * 24;
 
 const calcFactor = (grade: number, easinessFactor: number) => {
     const clamped = MAX_GRADE - Math.max(0, Math.min(MAX_GRADE, grade));
@@ -10,7 +12,7 @@ const calcFactor = (grade: number, easinessFactor: number) => {
  * Calculate the next interval, repetitions, and easiness factor for SuperMemo 2.
  * This is a spaced repetition algorithm.
  *
- * @param grade The user's grade for the card. It should be between 0 and 4 (`MAX_GRADE`).
+ * @param grade The user's grade for the card. It should be between 0 and 3 (`MAX_GRADE`).
  * @param repetitions The number of times the user has reviewed the card.
  * @param prevInterval The previous interval for the card.
  * @param easinessFactor The easiness factor for the card.
@@ -26,12 +28,12 @@ const calcSuperMemo2 = (
     let interval: number;
     if (grade < 2) {
         repetitions = 0;
-        interval = ONE_MINUTE * 5;
+        interval = START_INTERVAL_MS; // 1 day
     } else {
         if (repetitions === 0) {
-            interval = ONE_MINUTE * 10;
+            interval = START_INTERVAL_MS;
         } else if (repetitions === 1) {
-            interval = ONE_MINUTE * 60 * 24;
+            interval = START_INTERVAL_MS;
         } else {
             interval = Math.round(prevInterval * factor);
         }

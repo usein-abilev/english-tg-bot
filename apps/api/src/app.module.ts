@@ -8,6 +8,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import appConfig from "./configs/app.config";
 import { UsersModule } from "./modules/users/users.module";
 import { DecksModule } from "./modules/decks/decks.module";
+import { PracticeModule } from "./modules/practice/practice.module";
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { DecksModule } from "./modules/decks/decks.module";
         }),
         UsersModule,
         DecksModule,
+        PracticeModule,
     ],
     controllers: [],
     providers: [],

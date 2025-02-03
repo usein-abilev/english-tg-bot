@@ -26,6 +26,24 @@ export class DecksService {
         });
     }
 
+    /**
+     * Adds a deck to user's favorites
+     */
+    async addFavoriteDeck(deckId: number, userId: number) {
+        const deck = await this.decksRepository.findOneBy({ id: deckId });
+        if (!deck) {
+            throw new NotFoundException("Deck not found");
+        }
+        const userDeck = await this.userDecksRepository.save({
+            deck,
+            user: { id: userId },
+        });
+        return userDeck;
+    }
+
+    /**
+     * Creates a new deck
+     */
     async createDeck(params: CreateDeckDto) {
         const queryRunner = this.dataSource.createQueryRunner();
 

@@ -3,6 +3,7 @@ import {
     CreateDateColumn,
     Entity,
     Index,
+    JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
@@ -14,6 +15,7 @@ import { CardEntity } from "./card.entity";
  * UserCardProgress entity used to store the progress of a user on a card
  */
 @Entity({ name: "user_card_progress" })
+@Index(["userId", "cardId"], { unique: true })
 export class UserCardProgressEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -34,8 +36,9 @@ export class UserCardProgressEntity {
 
     /**
      * The interval is the number in milliseconds that the user should wait before reviewing the word again.
+     * It is calculated using the easiness factor and the repetitions.
      */
-    @Column({ default: 0 })
+    @Column({ type: "int8", default: 0 })
     @Index()
     interval: number = 0;
 
@@ -47,10 +50,18 @@ export class UserCardProgressEntity {
     nextReviewAt!: Date;
 
     @ManyToOne(() => UserEntity, (user) => user.id)
+    @JoinColumn({ name: "userId" })
     user: UserEntity;
 
+    @Column()
+    userId: number;
+
     @ManyToOne(() => CardEntity, (card) => card.id)
+    @JoinColumn({ name: "cardId" })
     card: CardEntity;
+
+    @Column()
+    cardId: number;
 
     @CreateDateColumn()
     createdAt: Date;

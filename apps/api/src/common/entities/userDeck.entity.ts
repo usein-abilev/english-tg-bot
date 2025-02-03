@@ -1,4 +1,4 @@
-import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { DeckEntity } from "./deck.entity";
 
@@ -17,11 +17,25 @@ export class UserDeckEntity {
     @Index()
     lastReviewAt?: Date;
 
+    /**
+     * The timestamp when the user should review this deck.
+     */
+    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+    @Index()
+    nextReviewAt: Date;
+
     @ManyToOne(() => UserEntity, (user) => user.id)
     user: UserEntity;
+
+    @Column()
+    userId: number;
 
     @ManyToOne(() => DeckEntity, (deck) => deck.id, {
         onDelete: "CASCADE",
     })
+    @JoinColumn({ name: "deckId" })
     deck: DeckEntity;
+
+    @Column()
+    deckId: number;
 }

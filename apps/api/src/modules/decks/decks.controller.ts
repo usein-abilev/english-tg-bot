@@ -30,6 +30,11 @@ export class DecksController {
         });
     }
 
+    @Post("/:id/add")
+    async addDeck(@Request() request: ClientRequest) {
+        return this.decksService.addFavoriteDeck(+request.params.id, request.initData.user.id);
+    }
+
     @Delete("/:id")
     async deleteDeck(@Request() request: ClientRequest) {
         return this.decksService.deleteDeck(+request.params.id, request.initData.user.id);
