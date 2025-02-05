@@ -25,7 +25,7 @@ export class UsersService {
             lastName: params.lastName,
             languageCode: params.languageCode,
             photoUrl: params.photoUrl,
-            isPremium: params.isPremium,
+            isPremium: params.isPremium || false,
             allowsWriteToPm: params.allowsWriteToPm,
         });
         return this.usersRepository.save(newUser);

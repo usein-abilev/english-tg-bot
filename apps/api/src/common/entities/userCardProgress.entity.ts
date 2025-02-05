@@ -53,7 +53,7 @@ export class UserCardProgressEntity {
     @JoinColumn({ name: "userId" })
     user: UserEntity;
 
-    @Column()
+    @Column({ type: "int8" })
     userId: number;
 
     @ManyToOne(() => CardEntity, (card) => card.id)

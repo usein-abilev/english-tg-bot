@@ -27,11 +27,11 @@ export class DeckEntity {
     @OneToMany(() => CardEntity, (card) => card.deck, {
         cascade: true,
     })
-    cards!: CardEntity[];
+    cards?: CardEntity[];
 
     @ManyToOne(() => UserEntity, (user) => user.id)
     @JoinColumn({ name: "authorId" })
-    author: UserEntity;
+    author?: UserEntity;
 
     @Column()
     authorId!: number;
@@ -39,7 +39,7 @@ export class DeckEntity {
     @OneToMany(() => UserDeckEntity, (userDeck) => userDeck.deck, {
         cascade: true,
     })
-    users: UserDeckEntity[];
+    users?: UserDeckEntity[];
 
     @CreateDateColumn()
     createdAt!: Date;

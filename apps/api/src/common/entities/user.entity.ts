@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, UpdateDateColum
 
 @Entity({ name: "users" })
 export class UserEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ type: "int8" })
     @Index({ unique: true })
     id: number;
 

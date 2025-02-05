@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeckEntity } from "../../common/entities/deck.entity";
@@ -19,13 +24,6 @@ export class DecksService {
         private readonly userDecksRepository: Repository<UserDeckEntity>,
     ) {}
 
-    async getUserDecks(userId: number) {
-        return this.userDecksRepository.find({
-            where: { user: { id: userId } },
-            relations: { deck: true },
-        });
-    }
-
     /**
      * Adds a deck to user's favorites
      */
@@ -33,6 +31,9 @@ export class DecksService {
         const deck = await this.decksRepository.findOneBy({ id: deckId });
         if (!deck) {
             throw new NotFoundException("Deck not found");
+        }
+        if (deck.authorId === userId) {
+            throw new BadRequestException("You can't add your own deck to favorites");
         }
         const userDeck = await this.userDecksRepository.save({
             deck,
