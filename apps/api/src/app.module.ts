@@ -13,6 +13,7 @@ import { PracticeModule } from "./modules/practice/practice.module";
 @Module({
     imports: [
         TypeOrmModule.forRoot({
+            parseInt8: true, // because userId is int8 in the database
             type: appConfig.database.type,
             host: appConfig.database.host,
             port: appConfig.database.port,
