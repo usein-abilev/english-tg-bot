@@ -7,7 +7,7 @@ import {
 import { DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeckEntity } from "../../common/entities/deck.entity";
-import { AddCardQueryDto, CreateDeckDto, GetCardsQueryDto } from "./decks.dto";
+import { AddCardDto, CreateDeckDto, DeckExtendedDto, GetCardsQueryDto } from "./decks.dto";
 import { CardEntity } from "../../common/entities/card.entity";
 import { GetElementsResponse } from "../../common/types/response.types";
 import { UserDeckEntity } from "../../common/entities/userDeck.entity";
@@ -23,6 +23,49 @@ export class DecksService {
         @InjectRepository(UserDeckEntity)
         private readonly userDecksRepository: Repository<UserDeckEntity>,
     ) {}
+
+    async get(deckId: number, userId: number): Promise<DeckExtendedDto> {
+        const deck = await this.decksRepository.findOneBy({ id: deckId });
+        if (!deck) {
+            throw new NotFoundException("Deck not found");
+        }
+
+        const progressData = await this.userDecksRepository
+            .createQueryBuilder("user_deck")
+            .addSelect("COUNT(card.id)", "cards_count")
+            .addSelect(
+                "COUNT(CASE WHEN progress.nextReviewAt <= :now THEN 1 END)",
+                "due_cards_count",
+            )
+            .addSelect(
+                "COUNT(CASE WHEN progress.repetitions IS NULL THEN 1 END)",
+                "new_cards_count",
+            )
+            .addSelect("MIN(progress.nextReviewAt)", "next_review_at")
+            .leftJoin(CardEntity, "card", "card.deckId = user_deck.deckId")
+            .leftJoin(
+                "user_card_progress",
+                "progress",
+                "progress.cardId = card.id AND progress.userId = :userId",
+            )
+            .where("user_deck.userId = :userId", { userId })
+            .andWhere("user_deck.deckId = :deckId", { deckId })
+            .setParameters({ now: new Date(), userId, deckId: deck.id })
+            .groupBy("user_deck.id")
+            .addGroupBy("user_deck.deckId")
+            .getRawOne();
+
+        return {
+            ...deck,
+            progress: progressData && {
+                cardsCount: progressData.cards_count,
+                cardsToLearnCount: progressData.new_cards_count,
+                cardsToReviewCount: progressData.due_cards_count,
+                lastReviewAt: progressData.user_deck_lastReviewAt,
+                nextReviewAt: progressData.next_review_at,
+            },
+        };
+    }
 
     /**
      * Adds a deck to user's favorites
@@ -45,7 +88,7 @@ export class DecksService {
     /**
      * Creates a new deck
      */
-    async createDeck(params: CreateDeckDto) {
+    async createDeck(params: CreateDeckDto): Promise<DeckExtendedDto> {
         const queryRunner = this.dataSource.createQueryRunner();
 
         await queryRunner.connect();
@@ -55,6 +98,7 @@ export class DecksService {
 
         try {
             const deckRepository = manager.getRepository(DeckEntity);
+            const cardRepository = manager.getRepository(CardEntity);
             const userDeckRepository = manager.getRepository(UserDeckEntity);
 
             const deck = await deckRepository.save({
@@ -63,12 +107,23 @@ export class DecksService {
                 description: params.description.trim(),
             });
 
-            const userDeck = await userDeckRepository.save({
+            if (Array.isArray(params.cards)) {
+                await cardRepository.save(
+                    params.cards.map((card) => ({
+                        deck: { id: deck.id },
+                        term: card.term,
+                        definition: card.definition,
+                        description: card.description || "",
+                    })),
+                );
+            }
+
+            await userDeckRepository.save({
                 deck,
                 user: { id: params.userId },
             });
             await queryRunner.commitTransaction();
-            return userDeck;
+            return deck;
         } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;
@@ -88,16 +143,19 @@ export class DecksService {
         if (!deck) {
             throw new NotFoundException("Deck not found");
         }
-        if (deck.author.id !== userId) {
+        if (deck.authorId !== userId) {
             throw new ForbiddenException("You are not allowed to delete this deck");
         }
         await this.decksRepository.delete({ id: deckId });
     }
 
-    async addCard(deckId: number, params: AddCardQueryDto) {
+    async addCard(deckId: number, params: AddCardDto) {
         const deck = await this.decksRepository.findOneBy({ id: deckId });
         if (!deck) {
             throw new NotFoundException("Deck not found");
+        }
+        if (deck.authorId !== params.userId) {
+            throw new ForbiddenException("You are not allowed to add cards to this deck");
         }
 
         const card = await this.cardsRepository.save(

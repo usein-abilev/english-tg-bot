@@ -1,16 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeckEntity } from "../../common/entities/deck.entity";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import { CardEntity } from "../../common/entities/card.entity";
 import { UserDeckEntity } from "../../common/entities/userDeck.entity";
-import {
-    PracticeDecksResponse,
-    PracticeGetDecksQueryDto,
-    PracticeRateCardDto,
-} from "./practice.dto";
+import { BatchRateCardDto, PracticeGetDecksQueryDto, PracticeRateCardDto } from "./practice.dto";
 import calcSuperMemo2 from "../../common/utils/calcSM2.util";
 import { UserCardProgressEntity } from "../../common/entities/userCardProgress.entity";
+import { DeckExtendedDto } from "../decks/decks.dto";
 
 @Injectable()
 export class PracticeService {
@@ -29,7 +26,7 @@ export class PracticeService {
     async getDecksToPractice(
         userId: number,
         params: PracticeGetDecksQueryDto,
-    ): Promise<PracticeDecksResponse[]> {
+    ): Promise<DeckExtendedDto[]> {
         const subQuery = this.userDecksRepository
             .createQueryBuilder("inner")
             .select("inner.deckId", "deckId")
@@ -39,7 +36,7 @@ export class PracticeService {
                 "due_cards_count",
             )
             .addSelect(
-                "COUNT(CASE WHEN progress.repetitions = 0 OR progress.repetitions IS NULL THEN 1 END)",
+                "COUNT(CASE WHEN progress.repetitions IS NULL THEN 1 END)",
                 "new_cards_count",
             )
             .addSelect("MIN(progress.nextReviewAt)", "next_review_at")
@@ -67,22 +64,24 @@ export class PracticeService {
 
         const raw = await query.getRawMany();
 
-        return raw.map((item) => ({
-            id: item.deck_id,
-            title: item.deck_title,
-            description: item.deck_description,
-            authorId: item.deck_authorId,
-            createdAt: item.deck_createdAt && new Date(item.deck_createdAt),
-            lastReviewAt: item.user_deck_lastReviewAt && new Date(item.user_deck_lastReviewAt),
-            nextReviewAt: item.next_review_at && new Date(item.next_review_at),
-            stats: {
-                cardsCount: +item.cards_count,
-                // Ensure that new cards count is not greater than the total cards count
-                // Because without it, if in the deck there are no cards with progress, the new cards count will be equal to 1.
-                newCardsCount: Math.min(+item.new_cards_count, +item.cards_count),
-                dueCardsCount: +item.due_cards_count,
-            },
-        }));
+        return raw.map((item) => {
+            return {
+                id: item.deck_id,
+                title: item.deck_title,
+                description: item.deck_description,
+                authorId: item.deck_authorId,
+                createdAt: item.deck_createdAt && new Date(item.deck_createdAt),
+                updatedAt: item.deck_updatedAt && new Date(item.deck_updatedAt),
+                progress: {
+                    cardsCount: +item.cards_count,
+                    cardsToReviewCount: +item.due_cards_count,
+                    cardsToLearnCount: Math.min(+item.new_cards_count, +item.cards_count),
+                    lastReviewAt:
+                        item.user_deck_lastReviewAt && new Date(item.user_deck_lastReviewAt),
+                    nextReviewAt: item.next_review_at && new Date(item.next_review_at),
+                },
+            } satisfies DeckExtendedDto;
+        });
     }
 
     /**
@@ -146,5 +145,92 @@ export class PracticeService {
         ]);
 
         return result;
+    }
+
+    /**
+     * Rates a batch of cards using the spaced repetition system
+     */
+    async rateCardBatch(params: BatchRateCardDto) {
+        const { userId, cards } = params;
+
+        await this.userCardProgressRepository
+            .createQueryBuilder()
+            .insert()
+            .into(UserCardProgressEntity)
+            .values(
+                cards.map((card) => ({
+                    userId,
+                    cardId: card.cardId,
+                    easinessFactor: 1.3,
+                    repetitions: 0,
+                    interval: 0,
+                    nextReviewAt: new Date(),
+                })),
+            )
+            .orIgnore()
+            .execute();
+
+        const cardIds = cards.map((card) => card.cardId);
+        const cardProgresses = await this.userCardProgressRepository.find({
+            where: {
+                userId,
+                cardId: In(cardIds),
+            },
+            select: {
+                id: true,
+                cardId: true,
+                easinessFactor: true,
+                repetitions: true,
+                interval: true,
+                nextReviewAt: true,
+            },
+        });
+
+        if (cardProgresses.length !== cards.length) {
+            throw new NotFoundException("Some cards not found");
+        }
+
+        const cardsGradesMap = new Map(cards.map((card) => [card.cardId, card.grade]));
+
+        const updatedProgresses = cardProgresses.map((cardProgress) => {
+            const grade = cardsGradesMap.get(cardProgress.cardId);
+            const sm = calcSuperMemo2(
+                grade,
+                cardProgress.repetitions + 1,
+                cardProgress.interval,
+                cardProgress.easinessFactor,
+            );
+            cardProgress.easinessFactor = sm.easinessFactor;
+            cardProgress.repetitions = sm.repetitions;
+            cardProgress.interval = sm.interval;
+            cardProgress.nextReviewAt = new Date(Date.now() + sm.interval);
+
+            return cardProgress;
+        });
+
+        const values = updatedProgresses
+            .map(
+                (p) =>
+                    `(${p.id}, ${p.easinessFactor}, ${p.repetitions}, ${p.interval}, '${p.nextReviewAt.toISOString()}'::timestamp)`,
+            )
+            .join(", ");
+
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.query(`
+            UPDATE user_card_progress AS ucp
+            SET 
+                "easinessFactor" = data.easinessFactor,
+                repetitions = data.repetitions,
+                interval = data.interval,
+                "nextReviewAt" = data.nextReviewAt
+            FROM (VALUES ${values}) AS data (id, easinessFactor, repetitions, interval, nextReviewAt)
+            WHERE ucp.id = data.id;
+            
+            UPDATE user_deck AS ud
+            SET "lastReviewAt" = NOW()
+            WHERE "userId" = ${userId} AND "deckId" IN (
+                SELECT DISTINCT "deckId" FROM cards WHERE id IN (${cardIds.join(", ")})
+            )
+        `);
     }
 }

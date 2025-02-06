@@ -3,6 +3,8 @@ import {
     Controller,
     Delete,
     Get,
+    Param,
+    ParseIntPipe,
     Post,
     Query,
     Request,
@@ -19,6 +21,11 @@ import { TgInitDataGuard } from "../../common/guards/tg.guard";
 export class DecksController {
     constructor(private readonly decksService: DecksService) {}
 
+    @Get("/:id")
+    async getById(@Request() request: ClientRequest, @Param("id", ParseIntPipe) id: number) {
+        return this.decksService.get(id, request.initData.user.id);
+    }
+
     @Post("/")
     async createDeck(
         @Request() request: ClientRequest,
@@ -31,22 +38,33 @@ export class DecksController {
     }
 
     @Post("/:id/add")
-    async addDeck(@Request() request: ClientRequest) {
-        return this.decksService.addFavoriteDeck(+request.params.id, request.initData.user.id);
+    async addDeck(@Request() request: ClientRequest, @Param("id", ParseIntPipe) id: number) {
+        return this.decksService.addFavoriteDeck(id, request.initData.user.id);
     }
 
     @Delete("/:id")
-    async deleteDeck(@Request() request: ClientRequest) {
-        return this.decksService.deleteDeck(+request.params.id, request.initData.user.id);
+    async deleteDeck(@Request() request: ClientRequest, @Param("id", ParseIntPipe) deckId: number) {
+        return this.decksService.deleteDeck(deckId, request.initData.user.id);
     }
 
     @Get("/:id/cards")
-    async getCards(@Request() request: ClientRequest, @Query() query: GetCardsQueryDto) {
-        return this.decksService.getCards(+request.params.id, query);
+    async getCards(
+        @Request() request: ClientRequest,
+        @Param("id", ParseIntPipe) id: number,
+        @Query() query: GetCardsQueryDto,
+    ) {
+        return this.decksService.getCards(id, query);
     }
 
     @Post("/:id/cards")
-    async createCard(@Request() request: ClientRequest, @Body() body: AddCardQueryDto) {
-        return this.decksService.addCard(+request.params.id, body);
+    async createCard(
+        @Request() request: ClientRequest,
+        @Param("id", ParseIntPipe) id: number,
+        @Body() body: AddCardQueryDto,
+    ) {
+        return this.decksService.addCard(id, {
+            ...body,
+            userId: request.initData.user.id,
+        });
     }
 }

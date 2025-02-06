@@ -7,6 +7,7 @@ import {
     Index,
     ManyToOne,
     JoinColumn,
+    UpdateDateColumn,
 } from "typeorm";
 import { CardEntity } from "./card.entity";
 import { UserEntity } from "./user.entity";
@@ -43,4 +44,7 @@ export class DeckEntity {
 
     @CreateDateColumn()
     createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
 }

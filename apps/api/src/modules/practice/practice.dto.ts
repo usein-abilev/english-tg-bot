@@ -1,7 +1,14 @@
-import { IsNumber, Max, Min } from "class-validator";
+import {
+    ArrayMaxSize,
+    ArrayMinSize,
+    IsArray,
+    IsNumber,
+    Max,
+    Min,
+    ValidateNested,
+} from "class-validator";
 import { MAX_RATE_CARD_GRADE } from "../../common/constants/practice.constants";
-import { Transform } from "class-transformer";
-import { DeckEntity } from "../../common/entities/deck.entity";
+import { Transform, Type } from "class-transformer";
 
 export class PracticeRateCardQueryDto {
     @IsNumber()
@@ -17,25 +24,22 @@ export interface PracticeRateCardDto extends PracticeRateCardQueryDto {
     userId: number;
 }
 
+export class BatchRateCardQueryDto {
+    @IsArray()
+    @ValidateNested({ each: true })
+    @ArrayMinSize(1)
+    @ArrayMaxSize(100)
+    @Type(() => PracticeRateCardQueryDto)
+    cards: PracticeRateCardQueryDto[];
+}
+
+export interface BatchRateCardDto extends BatchRateCardQueryDto {
+    userId: number;
+}
+
 export class PracticeGetDecksQueryDto {
     @Max(50)
     @Transform(({ value }) => Number(value))
     @IsNumber()
     limit: number;
-}
-
-export interface PracticeDecksResponse extends DeckEntity {
-    id: number;
-    title: string;
-    description: string;
-    authorId: number;
-    createdAt: Date;
-    lastReviewAt?: Date;
-    nextReviewAt: Date;
-
-    stats: {
-        cardsCount: number;
-        newCardsCount: number;
-        dueCardsCount: number;
-    };
 }

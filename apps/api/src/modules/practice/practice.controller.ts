@@ -11,7 +11,11 @@ import {
 import { PracticeService } from "./practice.service";
 import { TgInitDataGuard } from "../../common/guards/tg.guard";
 import { ClientRequest } from "../../common/types/request.types";
-import { PracticeGetDecksQueryDto, PracticeRateCardQueryDto } from "./practice.dto";
+import {
+    BatchRateCardQueryDto,
+    PracticeGetDecksQueryDto,
+    PracticeRateCardQueryDto,
+} from "./practice.dto";
 
 @Controller("practice")
 @UseGuards(TgInitDataGuard)
@@ -34,5 +38,14 @@ export class PracticeController {
     ) {
         const userId = request.initData.user.id;
         return this.practiceService.rateCard({ ...body, userId });
+    }
+
+    @Post("/rateCardBatch")
+    async rateCardBatch(
+        @Request() request: ClientRequest,
+        @Body(new ValidationPipe({ transform: true })) body: BatchRateCardQueryDto,
+    ) {
+        const userId = request.initData.user.id;
+        return this.practiceService.rateCardBatch({ ...body, userId });
     }
 }
