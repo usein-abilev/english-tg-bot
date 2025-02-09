@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import styled from "styled-components";
 import { DeckSchema } from "../../features/types/deck.types";
-import { Divider, Progress } from "@telegram-apps/telegram-ui";
+import { Progress } from "@telegram-apps/telegram-ui";
 
 interface DeckBlockProps {
     deck: DeckSchema;
@@ -9,11 +9,11 @@ interface DeckBlockProps {
 }
 
 const DeckBlockStyled = styled.div`
-    padding: 12px;
-    font-family: var(--tgui--font-family);
-    color: var(-- tgui--text_color);
-    background: var(--tgui--bg_color);
-    border-radius: 12px;
+    padding: 12px 16px;
+    font-family: var(--app-font-family);
+    color: var(--tgui--text_color);
+    background: var(--app-deck-bg-color);
+    border-radius: 18px;
 
     display: flex;
     flex-direction: column;
@@ -22,14 +22,14 @@ const DeckBlockStyled = styled.div`
     .deck-title {
         font-style: normal;
         font-weight: 600;
-        font-size: 16px;
-        line-height: 18px;
+        font-size: 20px;
+        line-height: 23px;
     }
 
     .deck-description {
         opacity: 0.5;
-        font-size: 14px;
-        line-height: 16px;
+        font-size: 12px;
+        line-height: 15px;
     }
 
     .deck-progress {
@@ -43,22 +43,28 @@ const DeckBlockStyled = styled.div`
     }
 
     &:active {
-        background: var(--tgui--tertiary_bg_color);
+        opacity: 0.8;
     }
 `;
 
 const DeckBlock: FC<DeckBlockProps> = ({ deck, onClick }) => {
+    const progressValue = useMemo(() => {
+        if (!deck.progress?.cardsCount) return 0;
+        const learn = deck.progress.cardsToLearnCount + deck.progress.cardsToReviewCount;
+        return (1 - learn / deck.progress.cardsCount) * 100;
+    }, [deck]);
+
     return (
         <DeckBlockStyled className="deck-block" onClick={() => onClick?.(deck)}>
             <div className="deck-title">{deck.title}</div>
 
-            <Divider />
-
             <div className="deck-description">{deck.description}</div>
 
-            <div className="deck-progress">
-                <Progress value={28} className="deck-progress-bar" />
-            </div>
+            {progressValue > 0 && (
+                <div className="deck-progress">
+                    <Progress value={progressValue} className="deck-progress-bar" />
+                </div>
+            )}
         </DeckBlockStyled>
     );
 };

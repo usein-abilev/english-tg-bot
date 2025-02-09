@@ -3,58 +3,31 @@ import { AppRoot } from "@telegram-apps/telegram-ui";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { queryClient } from "../features/reactQuery";
-import { userQuery } from "../features/api/user";
+import { createUserQuery } from "../features/api/user";
 import { ROUTES } from "../constants/routes";
-import { MainLayout } from "../components/layouts";
-import { ErrorRecoveryScreen } from "./screens/error";
+import { MainLayout } from "../components/Layouts";
+import { ErrorRecoveryScreen } from "./screens/Error";
 import Home from "./screens/Home";
 import CardPractice from "./screens/CardPractice/CardPractice";
-import DeckReview from "./screens/DeckReview/DeckReview";
-import NewDeckForm from "./screens/NewDeckForm/NewDeckForm";
+import decksRoute from "./screens/Decks/decksRoute";
 
 const loader = async () => {
-    return queryClient.ensureQueryData(userQuery());
+    return queryClient.ensureQueryData(createUserQuery());
 };
 
 const router = createBrowserRouter([
     {
-        path: ROUTES.HOME,
+        path: "/",
         loader,
-        element: (
-            <MainLayout>
-                <Home />
-            </MainLayout>
-        ),
+        element: <MainLayout />,
         errorElement: <ErrorRecoveryScreen />,
-    },
-    {
-        path: ROUTES.DECK_REVIEW,
-        loader,
-        element: (
-            <MainLayout>
-                <DeckReview />
-            </MainLayout>
-        ),
-        errorElement: <ErrorRecoveryScreen />,
+        children: [{ path: "", element: <Home /> }, decksRoute],
     },
     {
         path: ROUTES.DECK_PRACTICE,
         loader,
-        element: (
-            <MainLayout>
-                <CardPractice />
-            </MainLayout>
-        ),
-        errorElement: <ErrorRecoveryScreen />,
-    },
-    {
-        path: ROUTES.NEW_DECK,
-        loader,
-        element: (
-            <MainLayout>
-                <NewDeckForm />
-            </MainLayout>
-        ),
+        element: <MainLayout />,
+        children: [{ path: "", element: <CardPractice /> }],
         errorElement: <ErrorRecoveryScreen />,
     },
     {
@@ -66,11 +39,11 @@ const router = createBrowserRouter([
 function App() {
     return (
         <AppRoot appearance="dark" platform="ios">
-            <QueryClientProvider client={queryClient}>
-                <React.Suspense fallback={<div className="">Loading...</div>}>
-                    <RouterProvider router={router} />
-                </React.Suspense>
-            </QueryClientProvider>
+            <React.Suspense fallback={<div className="">Loading...</div>}>
+                <QueryClientProvider client={queryClient}>
+                    <RouterProvider fallbackElement={<div>LOADING</div>} router={router} />
+                </QueryClientProvider>
+            </React.Suspense>
         </AppRoot>
     );
 }

@@ -1,6 +1,26 @@
 :root {
-    --tg-theme-bg-color: #212121;
-    --tg-theme-text-color: #e8e8e8;
+    --app-bg-color: #17191E;
+    --app-secondary-bg-color: #22262E;
+    --app-card-bg-color: linear-gradient(92.19deg, #232832 0%, #2A323E 100%);
+    --app-deck-bg-color: linear-gradient(95.49deg, #1E232D 0%, #232832 100%);
+
+    --app-accent-blue: #5A8CFF;
+    --app-accent-green: #4EC536;
+    --app-accent-yellow: #DCC83C;
+
+    --app-primary-button-color: #3C6EE1;
+    --app-secondary-button-color: color-mix(in srgb, #FFF 5%, transparent);
+    --app-secondary-button-text-color: var(--app-title-text-color);
+
+    --app-link-color: var(--app-accent-blue);
+    --app-title-text-color: #F5F5F5;
+    --app-subtitle-text-color: #96A0AA;
+    --app-section-text-color: #545A64;
+    --app-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Apple Color Emoji", "Helvetica Neue", sans-serif;
+
+
+    --tg-theme-bg-color: var(--app-secondary-bg-color);
+    --tg-theme-text-color: var(--app-title-text-color);
     --tg-theme-hint-color: #aaa;
     --tg-theme-link-color: #2990ff;
     --tg-theme-button-color: #2990ff;
@@ -8,12 +28,13 @@
     --tg-theme-secondary-bg-color: #1a1a1a;
     --tg-theme-header-bg-color: #1a1a1a;
     --tg-theme-accent-text-color: #007aff;
+    --tg-theme-section-header-text-color: var(--app-section-text-color);
 
     --tgui--font-family: system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Apple Color Emoji", "Helvetica Neue", sans-serif;
 
     --tgui--font_weight--accent1: 700;
     --tgui--font_weight--accent2: 600;
-    --tgui--font_weight--accent3: 400;
+    --tgui--font_weight--accent3: 600;
 
     --tgui--large_title--font_size: 34px;
     --tgui--large_title--line_height: 42px;
@@ -66,7 +87,7 @@
     --tgui--caption1--line_height: 16px;
     --tgui--caption2--line_height: 13px;
 
-    --tgui--bg_color: #212121;
+    --tgui--bg_color: var(--app-secondary-bg-color);
     --tgui--text_color: #FFFFFF;
     --tgui--hint_color: #AAAAAA;
     --tgui--link_color: #2990FF;
@@ -76,8 +97,8 @@
     --tgui--header_bg_color: #212121;
     --tgui--accent_text_color: #007AFF;
     --tgui--section_bg_color: #212121;
-    --tgui--section_header_text_color: #AAAAAA;
-    --tgui--subtitle_text_color: #AAAAAA;
+    --tgui--section_header_text_color: var(--app-section-text-color);
+    --tgui--subtitle_text_color: var(--app-subtitle-text-color);
     --tgui--destructive_text_color: #E53935;
 
     --tgui--skeleton: rgba(255, 255, 255, .03);

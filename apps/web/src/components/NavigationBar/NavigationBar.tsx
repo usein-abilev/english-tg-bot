@@ -4,9 +4,12 @@ import styled from "styled-components";
 import * as Icons from "../icons";
 import { ROUTES } from "../../constants/routes";
 import { useLocation, useNavigate } from "react-router-dom";
+import NavigationCreateModal from "../Modals/NavigationCreateModal";
+import SVGIcon from "../icons/SVGIcon";
 
 const NavigationBarStyled = styled.div`
-    background: var(--tgui--bg_color);
+    background: var(--app-secondary-bg-color);
+
     .nav-buttons {
         display: flex;
         width: 100%;
@@ -20,7 +23,7 @@ const NavigationBarStyled = styled.div`
             width: 100%;
             border: none;
             background: transparent;
-            color: var(--tgui--text_color);
+            color: var(--app-title-text-color);
             fill: var(--tgui--text_color);
             stroke: var(--tgui--text_color);
             cursor: pointer;
@@ -42,9 +45,9 @@ const NavigationBarStyled = styled.div`
 
             &.active {
                 opacity: 1;
-                color: var(--tgui--link_color);
-                fill: var(--tgui--link_color);
-                stroke: var(--tgui--link_color);
+                color: var(--app-link-color);
+                fill: var(--app-link-color);
+                stroke: var(--app-link-color);
             }
             &:hover {
                 opacity: 0.7;
@@ -67,6 +70,7 @@ type NavigationTabs = "home" | "search" | "library" | "profile";
 
 function NavigationBar({}) {
     const [activeTab, setActiveTab] = useState<NavigationTabs | null>(null);
+    const [isModalOpen, setIsModalVisible] = useState(false);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -103,6 +107,8 @@ function NavigationBar({}) {
 
     return (
         <NavigationBarStyled className="footer">
+            <NavigationCreateModal open={isModalOpen} setOpen={setIsModalVisible} />
+
             <div className="nav-buttons">
                 <button
                     className={`nav-button ${getActiveTabClass("home")}`}
@@ -118,8 +124,8 @@ function NavigationBar({}) {
                 >
                     <Icons.IconSearch />
                 </button>
-                <button className="nav-button">
-                    <Icons.IconAdd />
+                <button className="nav-button" onClick={() => setIsModalVisible(true)}>
+                    <SVGIcon id="plus-circle" />
                 </button>
                 <button
                     className={`nav-button ${getActiveTabClass("library")}`}

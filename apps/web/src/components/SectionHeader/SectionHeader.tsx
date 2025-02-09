@@ -3,7 +3,7 @@ import React, { FC } from "react";
 import styled from "styled-components";
 
 const SectionHeaderStyled = styled(Section.Header)`
-    padding: 8px 8px 12px;
+    padding: 0 6px;
 
     .SectionHeader--content {
         display: flex;
@@ -12,22 +12,27 @@ const SectionHeaderStyled = styled(Section.Header)`
         align-items: center;
 
         .SectionHeader--title {
+            font-family: var(--app-font-family);
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 15px;
+            color: var(--app-section-text-color);
         }
 
         .SectionHeader-rightButton {
-            color: var(--tgui--button_color);
+            color: var(--app-link-color);
             background: transparent;
             border: none;
 
             padding: 5px 0 5px 24px;
 
-            font-family: var(--tgui--font-family);
+            font-family: var(--app-font-family);
             font-weight: 500;
             font-size: 14px;
             line-height: 16px;
 
             &:active {
-                color: var(--tgui--accent_text_color);
+                opacity: 0.7;
             }
         }
     }
