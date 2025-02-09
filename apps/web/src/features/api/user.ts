@@ -12,17 +12,11 @@ interface UserQueryResponse {
 
 const getUserInfo = async (): Promise<UserQueryResponse> => {
     const data = await fetchAPI(`${API_URL}/users/me`);
-    return {
-        ...data,
-        decks: data.decks.map((relation: any) => ({
-            ...relation.deck,
-            lastReviewAt: new Date(relation.lastReviewAt),
-        })),
-    };
+    return data;
 };
 
 export const USER_QUERY_KEY = "user";
-export const userQuery = () => {
+export const createUserQuery = () => {
     return queryOptions({
         ...queryConfig,
         queryKey: [USER_QUERY_KEY],

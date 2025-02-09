@@ -29,6 +29,23 @@ export class CreateDeckQueryDto {
     description: string;
 }
 
+/**
+ * UpdateDeckQuery - Data transfer object for editing deck
+ */
+export class UpdateDeckQueryDto {
+    @IsString()
+    @MinLength(3)
+    title: string;
+
+    @IsString()
+    @MaxLength(128)
+    description: string;
+}
+
+export class UpdateDeckDto extends UpdateDeckQueryDto {
+    userId: number;
+}
+
 export class CreateDeckDto extends CreateDeckQueryDto {
     userId: number;
     cards?: AddCardQueryDto[];

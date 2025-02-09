@@ -56,7 +56,9 @@ export class UserCardProgressEntity {
     @Column({ type: "int8" })
     userId: number;
 
-    @ManyToOne(() => CardEntity, (card) => card.id)
+    @ManyToOne(() => CardEntity, (card) => card.id, {
+        onDelete: "CASCADE",
+    })
     @JoinColumn({ name: "cardId" })
     card: CardEntity;
 

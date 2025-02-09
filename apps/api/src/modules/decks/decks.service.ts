@@ -7,7 +7,13 @@ import {
 import { DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeckEntity } from "../../common/entities/deck.entity";
-import { AddCardDto, CreateDeckDto, DeckExtendedDto, GetCardsQueryDto } from "./decks.dto";
+import {
+    AddCardDto,
+    CreateDeckDto,
+    DeckExtendedDto,
+    GetCardsQueryDto,
+    UpdateDeckDto,
+} from "./decks.dto";
 import { CardEntity } from "../../common/entities/card.entity";
 import { GetElementsResponse } from "../../common/types/response.types";
 import { UserDeckEntity } from "../../common/entities/userDeck.entity";
@@ -59,8 +65,11 @@ export class DecksService {
             ...deck,
             progress: progressData && {
                 cardsCount: progressData.cards_count,
-                cardsToLearnCount: progressData.new_cards_count,
-                cardsToReviewCount: progressData.due_cards_count,
+                cardsToLearnCount: Math.min(progressData.cards_count, progressData.new_cards_count),
+                cardsToReviewCount: Math.min(
+                    progressData.cards_count,
+                    progressData.due_cards_count,
+                ),
                 lastReviewAt: progressData.user_deck_lastReviewAt,
                 nextReviewAt: progressData.next_review_at,
             },
@@ -133,6 +142,26 @@ export class DecksService {
     }
 
     /**
+     * Updates a deck
+     */
+    async updateDeck(id: number, params: UpdateDeckDto): Promise<void> {
+        const deck = await this.decksRepository.findOneBy({ id });
+        if (!deck) {
+            throw new NotFoundException("Deck not found");
+        }
+        if (deck.authorId !== params.userId) {
+            throw new ForbiddenException("You are not allowed to update this deck");
+        }
+        await this.decksRepository.update(
+            { id },
+            {
+                title: params.title,
+                description: params.description,
+            },
+        );
+    }
+
+    /**
      * Deletes a deck and all its cards
      */
     async deleteDeck(deckId: number, userId: number) {
@@ -167,6 +196,18 @@ export class DecksService {
             }),
         );
         return card;
+    }
+
+    async deleteCard(deckId: number, cardId: number, userId: number) {
+        const deck = await this.decksRepository.findOneBy({ id: deckId });
+        if (!deck) {
+            throw new NotFoundException("Deck not found");
+        }
+        if (deck.authorId !== userId) {
+            throw new ForbiddenException("You are not allowed to delete cards from this deck");
+        }
+
+        await this.cardsRepository.delete({ id: cardId });
     }
 
     async getCards(

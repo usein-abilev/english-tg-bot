@@ -5,6 +5,7 @@ import { queryClient } from "../reactQuery";
 import { USER_QUERY_KEY } from "./user";
 import { GetElementsResponse } from "../types/common.types";
 import { CardSchema } from "../types/deck.types";
+import { DECKS_QUERY_KEY } from "./decks";
 
 export const CARDS_QUERY_KEY = "cards";
 
@@ -20,6 +21,17 @@ const createCard = async (params: CreateCardParams) => {
         method: "POST",
         body: JSON.stringify(params),
         headers: { "content-type": "application/json" },
+    });
+};
+
+export interface DeleteCardParams {
+    deckId: number;
+    cardId: number;
+}
+
+const deleteCard = async (params: DeleteCardParams) => {
+    return fetchAPI(`${API_URL}/decks/${params.deckId}/cards/${params.cardId}`, {
+        method: "DELETE",
     });
 };
 
@@ -61,6 +73,20 @@ export const useCreateCardMutation = () => {
             console.log("[useCreateCardMutation]: Card created:", response);
             queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
             queryClient.invalidateQueries({ queryKey: [CARDS_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [DECKS_QUERY_KEY, response.deckId] });
+        },
+    });
+};
+
+export const useDeleteCardMutation = () => {
+    return useMutation({
+        mutationKey: ["deleteCard"],
+        mutationFn: deleteCard,
+        onSuccess: (response, params: DeleteCardParams) => {
+            console.log("[useDeleteCardMutation]: Card deleted:", response);
+            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [CARDS_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [DECKS_QUERY_KEY, params.deckId] });
         },
     });
 };

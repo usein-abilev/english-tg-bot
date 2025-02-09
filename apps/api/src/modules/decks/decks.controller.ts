@@ -6,13 +6,19 @@ import {
     Param,
     ParseIntPipe,
     Post,
+    Put,
     Query,
     Request,
     UseGuards,
     ValidationPipe,
 } from "@nestjs/common";
 import { DecksService } from "./decks.service";
-import { AddCardQueryDto, CreateDeckQueryDto, GetCardsQueryDto } from "./decks.dto";
+import {
+    AddCardQueryDto,
+    CreateDeckQueryDto,
+    GetCardsQueryDto,
+    UpdateDeckQueryDto,
+} from "./decks.dto";
 import { ClientRequest } from "../../common/types/request.types";
 import { TgInitDataGuard } from "../../common/guards/tg.guard";
 
@@ -37,14 +43,29 @@ export class DecksController {
         });
     }
 
-    @Post("/:id/add")
-    async addDeck(@Request() request: ClientRequest, @Param("id", ParseIntPipe) id: number) {
-        return this.decksService.addFavoriteDeck(id, request.initData.user.id);
+    @Put("/:id")
+    async updateDeck(
+        @Request() request: ClientRequest,
+        @Param("id", ParseIntPipe) deckId: number,
+        @Body() body: UpdateDeckQueryDto,
+    ) {
+        return this.decksService.updateDeck(deckId, {
+            ...body,
+            userId: request.initData.user.id,
+        });
     }
 
     @Delete("/:id")
     async deleteDeck(@Request() request: ClientRequest, @Param("id", ParseIntPipe) deckId: number) {
         return this.decksService.deleteDeck(deckId, request.initData.user.id);
+    }
+
+    @Post("/:id/favorite")
+    async addFavoriteDeck(
+        @Request() request: ClientRequest,
+        @Param("id", ParseIntPipe) id: number,
+    ) {
+        return this.decksService.addFavoriteDeck(id, request.initData.user.id);
     }
 
     @Get("/:id/cards")
@@ -66,5 +87,14 @@ export class DecksController {
             ...body,
             userId: request.initData.user.id,
         });
+    }
+
+    @Delete("/:id/cards/:cardId")
+    async deleteCard(
+        @Request() request: ClientRequest,
+        @Param("id", ParseIntPipe) id: number,
+        @Param("cardId", ParseIntPipe) cardId: number,
+    ) {
+        return this.decksService.deleteCard(id, cardId, request.initData.user.id);
     }
 }

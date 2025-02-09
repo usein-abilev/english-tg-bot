@@ -7,14 +7,20 @@ export interface DeckSchema {
     cards: CardSchema[];
     author: UserSchema;
     createdAt: Date;
-
-    // Merged manually from UserDeckEntity
-    lastReviewAt?: Date;
+    updatedAt: Date;
+    progress?: {
+        lastReviewAt?: Date;
+        nextReviewAt?: Date;
+        cardsCount: number;
+        cardsToLearnCount: number;
+        cardsToReviewCount: number;
+    };
 }
 
 export interface CardSchema {
     id: number;
     deck?: DeckSchema;
+    deckId: number;
     term: string;
     definition: string;
     description: string;
