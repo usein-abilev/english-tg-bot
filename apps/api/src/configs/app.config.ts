@@ -15,6 +15,9 @@ const appConfig = {
         host: process.env.TRANSLATION_HOST as string,
         port: parseInt(process.env.TRANSLATION_PORT as string),
     },
+    dictionary: {
+        url: process.env.DICTIONARY_API_URL as string,
+    },
 } as const;
 
 export type AppConfig = typeof appConfig;

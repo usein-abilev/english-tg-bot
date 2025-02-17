@@ -3,12 +3,13 @@ import * as dotenv from "dotenv";
 
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
+import appConfig from "./configs/app.config";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import appConfig from "./configs/app.config";
 import { UsersModule } from "./modules/users/users.module";
 import { DecksModule } from "./modules/decks/decks.module";
 import { PracticeModule } from "./modules/practice/practice.module";
+import { DictionaryModule } from "./modules/dictionary/dictionary.module";
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { PracticeModule } from "./modules/practice/practice.module";
         UsersModule,
         DecksModule,
         PracticeModule,
+        DictionaryModule,
     ],
     controllers: [],
     providers: [],
