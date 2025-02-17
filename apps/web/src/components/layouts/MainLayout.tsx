@@ -6,7 +6,6 @@ import { Outlet, useLoaderData } from "react-router-dom";
 import { SVGIconRoot } from "../icons/SVGIcon";
 
 const StyledContainer = styled.div`
-    background: transparent;
     height: 100vh;
     overflow: hidden;
     display: flex;

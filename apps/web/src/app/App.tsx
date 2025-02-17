@@ -8,7 +8,7 @@ import { ROUTES } from "../constants/routes";
 import { MainLayout } from "../components/Layouts";
 import { ErrorRecoveryScreen } from "./screens/Error";
 import Home from "./screens/Home";
-import CardPractice from "./screens/CardPractice/CardPractice";
+import CardPractice from "./screens/Practice/CardPractice";
 import decksRoute from "./screens/Decks/decksRoute";
 
 const loader = async () => {
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
         children: [{ path: "", element: <Home /> }, decksRoute],
     },
     {
-        path: ROUTES.DECK_PRACTICE,
+        path: ROUTES.PRACTICE,
         loader,
         element: <MainLayout />,
         children: [{ path: "", element: <CardPractice /> }],

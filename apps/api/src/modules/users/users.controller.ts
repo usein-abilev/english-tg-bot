@@ -21,7 +21,8 @@ export class UsersController {
         const { user: telegramUser } = request.initData as TgInitData;
         const user = await this.usersService.getOrCreateFromApp(telegramUser);
         const userDecks = await this.practiceService.getDecksToPractice(user.id, { limit: 10 });
+        const practiceCounters = await this.practiceService.getUserPracticeCounters(user.id);
         this.logger.debug(`User ${user.id} requested his data`, user);
-        return { user, decks: userDecks };
+        return { user, decks: userDecks, practiceCounters };
     }
 }

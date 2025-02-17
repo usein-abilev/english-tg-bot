@@ -1,6 +1,6 @@
-import { Transform } from "class-transformer";
-import { IsNumber, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 import { DeckEntity } from "../../common/entities/deck.entity";
+import { PaginationQueryDto } from "../../common/dto/pagination.dto";
 
 /**
  * Data transfer object for a deck.
@@ -67,12 +67,4 @@ export class AddCardDto extends AddCardQueryDto {
     userId: number;
 }
 
-export class GetCardsQueryDto {
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    page: number;
-
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    limit: number;
-}
+export class GetCardsQueryDto extends PaginationQueryDto {}

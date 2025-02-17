@@ -25,7 +25,7 @@ function DeckCreate() {
             onError: (error) => console.log("Error happened:", error),
             onSuccess: (data) => {
                 console.log("[NewDeckForm]: Deck created", data);
-                navigate(ROUTES.DECKS_REVIEW.replace(":id", String(data.id)));
+                navigate(ROUTES.DECKS_REVIEW.replace(":id", String(data.id)), { replace: true });
             },
         });
     };
@@ -42,7 +42,7 @@ function DeckCreate() {
             <Input
                 disabled={createDeckMutation.isPending}
                 value={form.title}
-                header="title"
+                header="Title"
                 status={createDeckMutation.isError ? "error" : "default"}
                 onChange={(e) =>
                     setForm({
@@ -55,6 +55,7 @@ function DeckCreate() {
             <Input
                 disabled={createDeckMutation.isPending}
                 value={form.description}
+                header="Description"
                 onChange={(e) =>
                     setForm({
                         ...form,

@@ -76,26 +76,20 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ buttonRef, isOpen, onClose, child
         if (!isOpen) return;
 
         const handleClickOutside = (event: any) => {
-            if (
-                menuRef.current &&
-                !menuRef.current.contains(event.target) &&
-                buttonRef.current &&
-                !buttonRef.current.contains(event.target)
-            ) {
-                onClose();
-            }
+            onClose();
         };
 
         const handleScroll = () => {
             onClose();
         };
 
-        document.addEventListener("mousedown", handleClickOutside);
-        document.addEventListener("touchstart", handleClickOutside);
+        document.addEventListener("mouseup", handleClickOutside);
+        document.addEventListener("touchend", handleClickOutside);
         document.addEventListener("scroll", handleScroll, { passive: true });
 
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("mouseup", handleClickOutside);
+            document.removeEventListener("touchend", handleClickOutside);
             document.removeEventListener("scroll", handleScroll);
         };
     }, [isOpen, onClose, buttonRef]);
@@ -107,10 +101,10 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ buttonRef, isOpen, onClose, child
                     <motion.div
                         ref={menuRef}
                         className="DropdownMenu-menu"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
+                        initial={{ opacity: 0, scale: 0.85, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.85, y: -5 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
                         style={{ top: position.top, left: position.left, zIndex: 100 }}
                     >
                         {children}

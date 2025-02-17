@@ -101,6 +101,17 @@ const StyledDeckReview = styled.div`
                     border-radius: 50%;
                     overflow: hidden;
 
+                    span {
+                        background: var(--app-secondary-button-color);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        text-align: center;
+                        font-size: 12px;
+                        height: 100%;
+                        height: 100%;
+                    }
+
                     img {
                         width: 100%;
                         height: 100%;
@@ -148,12 +159,12 @@ function DeckReview() {
     const { data: deck } = useSuspenseQuery(getDeckByIdQuery(Number(id), location.state?.deck));
     const deleteDeckMutation = useDeleteDeckMutation();
 
+    const isAuthor = deck?.authorId === userData.user.id;
+
     const {
         data: cardsPagesResult,
         hasNextPage,
         fetchNextPage,
-        isLoading: isCardsLoading,
-        isFetchingNextPage,
     } = useInfiniteQuery(
         getDecksCardsInfinityQuery({
             deckId: deck?.id,
@@ -161,6 +172,7 @@ function DeckReview() {
             page: 1,
         }),
     );
+
     const cards = useMemo(() => {
         if (!cardsPagesResult) return [];
         return cardsPagesResult.pages.flatMap((page) => page.items);
@@ -192,9 +204,7 @@ function DeckReview() {
     };
 
     const handlePractice = () => {
-        navigate(ROUTES.DECK_PRACTICE.replace(":id", String(deck.id)), {
-            state: { cards },
-        });
+        navigate(ROUTES.PRACTICE, { state: { deckId: deck.id } });
     };
 
     const handleEditDeck = () => {
@@ -215,6 +225,14 @@ function DeckReview() {
         });
     };
 
+    const stats = useMemo(() => {
+        if (!deck?.progress) return { total: 0, completed: 0, remind: 0 };
+        const total = deck.progress.cardsCount || 0;
+        const remind = deck.progress.cardsToReviewCount + deck.progress.cardsToLearnCount;
+        const completed = total - remind;
+        return { total, completed, remind };
+    }, [deck]);
+
     return (
         <StyledDeckReview className="deck-layout">
             <AddCardModal deckId={deck?.id} open={addCardModal} setOpen={setAddCardModal} />
@@ -223,6 +241,7 @@ function DeckReview() {
                 isOpen={deckMenuOpen}
                 onClose={() => setDeckMenuOpen(false)}
             >
+                <DropdownMenuItem onClick={handleAddCard}>Add card</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleEditDeck}>Edit deck</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleDeleteDeck}>Delete deck</DropdownMenuItem>
             </DropdownMenu>
@@ -237,26 +256,30 @@ function DeckReview() {
                         <div className="indicator-icon">
                             <SVGIcon id="cards" />
                         </div>
-                        {deck?.progress?.cardsCount || 0}
+                        {stats.total}
                     </div>
                     <div id="completed-count" className="indicator">
                         <div className="indicator-icon">
                             <SVGIcon id="completed-cards" />
                         </div>
-                        {deck?.progress?.cardsToLearnCount || 0}
+                        {stats.completed}
                     </div>
                     <div id="remind-count" className="indicator">
                         <div className="indicator-icon">
                             <SVGIcon id="remind-cards" />
                         </div>
-                        {deck?.progress?.cardsToReviewCount || 0}
+                        {stats.remind}
                     </div>
                 </div>
                 <div className="deck-header-bottom">
                     <div className="left-block">
                         <div className="author-block">
                             <div className="author-image">
-                                <img src={userData.user.photoUrl} alt="author" />
+                                {userData.user.photoUrl ? (
+                                    <img src={userData.user.photoUrl} alt="author" />
+                                ) : (
+                                    <span>{userData.user.firstName.charAt(0).toUpperCase()}</span>
+                                )}
                             </div>
                             <div className="author-name">{userData.user.firstName}</div>
                         </div>
@@ -266,11 +289,20 @@ function DeckReview() {
                     </div>
                     <div className="deck-controls">
                         <Button className="deck-control" size="m" mode="filled" onClick={handlePractice}>
-                            <SVGIcon id="play-line" />
+                            {!isAuthor ? <SVGIcon id="play-line" /> : "Start"}
                         </Button>
-                        <Button className="deck-control" size="m" mode="bezeled" onClick={handleAddCard}>
-                            <SVGIcon id="plus-line" />
-                        </Button>
+                        {!isAuthor && (
+                            <Button
+                                className="deck-control"
+                                size="m"
+                                mode="bezeled"
+                                onClick={() => {
+                                    console.log("Add card to favorite not implemented yet");
+                                }}
+                            >
+                                <SVGIcon id="plus-line" />
+                            </Button>
+                        )}
                         <Button
                             elementRef={deckMenuDetailsRef}
                             className="deck-control"

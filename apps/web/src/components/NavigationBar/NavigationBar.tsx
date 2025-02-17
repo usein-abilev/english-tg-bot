@@ -105,8 +105,10 @@ function NavigationBar({}) {
         [navigate, setActiveTab],
     );
 
+    const iphoneBottomBarCorrect = window.Telegram.WebApp.platform === "ios" ? { height: "75px" } : {};
+
     return (
-        <NavigationBarStyled className="footer">
+        <NavigationBarStyled className="footer" style={iphoneBottomBarCorrect}>
             <NavigationCreateModal open={isModalOpen} setOpen={setIsModalVisible} />
 
             <div className="nav-buttons">

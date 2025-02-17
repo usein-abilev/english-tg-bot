@@ -128,6 +128,32 @@ const icons = {
             </symbol>
         ),
     },
+    translate: {
+        width: 16,
+        height: 16,
+        element: (
+            <symbol width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M4.207 8.103 5.98 3.807M7.68 8.117l-1.7-4.31M7.114 6.673H4.797M10.877 8.46h2.24M11.893 8.46c0 1.447-1.763 3.837-3.53 4.203"
+                    stroke="#96A0AA"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+                <path
+                    d="M9.31 10.93c.71.8 1.87 1.58 2.94 1.733M8.843 1.833H3.046c-.67 0-1.213.543-1.213 1.214v5.796c0 .67.543 1.214 1.213 1.214h5.797c.67 0 1.213-.544 1.213-1.214V3.047c0-.67-.543-1.214-1.213-1.214Z"
+                    stroke="#96A0AA"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+                <path
+                    d="M5.943 10.057v2.896c0 .667.547 1.214 1.214 1.214h5.793c.667 0 1.213-.547 1.213-1.214V7.157c0-.667-.546-1.214-1.213-1.214h-2.897"
+                    stroke="#96A0AA"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </symbol>
+        ),
+    },
 };
 
 export function SVGIconRoot() {

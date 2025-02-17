@@ -20,7 +20,6 @@ const DeckEditFooter = styled.div`
 function DeckEdit() {
     const { id } = useParams<{ id: string }>();
 
-    // const { data: userData } = useSuspenseQuery(createUserQuery());
     const updateDeckMutation = useUpdateDeckMutation();
     const { data: deck } = useSuspenseQuery(getDeckByIdQuery(Number(id)));
 
@@ -38,7 +37,7 @@ function DeckEdit() {
                 onError: (error) => console.log("Error happened:", error),
                 onSuccess: (data) => {
                     console.log("[NewDeckForm]: Deck updated", data);
-                    navigate(ROUTES.DECKS_REVIEW.replace(":id", String(deck.id)));
+                    navigate(ROUTES.DECKS_REVIEW.replace(":id", String(deck.id)), { replace: true });
                 },
             },
         );

@@ -6,6 +6,7 @@ export interface DeckSchema {
     description: string;
     cards: CardSchema[];
     author: UserSchema;
+    authorId: number;
     createdAt: Date;
     updatedAt: Date;
     progress?: {

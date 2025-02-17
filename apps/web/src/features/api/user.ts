@@ -8,6 +8,13 @@ import { UserSchema } from "../types/user.types";
 interface UserQueryResponse {
     user: UserSchema;
     decks: DeckSchema[];
+    practiceCounters: {
+        cardsTotal: number;
+        cardsToLearnCount: number;
+        cardsToReviewCount: number;
+        cardsToPracticeCount: number;
+        decksToPracticeCount: number;
+    };
 }
 
 const getUserInfo = async (): Promise<UserQueryResponse> => {

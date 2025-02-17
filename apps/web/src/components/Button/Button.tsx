@@ -18,18 +18,21 @@ interface CustomButtonProps extends ButtonProps {
 
 function Button({ elementRef, ...props }: CustomButtonProps) {
     const style = useMemo(() => {
+        if (!props.mode) {
+            return {
+                background: "var(--app-primary-button-color)",
+            };
+        }
         if (props.mode === "bezeled") {
             return {
                 background: "var(--app-secondary-button-color)",
                 color: "var(--app-secondary-button-text-color)",
             };
         }
-        return {
-            // background: "var(--app-primary-button-color)",
-        };
+        return {};
     }, [props.mode]);
     return (
-        <ButtonStyled {...props} ref={elementRef} style={style}>
+        <ButtonStyled {...props} ref={elementRef} style={{ ...style, ...props.style }}>
             {props.children}
         </ButtonStyled>
     );

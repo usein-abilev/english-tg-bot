@@ -10,7 +10,7 @@ const CreateModalContainer = styled(List)`
     justify-content: center;
     align-items: center;
     padding-bottom: 24px;
-    font-family: var(--tgui--font-family);
+    font-family: var(--app-font-family);
 
     .create-option {
         background: rgba(0, 122, 255, 0.1);

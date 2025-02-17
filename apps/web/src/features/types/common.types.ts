@@ -6,3 +6,8 @@ export interface GetElementsResponse<T> {
         limit: number;
     };
 }
+
+export interface PaginatedQueryParams {
+    page?: number;
+    limit?: number;
+}

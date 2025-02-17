@@ -21,7 +21,7 @@ const DeckBlockStyled = styled.div`
 
     .deck-title {
         font-style: normal;
-        font-weight: 600;
+        font-weight: 500;
         font-size: 20px;
         line-height: 23px;
     }
@@ -58,7 +58,7 @@ const DeckBlock: FC<DeckBlockProps> = ({ deck, onClick }) => {
         <DeckBlockStyled className="deck-block" onClick={() => onClick?.(deck)}>
             <div className="deck-title">{deck.title}</div>
 
-            <div className="deck-description">{deck.description}</div>
+            {deck.description && <div className="deck-description">{deck.description}</div>}
 
             {progressValue > 0 && (
                 <div className="deck-progress">

@@ -1,24 +1,42 @@
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto.ttf') format('truetype');
+}
+
 :root {
+    /* App Background Colors */
     --app-bg-color: #17191E;
     --app-secondary-bg-color: #22262E;
     --app-card-bg-color: linear-gradient(92.19deg, #232832 0%, #2A323E 100%);
     --app-deck-bg-color: linear-gradient(95.49deg, #1E232D 0%, #232832 100%);
 
+    /* Activity Colors */
+    --app-activity-bg-blue: linear-gradient(94.03deg, #1e3c82 0%, #285aa0 100%);
+    --app-activity-bg-purple: linear-gradient(94.03deg, #3c1e82 0%, #5a28a0 100%);
+
     --app-accent-blue: #5A8CFF;
     --app-accent-green: #4EC536;
     --app-accent-yellow: #DCC83C;
 
+    /* Button Colors */
+    --app-red-button-color: color-mix(in srgb, #C83232 10%, transparent);
+    --app-red-button-text-color: #C83232;
+    --app-green-button-color: color-mix(in srgb, #4EC536 10%, transparent);
+    --app-green-button-text-color: #4EC536;
+    --app-orange-button-color: color-mix(in srgb, #DCC83C 10%, transparent);
+    --app-orange-button-text-color: #DCC83C;
     --app-primary-button-color: #3C6EE1;
     --app-secondary-button-color: color-mix(in srgb, #FFF 5%, transparent);
     --app-secondary-button-text-color: var(--app-title-text-color);
 
+    /* Text Colors */
     --app-link-color: var(--app-accent-blue);
     --app-title-text-color: #F5F5F5;
     --app-subtitle-text-color: #96A0AA;
     --app-section-text-color: #545A64;
-    --app-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Apple Color Emoji", "Helvetica Neue", sans-serif;
+    --app-font-family: "Roboto", system-ui, -apple-system, sans-serif;
 
-
+    /* Overload TGUI Theme */
     --tg-theme-bg-color: var(--app-secondary-bg-color);
     --tg-theme-text-color: var(--app-title-text-color);
     --tg-theme-hint-color: #aaa;
@@ -120,8 +138,14 @@
     --tgui--plain_foreground: rgba(255, 255, 255, .95);
 }
 
-body {
+html, body, #root {
     margin: 0;
     padding: 0;
-    font-family: var(--tgui--font-family);
+    font-family: var(--app-font-family);
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+#root {
+    overflow-y: auto;
 }

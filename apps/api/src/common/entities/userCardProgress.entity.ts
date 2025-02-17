@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { CardEntity } from "./card.entity";
+import { DeckEntity } from "./deck.entity";
 
 /**
  * UserCardProgress entity used to store the progress of a user on a card
@@ -49,6 +50,15 @@ export class UserCardProgressEntity {
     @Index()
     nextReviewAt!: Date;
 
+    /**
+     * The last score coefficient is a value from 0 to 1 that represents how well the user remembered the word last time
+     */
+    @Column("real", { nullable: true })
+    lastScoreCoefficient: number;
+
+    @Column("int", { nullable: true })
+    lastScore: number;
+
     @ManyToOne(() => UserEntity, (user) => user.id)
     @JoinColumn({ name: "userId" })
     user: UserEntity;
@@ -64,6 +74,15 @@ export class UserCardProgressEntity {
 
     @Column()
     cardId: number;
+
+    @ManyToOne(() => DeckEntity, (deck) => deck.id, {
+        onDelete: "CASCADE",
+    })
+    @JoinColumn({ name: "deckId" })
+    deck: DeckEntity;
+
+    @Column()
+    deckId: number;
 
     @CreateDateColumn()
     createdAt: Date;

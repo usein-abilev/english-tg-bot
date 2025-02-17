@@ -1,11 +1,9 @@
-import { infiniteQueryOptions, keepPreviousData, useMutation } from "@tanstack/react-query";
+import { infiniteQueryOptions, useMutation } from "@tanstack/react-query";
 import { API_URL } from "../../constants/config";
 import fetchAPI from "../fetchAPI";
-import { queryClient } from "../reactQuery";
-import { USER_QUERY_KEY } from "./user";
-import { GetElementsResponse } from "../types/common.types";
+import { GetElementsResponse, PaginatedQueryParams } from "../types/common.types";
 import { CardSchema } from "../types/deck.types";
-import { DECKS_QUERY_KEY } from "./decks";
+import { formatQueryParams } from "../../utils/queryParams.util";
 
 export const PRACTICE_QUERY_KEY = "practice";
 
@@ -14,22 +12,52 @@ export interface RateCardParams {
     grade: number;
 }
 
-const rateCard = async (params: RateCardParams) => {
-    return fetchAPI(`${API_URL}/practice/rateCard`, {
+export interface RateCardsParams {
+    cards: RateCardParams[];
+}
+
+const rateCards = async (params: RateCardsParams) => {
+    return fetchAPI(`${API_URL}/practice/rateCards`, {
         method: "POST",
         body: JSON.stringify(params),
         headers: { "content-type": "application/json" },
     });
 };
 
-export const useRateCardMutation = () => {
+interface GetCardsToPracticeParams extends PaginatedQueryParams {
+    deckId?: number;
+}
+
+const getCardsToPractice = async (
+    params: GetCardsToPracticeParams,
+): Promise<GetElementsResponse<CardSchema>> => {
+    const urlParams = formatQueryParams(params);
+    const url = new URL(`${API_URL}/practice/cards?${urlParams}`);
+
+    return fetchAPI(url);
+};
+
+export const useRateCardBatchMutation = () => {
     return useMutation({
-        mutationKey: ["rateCard"],
-        mutationFn: rateCard,
+        mutationKey: ["rateCardBatch"],
+        mutationFn: rateCards,
         onSuccess: (response) => {
-            console.log("[useRateCardMutation]: Card rated:", response);
-            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
-            // queryClient.invalidateQueries({ queryKey: [DECKS_QUERY_KEY, ]})
+            console.log("[useRateCardBatchMutation]: Cards rated:", response);
         },
+    });
+};
+
+export const getCardsToPracticeQuery = (params: GetCardsToPracticeParams) => {
+    return infiniteQueryOptions({
+        queryKey: [PRACTICE_QUERY_KEY, "cards", params.deckId ? params.deckId : "all"],
+        queryFn: ({ pageParam }) => {
+            return getCardsToPractice({ ...params, page: pageParam });
+        },
+        getNextPageParam: (lastPage) => {
+            const { limit, page } = lastPage.pagination;
+            return lastPage.items.length < limit ? undefined : page + 1;
+        },
+        initialPageParam: 0,
+        staleTime: 30_000,
     });
 };
