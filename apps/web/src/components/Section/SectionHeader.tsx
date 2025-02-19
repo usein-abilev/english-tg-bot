@@ -4,12 +4,15 @@ import styled from "styled-components";
 
 const SectionHeaderStyled = styled(Section.Header)`
     padding: 0 6px;
+    padding-bottom: 4px;
 
     .SectionHeader--content {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+
+        user-select: none;
 
         .SectionHeader--title {
             font-family: var(--app-font-family);
@@ -23,6 +26,7 @@ const SectionHeaderStyled = styled(Section.Header)`
             color: var(--app-link-color);
             background: transparent;
             border: none;
+            cursor: pointer;
 
             padding: 5px 0 5px 24px;
 

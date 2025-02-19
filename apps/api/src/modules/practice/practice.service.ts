@@ -13,7 +13,6 @@ import calcSuperMemo2 from "../../common/utils/calcSM2.util";
 import { UserCardProgressEntity } from "../../common/entities/userCardProgress.entity";
 import { DeckExtendedDto } from "../decks/decks.dto";
 import { GetElementsResponse } from "../../common/types/response.types";
-import { MAX_RATE_CARD_GRADE } from "../../common/constants/practice.constants";
 
 @Injectable()
 export class PracticeService {
@@ -78,6 +77,7 @@ export class PracticeService {
                 title: item.deck_title,
                 description: item.deck_description,
                 authorId: item.deck_authorId,
+                public: item.deck_public,
                 createdAt: item.deck_createdAt && new Date(item.deck_createdAt),
                 updatedAt: item.deck_updatedAt && new Date(item.deck_updatedAt),
                 progress: {
@@ -219,6 +219,8 @@ export class PracticeService {
                 repetitions: true,
                 interval: true,
                 nextReviewAt: true,
+                lastGrade: true,
+                streakCount: true,
             },
         });
 
@@ -240,7 +242,11 @@ export class PracticeService {
             cardProgress.repetitions = sm.repetitions;
             cardProgress.interval = sm.interval;
             cardProgress.nextReviewAt = new Date(Date.now() + sm.interval);
-            cardProgress.lastScoreCoefficient = grade / (MAX_RATE_CARD_GRADE - 1);
+
+            // update streak count and last grade
+            const currStreak = grade === cardProgress.lastGrade ? cardProgress.streakCount + 1 : 1;
+            cardProgress.streakCount = currStreak;
+            cardProgress.lastGrade = grade;
 
             return cardProgress;
         });
@@ -248,7 +254,7 @@ export class PracticeService {
         const values = updatedProgresses
             .map(
                 (p) => `(${p.id}, ${p.easinessFactor}, ${p.repetitions}, ${p.interval},
-                    ${p.lastScoreCoefficient}, '${p.nextReviewAt.toISOString()}'::timestamp)`,
+                    ${p.lastGrade}, ${p.streakCount}, '${p.nextReviewAt.toISOString()}'::timestamp)`,
             )
             .join(", ");
 
@@ -260,10 +266,12 @@ export class PracticeService {
                 "easinessFactor" = data.easinessFactor,
                 repetitions = data.repetitions,
                 interval = data.interval,
-                "nextReviewAt" = data.nextReviewAt
-            FROM (VALUES ${values}) AS data (id, easinessFactor, repetitions, interval, lastGradeCoefficient, nextReviewAt)
+                "nextReviewAt" = data.nextReviewAt,
+                "lastGrade" = data.lastGrade,
+                "streakCount" = data.streakCount
+            FROM (VALUES ${values}) AS data (id, easinessFactor, repetitions, interval, lastGrade, streakCount, nextReviewAt)
             WHERE ucp.id = data.id;
-            
+
             UPDATE user_deck AS ud
             SET "lastReviewAt" = NOW()
             WHERE "userId" = ${userId} AND "deckId" IN (

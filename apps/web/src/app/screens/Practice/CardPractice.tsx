@@ -1,5 +1,5 @@
 import React, { FC, useRef } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useBlocker, useLocation, useParams } from "react-router-dom";
 import { useRateCardBatchMutation } from "../../../features/api/practice";
 import CardPracticeRate from "./CardPracticeRate";
 import PracticeContainer from "./PracticeContainer";
@@ -16,6 +16,12 @@ interface CardPracticeProps {}
 const CardPractice: FC<CardPracticeProps> = () => {
     const location = useLocation();
     const state = (location.state as { deckId?: number }) || {};
+
+    const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+        const accept = confirm("Are you sure you want to leave the practice session?");
+        console.log("[Card Practice]: Blocker", currentLocation, nextLocation);
+        return !accept; // block navigation
+    });
 
     const queryClient = useQueryClient();
 

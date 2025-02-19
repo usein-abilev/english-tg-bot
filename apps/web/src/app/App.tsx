@@ -10,6 +10,9 @@ import { ErrorRecoveryScreen } from "./screens/Error";
 import Home from "./screens/Home";
 import CardPractice from "./screens/Practice/CardPractice";
 import decksRoute from "./screens/Decks/decksRoute";
+import Profile from "./screens/Profile/Profile";
+import Library from "./screens/Library/Library";
+import Explore from "./screens/Explore/Explore";
 
 const loader = async () => {
     return queryClient.ensureQueryData(createUserQuery());
@@ -28,6 +31,27 @@ const router = createBrowserRouter([
         loader,
         element: <MainLayout />,
         children: [{ path: "", element: <CardPractice /> }],
+        errorElement: <ErrorRecoveryScreen />,
+    },
+    {
+        path: ROUTES.PROFILE,
+        loader,
+        element: <MainLayout />,
+        children: [{ path: "", element: <Profile /> }],
+        errorElement: <ErrorRecoveryScreen />,
+    },
+    {
+        path: ROUTES.LIBRARY,
+        loader,
+        element: <MainLayout />,
+        children: [{ path: "", element: <Library /> }],
+        errorElement: <ErrorRecoveryScreen />,
+    },
+    {
+        path: ROUTES.EXPLORE,
+        loader,
+        element: <MainLayout />,
+        children: [{ path: "", element: <Explore /> }],
         errorElement: <ErrorRecoveryScreen />,
     },
     {

@@ -11,7 +11,9 @@ import {
     AddCardDto,
     CreateDeckDto,
     DeckExtendedDto,
+    FindDecksQueryDto,
     GetCardsQueryDto,
+    UpdateCardDto,
     UpdateDeckDto,
 } from "./decks.dto";
 import { CardEntity } from "../../common/entities/card.entity";
@@ -72,6 +74,28 @@ export class DecksService {
                 ),
                 lastReviewAt: progressData.user_deck_lastReviewAt,
                 nextReviewAt: progressData.next_review_at,
+            },
+        };
+    }
+
+    /**
+     * Find public decks with pagination
+     */
+    async find(params: FindDecksQueryDto): Promise<GetElementsResponse<DeckEntity>> {
+        const { page = 0, limit = 50 } = params;
+
+        const [items, total] = await this.decksRepository.findAndCount({
+            where: { public: true },
+            skip: page * limit,
+            take: limit,
+        });
+
+        return {
+            items,
+            pagination: {
+                page,
+                limit,
+                total,
             },
         };
     }
@@ -157,6 +181,7 @@ export class DecksService {
             {
                 title: params.title,
                 description: params.description,
+                ...(params.public !== undefined && { public: params.public }),
             },
         );
     }
@@ -198,6 +223,25 @@ export class DecksService {
         return card;
     }
 
+    async updateCard(id: number, params: UpdateCardDto) {
+        const card = await this.cardsRepository.findOne({
+            where: { id, deckId: params.deckId, deck: { authorId: params.userId } },
+            relations: { deck: true },
+        });
+        if (!card) {
+            throw new NotFoundException("Card not found");
+        }
+
+        await this.cardsRepository.update(
+            { id },
+            {
+                term: params.term,
+                definition: params.definition,
+                description: params.description,
+            },
+        );
+    }
+
     async deleteCard(deckId: number, cardId: number, userId: number) {
         const deck = await this.decksRepository.findOneBy({ id: deckId });
         if (!deck) {
@@ -221,7 +265,9 @@ export class DecksService {
             skip: page * limit,
             take: limit,
         });
-        const total = await this.cardsRepository.count();
+        const total = await this.cardsRepository.count({
+            where: { deck: { id: deckId } },
+        });
 
         return {
             items,

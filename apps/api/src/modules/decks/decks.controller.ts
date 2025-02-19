@@ -16,7 +16,9 @@ import { DecksService } from "./decks.service";
 import {
     AddCardQueryDto,
     CreateDeckQueryDto,
+    FindDecksQueryDto,
     GetCardsQueryDto,
+    UpdateCardQueryDto,
     UpdateDeckQueryDto,
 } from "./decks.dto";
 import { ClientRequest } from "../../common/types/request.types";
@@ -26,6 +28,11 @@ import { TgInitDataGuard } from "../../common/guards/tg.guard";
 @UseGuards(TgInitDataGuard)
 export class DecksController {
     constructor(private readonly decksService: DecksService) {}
+
+    @Get("/")
+    async find(@Request() request: ClientRequest, @Query() query: FindDecksQueryDto) {
+        return this.decksService.find(query);
+    }
 
     @Get("/:id")
     async getById(@Request() request: ClientRequest, @Param("id", ParseIntPipe) id: number) {
@@ -77,15 +84,29 @@ export class DecksController {
         return this.decksService.getCards(id, query);
     }
 
-    @Post("/:id/cards")
+    @Post("/:deckId/cards")
     async createCard(
         @Request() request: ClientRequest,
-        @Param("id", ParseIntPipe) id: number,
+        @Param("deckId", ParseIntPipe) deckId: number,
         @Body() body: AddCardQueryDto,
     ) {
-        return this.decksService.addCard(id, {
+        return this.decksService.addCard(deckId, {
             ...body,
             userId: request.initData.user.id,
+        });
+    }
+
+    @Put("/:deckId/cards/:id")
+    async updateCard(
+        @Request() request: ClientRequest,
+        @Param("deckId", ParseIntPipe) deckId: number,
+        @Param("id", ParseIntPipe) id: number,
+        @Body() body: UpdateCardQueryDto,
+    ) {
+        return this.decksService.updateCard(id, {
+            ...body,
+            userId: request.initData.user.id,
+            deckId,
         });
     }
 

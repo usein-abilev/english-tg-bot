@@ -61,12 +61,12 @@ const NavigationBarStyled = styled.div`
 
 const NAVIGATION_ROUTES = {
     home: ROUTES.HOME,
-    search: "/search",
+    explore: "/explore",
     library: "/library",
     profile: "/profile",
 };
 
-type NavigationTabs = "home" | "search" | "library" | "profile";
+type NavigationTabs = "home" | "explore" | "library" | "profile";
 
 function NavigationBar({}) {
     const [activeTab, setActiveTab] = useState<NavigationTabs | null>(null);
@@ -78,8 +78,8 @@ function NavigationBar({}) {
     useEffect(() => {
         if (location.pathname === NAVIGATION_ROUTES.home) {
             setActiveTab("home");
-        } else if (location.pathname === NAVIGATION_ROUTES.search) {
-            setActiveTab("search");
+        } else if (location.pathname === NAVIGATION_ROUTES.explore) {
+            setActiveTab("explore");
         } else if (location.pathname === NAVIGATION_ROUTES.library) {
             setActiveTab("library");
         } else if (location.pathname === NAVIGATION_ROUTES.profile) {
@@ -120,8 +120,8 @@ function NavigationBar({}) {
                     <Icons.IconHome />
                 </button>
                 <button
-                    className={`nav-button ${getActiveTabClass("search")}`}
-                    data-id="search"
+                    className={`nav-button ${getActiveTabClass("explore")}`}
+                    data-id="explore"
                     onClick={handleMenuClick}
                 >
                     <Icons.IconSearch />

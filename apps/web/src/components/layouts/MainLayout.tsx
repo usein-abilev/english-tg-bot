@@ -6,16 +6,27 @@ import { Outlet, useLoaderData } from "react-router-dom";
 import { SVGIconRoot } from "../icons/SVGIcon";
 
 const StyledContainer = styled.div`
-    height: 100vh;
-    overflow: hidden;
     display: flex;
+    width: 100%;
     flex-direction: column;
-    justify-content: space-between;
-    background: var(--app-bg-color);
+    justify-content: center;
+    align-items: center;
+    background: hsl(from var(--app-bg-color) h s calc(l + 2));
 
-    .scrollable-container {
-        height: 100%;
-        overflow-y: auto;
+    .main-wrapper {
+        max-width: 480px;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: var(--app-bg-color);
+
+        .scrollable-container {
+            height: 100%;
+            overflow-y: auto;
+        }
     }
 `;
 
@@ -53,10 +64,12 @@ function MainLayout() {
 
     return (
         <StyledContainer>
-            <div className="scrollable-container">{<Outlet />}</div>
+            <div className="main-wrapper">
+                <div className="scrollable-container">{<Outlet />}</div>
 
-            <NavigationBar />
-            <SVGIconRoot />
+                <NavigationBar />
+                <SVGIconRoot />
+            </div>
         </StyledContainer>
     );
 }

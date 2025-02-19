@@ -51,13 +51,17 @@ export class UserCardProgressEntity {
     nextReviewAt!: Date;
 
     /**
-     * The last score coefficient is a value from 0 to 1 that represents how well the user remembered the word last time
+     * The last grade is the rating the user has given to the word in the last review.
+     * It contain the value between 0 and (MAX_RATE_CARD_GRADE - 1).
      */
-    @Column("real", { nullable: true })
-    lastScoreCoefficient: number;
-
     @Column("int", { nullable: true })
-    lastScore: number;
+    lastGrade: number;
+
+    /**
+     * The streak count is the number of times the user has reviewed the word correctly in a row.
+     */
+    @Column("int", { default: 0 })
+    streakCount: number;
 
     @ManyToOne(() => UserEntity, (user) => user.id)
     @JoinColumn({ name: "userId" })

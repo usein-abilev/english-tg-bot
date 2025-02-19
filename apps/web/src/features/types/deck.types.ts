@@ -7,6 +7,7 @@ export interface DeckSchema {
     cards: CardSchema[];
     author: UserSchema;
     authorId: number;
+    public: boolean;
     createdAt: Date;
     updatedAt: Date;
     progress?: {

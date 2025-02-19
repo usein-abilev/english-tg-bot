@@ -28,5 +28,6 @@ export const createUserQuery = () => {
         ...queryConfig,
         queryKey: [USER_QUERY_KEY],
         queryFn: getUserInfo,
+        staleTime: 60_000 * 10,
     });
 };

@@ -79,6 +79,18 @@ const icons = {
             </symbol>
         ),
     },
+    "three-dots-horizontal": {
+        width: 16,
+        height: 16,
+        element: (
+            <symbol fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8 12a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM8 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM10 2a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"
+                    fill="#F5F5F5"
+                />
+            </symbol>
+        ),
+    },
     "plus-circle": {
         width: 40,
         height: 40,

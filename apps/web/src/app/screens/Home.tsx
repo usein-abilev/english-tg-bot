@@ -4,20 +4,21 @@ import styled from "styled-components";
 import { List } from "@telegram-apps/telegram-ui";
 import { useQuery } from "@tanstack/react-query";
 import { createUserQuery } from "../../features/api/user";
-import { ROUTES } from "../../constants/routes";
+import { replaceRouteParams, ROUTES } from "../../constants/routes";
 import { DeckListBlock } from "../../components/deck";
 import { DeckSchema } from "../../features/types/deck.types";
 import SectionHeader from "../../components/Section/SectionHeader";
 import SVGIcon from "../../components/icons/SVGIcon";
 import ActivityBlock, { ActivityBlockProps } from "../../components/ActivityBlock/ActivityBlock";
 import Section from "../../components/Section/Section";
+import SectionEmptyContent from "../../components/Section/SectionEmptyContent";
 
 const ListStyled = styled(List)`
-    padding: 0;
+    padding: var(--app-screen-padding);
 
     .home-header {
         .greeting-title {
-            padding: 24px 28px 0 28px;
+            padding: 0 12px;
             font-size: 32px;
             line-height: 35px;
             font-weight: 500;
@@ -25,7 +26,6 @@ const ListStyled = styled(List)`
         }
 
         .activity-list {
-            padding: 0 16px;
             margin-top: 12px;
 
             display: flex;
@@ -76,10 +76,10 @@ export default function Home() {
         return [];
     }, [userResult, openPractice]);
 
-    const handleViewAllDecks = () => {};
-
     const handleDeckClick = (deck: DeckSchema) => {
-        navigate(ROUTES.DECKS_REVIEW.replace(":id", String(deck.id)), { state: { deck } });
+        navigate(replaceRouteParams(ROUTES.DECKS_REVIEW, { id: deck.id }), {
+            state: { deck },
+        });
     };
 
     return (
@@ -102,12 +102,20 @@ export default function Home() {
                 )}
             </header>
             <Section>
-                <SectionHeader title="My decks" onViewAllClick={handleViewAllDecks} />
+                <SectionHeader title="My decks" onViewAllClick={() => navigate(ROUTES.LIBRARY)} />
                 {userResult?.decks?.length ? (
                     <DeckListBlock decks={userResult.decks} onDeckClick={handleDeckClick} />
                 ) : (
-                    <p>No cards</p>
+                    <SectionEmptyContent>No decks available</SectionEmptyContent>
                 )}
+            </Section>
+            <Section>
+                <SectionHeader title="For you" onViewAllClick={() => navigate(ROUTES.EXPLORE)} />
+                <SectionEmptyContent>Not available yet</SectionEmptyContent>
+            </Section>
+            <Section>
+                <SectionHeader title="Recent activity" onViewAllClick={() => {}} />
+                <SectionEmptyContent>Not available yet</SectionEmptyContent>
             </Section>
         </ListStyled>
     );

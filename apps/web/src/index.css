@@ -34,7 +34,10 @@
     --app-title-text-color: #F5F5F5;
     --app-subtitle-text-color: #96A0AA;
     --app-section-text-color: #545A64;
+    --app-secondary-text-color: #555A64;
     --app-font-family: "Roboto", system-ui, -apple-system, sans-serif;
+
+    --app-screen-padding: 24px 16px;
 
     /* Overload TGUI Theme */
     --tg-theme-bg-color: var(--app-secondary-bg-color);

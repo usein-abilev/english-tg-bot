@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from "react";
 import styled from "styled-components";
 import { DeckSchema } from "../../features/types/deck.types";
+import CircularProgress from "../Feedback/CircularProgress";
 import { Progress } from "@telegram-apps/telegram-ui";
 
 interface DeckBlockProps {

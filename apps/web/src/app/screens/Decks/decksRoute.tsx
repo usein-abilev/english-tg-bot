@@ -3,6 +3,7 @@ import { ROUTES } from "../../../constants/routes";
 import DeckReview from "./DeckReview/DeckReview";
 import DeckCreate from "./DeckCreate/DeckCreate";
 import DeckEdit from "./DeckEdit/DeckEdit";
+import DeckCardReview from "./DeckCardReview/DeckCardReview";
 
 const decksRoute: RouteObject = {
     children: [
@@ -21,6 +22,10 @@ const decksRoute: RouteObject = {
         {
             path: ROUTES.DECK_EDIT,
             element: <DeckEdit />,
+        },
+        {
+            path: ROUTES.DECK_CARD_REVIEW,
+            element: <DeckCardReview />,
         },
     ],
 };

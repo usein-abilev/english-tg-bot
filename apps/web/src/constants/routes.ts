@@ -4,9 +4,21 @@ export const ROUTES = {
     DECKS_REVIEW: "/decks/:id",
     DECK_EDIT: "/decks/:id/edit",
     DECK_CREATE: "/decks/create",
-    // DECK_ADD_CARD: "/deck/:id/add-card",
-    // NEW_FOLDER: "/new-folder",
+    DECK_CARD_REVIEW: "/decks/:deckId/cards/:cardId",
     PRACTICE: "/practice",
-    STATS: "/stats",
+    PROFILE: "/profile",
+    LIBRARY: "/library",
+    EXPLORE: "/explore",
     SETTINGS: "/settings",
+};
+
+/**
+ * Replace route params with actual values.
+ */
+export const replaceRouteParams = (route: string, params: Record<string, string | number>) => {
+    let newRoute = route;
+    Object.entries(params).forEach(([key, value]) => {
+        newRoute = newRoute.replace(`:${key}`, value.toString());
+    });
+    return newRoute;
 };

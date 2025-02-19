@@ -4,7 +4,7 @@ import { getDeckByIdQuery, useUpdateDeckMutation } from "../../../../features/ap
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "../../../../constants/routes";
 import Button from "../../../../components/Button/Button";
-import { Input } from "@telegram-apps/telegram-ui";
+import { Cell, Input, Switch } from "@telegram-apps/telegram-ui";
 import FormLayout from "../../../../components/Layouts/FormLayout";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
@@ -26,6 +26,7 @@ function DeckEdit() {
     const [form, setForm] = React.useState({
         title: deck.title || "",
         description: deck.description || "",
+        public: deck.public || false,
     });
     const navigate = useNavigate();
 
@@ -85,6 +86,29 @@ function DeckEdit() {
                 }
                 placeholder="E.g. A deck to learn English phrasal verbs"
             />
+            <Cell
+                Component="label"
+                after={
+                    <Switch
+                        checked={form.public}
+                        onChange={(event) => {
+                            if (deck.public) return false;
+                            setForm((prev) => ({ ...prev, public: event.target.checked }));
+                        }}
+                    />
+                }
+                description={
+                    <span>
+                        Make this deck public. Anyone can see it and practice with it.{" "}
+                        <span style={{ color: "var(--app-red-button-text-color)" }}>
+                            You can&apos;t undo this action.
+                        </span>
+                    </span>
+                }
+                multiline
+            >
+                Public Deck
+            </Cell>
         </FormLayout>
     );
 }

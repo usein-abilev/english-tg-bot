@@ -24,6 +24,22 @@ const createCard = async (params: CreateCardParams) => {
     });
 };
 
+export interface UpdateCardParams {
+    id: number;
+    deckId: number;
+    term?: string;
+    definition?: string;
+    description?: string;
+}
+
+const updateCard = async ({ id, deckId, ...params }: UpdateCardParams) => {
+    return fetchAPI(`${API_URL}/decks/${deckId}/cards/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(params),
+        headers: { "content-type": "application/json" },
+    });
+};
+
 export interface DeleteCardParams {
     deckId: number;
     cardId: number;
@@ -74,6 +90,18 @@ export const useCreateCardMutation = () => {
             queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
             queryClient.invalidateQueries({ queryKey: [CARDS_QUERY_KEY] });
             queryClient.invalidateQueries({ queryKey: [DECKS_QUERY_KEY, response.deckId] });
+        },
+    });
+};
+export const useUpdateCardMutation = () => {
+    return useMutation({
+        mutationKey: ["updateCard"],
+        mutationFn: updateCard,
+        onSuccess: (response) => {
+            console.log("[useUpdateCardMutation]: Card updated:", response);
+            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [CARDS_QUERY_KEY] });
+            // queryClient.invalidateQueries({ queryKey: [DECKS_QUERY_KEY, response.deckId] });
         },
     });
 };

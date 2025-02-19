@@ -4,6 +4,8 @@ import fetchAPI from "../fetchAPI";
 import { GetElementsResponse, PaginatedQueryParams } from "../types/common.types";
 import { CardSchema } from "../types/deck.types";
 import { formatQueryParams } from "../../utils/queryParams.util";
+import { queryClient } from "../reactQuery";
+import { USER_QUERY_KEY } from "./user";
 
 export const PRACTICE_QUERY_KEY = "practice";
 
@@ -43,6 +45,7 @@ export const useRateCardBatchMutation = () => {
         mutationFn: rateCards,
         onSuccess: (response) => {
             console.log("[useRateCardBatchMutation]: Cards rated:", response);
+            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
         },
     });
 };

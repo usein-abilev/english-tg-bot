@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsBoolean, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 import { DeckEntity } from "../../common/entities/deck.entity";
 import { PaginationQueryDto } from "../../common/dto/pagination.dto";
 
@@ -40,7 +40,13 @@ export class UpdateDeckQueryDto {
     @IsString()
     @MaxLength(128)
     description: string;
+
+    @IsBoolean()
+    @IsOptional()
+    public?: boolean;
 }
+
+export class FindDecksQueryDto extends PaginationQueryDto {}
 
 export class UpdateDeckDto extends UpdateDeckQueryDto {
     userId: number;
@@ -62,9 +68,27 @@ export class AddCardQueryDto {
     @IsOptional()
     description: string;
 }
-
 export class AddCardDto extends AddCardQueryDto {
     userId: number;
+}
+
+export class UpdateCardQueryDto {
+    @IsString()
+    @IsOptional()
+    term?: string;
+
+    @IsString()
+    @IsOptional()
+    definition?: string;
+
+    @IsString()
+    @IsOptional()
+    description?: string;
+}
+
+export class UpdateCardDto extends UpdateCardQueryDto {
+    userId: number;
+    deckId: number;
 }
 
 export class GetCardsQueryDto extends PaginationQueryDto {}

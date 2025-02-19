@@ -4,6 +4,10 @@ import styled from "styled-components";
 import DropdownMenu from "../Modals/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "../Modals/DropdownMenu/DropdownMenuItem";
 import { useDeleteCardMutation } from "../../features/api/cards";
+import { useNavigate } from "react-router-dom";
+import { replaceRouteParams, ROUTES } from "../../constants/routes";
+import SVGIcon from "../icons/SVGIcon";
+import CardFormModal from "./CardFormModal";
 
 const StyledCardBlock = styled.div`
     background: var(--app-card-bg-color);
@@ -43,7 +47,24 @@ const CardBlock: FC<CardBlockProps> = ({ card, onCardClick }) => {
     const detailsBtnRef = React.useRef<HTMLDivElement>(null);
     const [detailsMenuOpen, setDetailsMenuOpen] = React.useState(false);
 
+    const [editModalOpen, setEditModalOpen] = React.useState(false);
+
+    const navigate = useNavigate();
     const cardDeleteMutation = useDeleteCardMutation();
+
+    const handleViewCard = () => {
+        navigate(
+            replaceRouteParams(ROUTES.DECK_CARD_REVIEW, {
+                cardId: card.id,
+                deckId: card.deckId,
+            }),
+            { state: card },
+        );
+    };
+
+    const handleEditCard = () => {
+        setEditModalOpen(true);
+    };
 
     const handleDeleteCard = () => {
         setDetailsMenuOpen(false);
@@ -58,30 +79,25 @@ const CardBlock: FC<CardBlockProps> = ({ card, onCardClick }) => {
 
     return (
         <StyledCardBlock>
+            <CardFormModal card={card} deckId={card.deckId} open={editModalOpen} setOpen={setEditModalOpen} />
+
             <DropdownMenu
                 buttonRef={detailsBtnRef}
                 isOpen={detailsMenuOpen}
                 onClose={() => setDetailsMenuOpen(false)}
             >
+                <DropdownMenuItem onClick={handleViewCard}>View</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleEditCard}>Edit</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleDeleteCard}>Delete</DropdownMenuItem>
             </DropdownMenu>
+
             <div className="info">
                 <div className="card-term">{card.term}</div>
                 <div className="card-description">{card.definition}</div>
             </div>
             <div className="details-icon">
                 <div ref={detailsBtnRef} onClick={() => setDetailsMenuOpen(true)}>
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <g fill="#eee">
-                            <path d="M8 12a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM8 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM10 2a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z" />
-                        </g>
-                    </svg>
+                    <SVGIcon id="three-dots-horizontal" />
                 </div>
             </div>
         </StyledCardBlock>

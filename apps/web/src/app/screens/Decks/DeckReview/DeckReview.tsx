@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { ROUTES } from "../../../../constants/routes";
-import { AddCardModal } from "../../../../components/deck";
+import { replaceRouteParams, ROUTES } from "../../../../constants/routes";
 import { useInfiniteQuery, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getDecksCardsInfinityQuery } from "../../../../features/api/cards";
 import CenterInfoFallback from "../../../../components/CenterInfoFallback/CenterInfoFallback";
@@ -13,6 +12,7 @@ import Button from "../../../../components/Button/Button";
 import SVGIcon from "../../../../components/icons/SVGIcon";
 import DropdownMenu from "../../../../components/Modals/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "../../../../components/Modals/DropdownMenu/DropdownMenuItem";
+import CardFormModal from "../../../../components/Card/CardFormModal";
 
 const StyledDeckReview = styled.div`
     overflow: hidden;
@@ -208,7 +208,7 @@ function DeckReview() {
     };
 
     const handleEditDeck = () => {
-        navigate(ROUTES.DECK_EDIT.replace(":id", String(deck.id)));
+        navigate(replaceRouteParams(ROUTES.DECK_EDIT, { id: deck.id }));
     };
 
     const handleDeleteDeck = () => {
@@ -235,15 +235,25 @@ function DeckReview() {
 
     return (
         <StyledDeckReview className="deck-layout">
-            <AddCardModal deckId={deck?.id} open={addCardModal} setOpen={setAddCardModal} />
+            <CardFormModal deckId={deck?.id} open={addCardModal} setOpen={setAddCardModal} />
             <DropdownMenu
                 buttonRef={deckMenuDetailsRef}
                 isOpen={deckMenuOpen}
                 onClose={() => setDeckMenuOpen(false)}
             >
-                <DropdownMenuItem onClick={handleAddCard}>Add card</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleEditDeck}>Edit deck</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDeleteDeck}>Delete deck</DropdownMenuItem>
+                {isAuthor && (
+                    <>
+                        <DropdownMenuItem onClick={handleAddCard}>Add card</DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleEditDeck}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={handleDeleteDeck}
+                            style={{ color: "var(--app-red-button-text-color)" }}
+                        >
+                            Delete
+                        </DropdownMenuItem>
+                    </>
+                )}
+                {!isAuthor && <DropdownMenuItem onClick={() => {}}>Make clone</DropdownMenuItem>}
             </DropdownMenu>
 
             <div className="deck-header">
@@ -256,7 +266,7 @@ function DeckReview() {
                         <div className="indicator-icon">
                             <SVGIcon id="cards" />
                         </div>
-                        {stats.total}
+                        {cardsPagesResult?.pages?.[0]?.pagination?.total || stats.total || 0}
                     </div>
                     <div id="completed-count" className="indicator">
                         <div className="indicator-icon">

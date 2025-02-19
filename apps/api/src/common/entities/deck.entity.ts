@@ -25,6 +25,9 @@ export class DeckEntity {
     @Column()
     description!: string;
 
+    @Column({ default: false })
+    public: boolean;
+
     @OneToMany(() => CardEntity, (card) => card.deck, {
         cascade: true,
     })

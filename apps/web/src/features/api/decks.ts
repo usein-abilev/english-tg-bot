@@ -1,9 +1,10 @@
-import { queryOptions, useMutation } from "@tanstack/react-query";
+import { infiniteQueryOptions, keepPreviousData, queryOptions, useMutation } from "@tanstack/react-query";
 import { API_URL } from "../../constants/config";
 import fetchAPI from "../fetchAPI";
 import { queryClient, queryConfig } from "../reactQuery";
 import { USER_QUERY_KEY } from "./user";
 import { DeckSchema } from "../types/deck.types";
+import { GetElementsResponse } from "../types/common.types";
 
 export const DECKS_QUERY_KEY = "decks";
 
@@ -53,6 +54,35 @@ export const getDeckByIdQuery = (id: number, initialData?: DeckSchema) => {
         queryFn: () => getDeckById(id),
         queryKey: [DECKS_QUERY_KEY, id],
         initialData,
+    });
+};
+
+export interface FindDecksParams {
+    limit: number;
+    page: number;
+}
+
+const findDecks = async (params: FindDecksParams): Promise<GetElementsResponse<DeckSchema>> => {
+    const url = new URL(`${API_URL}/decks`);
+    url.searchParams.append("limit", params.limit.toString());
+    url.searchParams.append("page", params.page.toString());
+    const response = await fetchAPI(url);
+    return response;
+};
+
+export const findDecksInfinityQuery = (params: FindDecksParams) => {
+    return infiniteQueryOptions({
+        queryKey: [DECKS_QUERY_KEY],
+        queryFn: ({ pageParam }) => {
+            return findDecks({ ...params, page: pageParam });
+        },
+        getNextPageParam: (lastPage) => {
+            const { limit, page } = lastPage.pagination;
+            return lastPage.items.length < limit ? undefined : page + 1;
+        },
+        placeholderData: keepPreviousData,
+        initialPageParam: 0,
+        staleTime: 30_000,
     });
 };
 
