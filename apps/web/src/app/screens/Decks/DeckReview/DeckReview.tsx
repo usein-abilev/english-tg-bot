@@ -60,6 +60,7 @@ const StyledDeckReview = styled.div`
 
                 &#cards-count {
                     color: var(--app-accent-blue);
+                    stroke: var(--app-accent-blue);
                 }
                 &#completed-count {
                     color: var(--app-accent-green);

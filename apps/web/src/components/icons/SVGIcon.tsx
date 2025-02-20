@@ -3,19 +3,19 @@ import React, { FC } from "react";
 
 const icons = {
     cards: {
-        width: 12,
+        width: 11,
         height: 12,
         element: (
-            <symbol fill="none" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+            <symbol fill="none" viewBox="0 0 11 12" xmlns="http://www.w3.org/2000/svg">
                 <path
-                    d="M1.6.5h5.124a1.1 1.1 0 0 1 1.1 1.1v.964H5.357a1.1 1.1 0 0 0-1.1 1.1v5.754H1.6a1.1 1.1 0 0 1-1.1-1.1V1.6A1.1 1.1 0 0 1 1.6.5Z"
-                    stroke="var(--app-accent-blue)"
+                    d="M2 0.5H5.5C6.3284 0.5 7 1.1716 7 2V2.5H5.5C4.6716 2.5 4 3.1716 4 4V9.5H2C1.1716 9.5 0.5 8.8284 0.5 8V2C0.5 1.1716 1.1716 0.5 2 0.5Z"
+                    stroke="currentColor"
                     strokeLinecap="square"
                     strokeLinejoin="round"
                 />
                 <path
-                    d="M11.5 3.682V10.4a1.1 1.1 0 0 1-1.1 1.1H5.276a1.1 1.1 0 0 1-1.1-1.1V3.682a1.1 1.1 0 0 1 1.1-1.1H10.4a1.1 1.1 0 0 1 1.1 1.1Z"
-                    stroke="var(--app-accent-blue)"
+                    d="M10.5 4V10C10.5 10.8284 9.8284 11.5 9 11.5L5.5 11.4999C4.6715 11.4999 4 10.8283 4 9.9999V4C4 3.1716 4.6716 2.5 5.5 2.5H9C9.8284 2.5 10.5 3.1716 10.5 4Z"
+                    stroke="currentColor"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
@@ -176,7 +176,7 @@ export function SVGIconRoot() {
     );
 }
 
-interface SVGIconProps {
+interface SVGIconProps extends React.SVGProps<SVGSVGElement> {
     id: keyof typeof icons;
 }
 

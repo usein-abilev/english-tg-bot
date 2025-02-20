@@ -5,7 +5,7 @@ import { List } from "@telegram-apps/telegram-ui";
 import { useQuery } from "@tanstack/react-query";
 import { createUserQuery } from "../../features/api/user";
 import { replaceRouteParams, ROUTES } from "../../constants/routes";
-import { DeckListBlock } from "../../components/deck";
+import { DeckListBlock } from "../../components/Deck";
 import { DeckSchema } from "../../features/types/deck.types";
 import SectionHeader from "../../components/Section/SectionHeader";
 import SVGIcon from "../../components/icons/SVGIcon";

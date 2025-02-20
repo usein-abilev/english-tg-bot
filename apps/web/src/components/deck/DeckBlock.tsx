@@ -1,8 +1,9 @@
 import React, { FC, useMemo } from "react";
 import styled from "styled-components";
 import { DeckSchema } from "../../features/types/deck.types";
-import CircularProgress from "../Feedback/CircularProgress";
+import CircularProgress from "../Feedback/CircularProgress/CircularProgress";
 import { Progress } from "@telegram-apps/telegram-ui";
+import SVGIcon from "../icons/SVGIcon";
 
 interface DeckBlockProps {
     deck: DeckSchema;
@@ -17,27 +18,52 @@ const DeckBlockStyled = styled.div`
     border-radius: 18px;
 
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
 
-    .deck-title {
-        font-style: normal;
-        font-weight: 500;
-        font-size: 20px;
-        line-height: 23px;
+    .deck-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        .deck-title {
+            font-style: normal;
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 23px;
+        }
+
+        .deck-description {
+            opacity: 0.5;
+            font-size: 12px;
+            line-height: 15px;
+        }
+
+        .deck-footer {
+            margin-top: 4px;
+
+            .deck-cards-count {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                color: var(--app-secondary-text-color);
+                stroke: var(--app-secondary-text-color);
+
+                .cards-count {
+                    font-size: 13px;
+                    font-weight: 500;
+                }
+            }
+        }
     }
 
-    .deck-description {
-        opacity: 0.5;
-        font-size: 12px;
-        line-height: 15px;
-    }
-
+    /* 
     .deck-progress {
         margin-top: 4px;
         background: rgba(41, 144, 255, 0.2);
         border-radius: 2px;
-    }
+    } */
 
     &:hover {
         cursor: pointer;
@@ -57,14 +83,20 @@ const DeckBlock: FC<DeckBlockProps> = ({ deck, onClick }) => {
 
     return (
         <DeckBlockStyled className="deck-block" onClick={() => onClick?.(deck)}>
-            <div className="deck-title">{deck.title}</div>
+            <div className="deck-info">
+                <div className="deck-title">{deck.title}</div>
 
-            {deck.description && <div className="deck-description">{deck.description}</div>}
+                {deck.description && <div className="deck-description">{deck.description}</div>}
 
-            {progressValue > 0 && (
-                <div className="deck-progress">
-                    <Progress value={progressValue} className="deck-progress-bar" />
+                <div className="deck-footer">
+                    <div className="deck-cards-count">
+                        <SVGIcon id="cards" />
+                        <span className="cards-count">{deck.progress?.cardsCount ?? "-"}</span>
+                    </div>
                 </div>
+            </div>
+            {progressValue > 0 && progressValue < 100 && (
+                <CircularProgress size={deck.description ? "large" : "medium"} progress={progressValue} />
             )}
         </DeckBlockStyled>
     );

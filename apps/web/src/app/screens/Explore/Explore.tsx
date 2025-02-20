@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import SectionEmptyContent from "../../../components/Section/SectionEmptyContent";
-import { DeckListBlock } from "../../../components/deck";
+import { DeckListBlock } from "../../../components/Deck";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { findDecksInfinityQuery } from "../../../features/api/decks";
 import { DeckSchema } from "../../../features/types/deck.types";
