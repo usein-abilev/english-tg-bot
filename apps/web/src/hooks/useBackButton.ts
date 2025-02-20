@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ROUTES } from "../constants/routes";
+
+const IGNORE_PATHS = [ROUTES.HOME, ROUTES.EXPLORE, ROUTES.LIBRARY, ROUTES.PROFILE];
 
 export const useBackButton = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const hideButton = location.pathname === "/";
+    const hideButton = IGNORE_PATHS.includes(location.pathname);
 
     useEffect(() => {
         if (hideButton) {
