@@ -1,11 +1,9 @@
-import { InlineButtons } from "@telegram-apps/telegram-ui";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import * as Icons from "../icons";
 import { ROUTES } from "../../constants/routes";
 import { useLocation, useNavigate } from "react-router-dom";
 import NavigationCreateModal from "../Modals/NavigationCreateModal";
-import SVGIcon from "../icons/SVGIcon";
+import SVGIcon from "../SVGIcon/SVGIcon";
 
 const NavigationBarStyled = styled.div`
     background: var(--app-secondary-bg-color);
@@ -28,12 +26,7 @@ const NavigationBarStyled = styled.div`
             stroke: var(--tgui--text_color);
             cursor: pointer;
 
-            color: var(--tgui--section_header_text_color);
             padding: 10px 0px;
-            font-family: var(--tgui--font-family);
-            font-size: 10px;
-            line-height: 12px;
-            font-weight: 500;
 
             display: flex;
             flex-direction: column;
@@ -117,14 +110,14 @@ function NavigationBar({}) {
                     data-id="home"
                     onClick={handleMenuClick}
                 >
-                    <Icons.IconHome />
+                    <SVGIcon id="nav-home-icon" />
                 </button>
                 <button
                     className={`nav-button ${getActiveTabClass("explore")}`}
                     data-id="explore"
                     onClick={handleMenuClick}
                 >
-                    <Icons.IconSearch />
+                    <SVGIcon id="nav-search-icon" />
                 </button>
                 <button className="nav-button" onClick={() => setIsModalVisible(true)}>
                     <SVGIcon id="plus-circle" />
@@ -134,14 +127,14 @@ function NavigationBar({}) {
                     data-id="library"
                     onClick={handleMenuClick}
                 >
-                    <Icons.IconLibrary />
+                    <SVGIcon id="nav-library-icon" />
                 </button>
                 <button
                     className={`nav-button ${getActiveTabClass("profile")}`}
                     data-id="profile"
                     onClick={handleMenuClick}
                 >
-                    <Icons.IconProfile />
+                    <SVGIcon id="nav-profile-icon" />
                 </button>
             </div>
         </NavigationBarStyled>

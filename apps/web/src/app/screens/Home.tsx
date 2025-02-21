@@ -8,7 +8,6 @@ import { replaceRouteParams, ROUTES } from "../../constants/routes";
 import { DeckListBlock } from "../../components/Deck";
 import { DeckSchema } from "../../features/types/deck.types";
 import SectionHeader from "../../components/Section/SectionHeader";
-import SVGIcon from "../../components/icons/SVGIcon";
 import ActivityBlock, { ActivityBlockProps } from "../../components/ActivityBlock/ActivityBlock";
 import Section from "../../components/Section/Section";
 import SectionEmptyContent from "../../components/Section/SectionEmptyContent";
