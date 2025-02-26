@@ -6,6 +6,7 @@ import DeckBlock from "./DeckBlock";
 interface DeckListBlockProps {
     decks: DeckSchema[];
     showAuthor?: boolean;
+    fallback?: React.ReactNode;
     onDeckClick?: (deck: DeckSchema) => void;
 }
 
@@ -15,13 +16,15 @@ const DeckListBlockStyled = styled.div`
     gap: 10px;
 `;
 
-const DeckListBlock: FC<DeckListBlockProps> = ({ decks, onDeckClick, showAuthor }) => {
-    return (
+const DeckListBlock: FC<DeckListBlockProps> = ({ decks, fallback, onDeckClick, showAuthor }) => {
+    return decks.length || !fallback ? (
         <DeckListBlockStyled className="decks-list">
             {decks.map((deck) => (
                 <DeckBlock key={deck.id} deck={deck} showAuthor={showAuthor} onClick={onDeckClick} />
             ))}
         </DeckListBlockStyled>
+    ) : (
+        fallback
     );
 };
 

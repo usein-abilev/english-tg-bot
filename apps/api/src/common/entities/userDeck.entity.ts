@@ -6,6 +6,7 @@ import { DeckEntity } from "./deck.entity";
  * UserDeck entity - represents user's deck
  */
 @Entity({ name: "user_deck" })
+@Index(["userId", "deckId"], { unique: true })
 export class UserDeckEntity {
     @PrimaryGeneratedColumn()
     id: number;

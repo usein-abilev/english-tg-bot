@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react";
+import React, { FC, useRef, useState } from "react";
 import { useBlocker, useLocation, useParams } from "react-router-dom";
 import { useFinalizePracticeMutation, useRateCardBatchMutation } from "../../../features/api/practice";
 import CardPracticeRate from "./CardPracticeRate";
@@ -17,11 +17,13 @@ const CardPractice: FC<CardPracticeProps> = () => {
     const location = useLocation();
     const state = (location.state as { deckId?: number }) || {};
 
-    const isDirty = useRef(false);
-    const isSessionEnded = useRef(false);
+    const [practiceSessionState, setPracticeSessionState] = useState({
+        isDirty: false,
+        isSessionEnded: false,
+    });
 
     useBlocker(({ currentLocation, nextLocation }) => {
-        if (!isDirty.current || isSessionEnded.current) {
+        if (!practiceSessionState.isDirty || practiceSessionState.isSessionEnded) {
             return false;
         }
         const accept = confirm("Are you sure you want to leave the practice session?");
@@ -59,6 +61,8 @@ const CardPractice: FC<CardPracticeProps> = () => {
                 queryClient.invalidateQueries({ queryKey: [DECKS_QUERY_KEY, deckId] });
             });
         }
+
+        setShowResults(true);
     };
 
     const deferredRate = useDeferredRateCard((ratings) => {
@@ -66,12 +70,11 @@ const CardPractice: FC<CardPracticeProps> = () => {
             { cards: ratings },
             {
                 onSuccess: async (rates) => {
-                    console.log("CardPractice card rated:", rates, isSessionEnded);
+                    console.log("CardPractice card rated:", rates, practiceSessionState);
 
-                    if (isSessionEnded.current) {
+                    if (practiceSessionState.isSessionEnded) {
                         // Practice session has ended
                         await onPracticeEnd();
-                        isSessionEnded.current = false;
                     }
                 },
             },
@@ -84,12 +87,12 @@ const CardPractice: FC<CardPracticeProps> = () => {
             return;
         }
 
-        if (isSessionEnded.current) {
+        if (practiceSessionState.isSessionEnded) {
             console.error("[CardPractice]: Session has ended.");
             return;
         }
 
-        isDirty.current = true;
+        setPracticeSessionState((prev) => ({ ...prev, isDirty: true }));
 
         if (!affectedDeckIds.current.includes(card.deckId)) {
             affectedDeckIds.current.push(card.deckId);
@@ -107,10 +110,9 @@ const CardPractice: FC<CardPracticeProps> = () => {
 
         if (cardIndex >= total - 1) {
             console.log("[CardPractice]: Flushing ratings");
-            isSessionEnded.current = true;
+            setPracticeSessionState((prev) => ({ ...prev, isSessionEnded: true }));
             deferredRate.addRate(card.id, grade);
             deferredRate.flush(true);
-            setShowResults(true);
         } else {
             nextCard();
             deferredRate.addRate(card.id, grade);

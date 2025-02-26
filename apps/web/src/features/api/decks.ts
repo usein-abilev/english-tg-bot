@@ -21,6 +21,18 @@ const createDeck = async (params: CreateDeckParams) => {
     return res;
 };
 
+export interface FavoriteDeckParams {
+    id: number;
+    delete?: boolean;
+}
+
+const favoriteDeck = async (params: FavoriteDeckParams) => {
+    const res = await fetchAPI(`${API_URL}/decks/${params.id}/favorite`, {
+        method: params.delete ? "DELETE" : "POST",
+    });
+    return res;
+};
+
 export interface UpdateDeckParams {
     id: number;
     title: string;
@@ -92,6 +104,17 @@ export const useDeleteDeckMutation = () => {
         mutationFn: deleteDeck,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
+        },
+    });
+};
+
+export const useFavoriteDeckMutation = () => {
+    return useMutation({
+        mutationKey: ["favoriteDeck"],
+        mutationFn: favoriteDeck,
+        onSuccess: (_, params) => {
+            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [DECKS_QUERY_KEY, params.id] });
         },
     });
 };

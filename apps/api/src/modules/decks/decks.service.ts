@@ -19,6 +19,7 @@ import {
 import { CardEntity } from "../../common/entities/card.entity";
 import { GetElementsResponse } from "../../common/types/response.types";
 import { UserDeckEntity } from "../../common/entities/userDeck.entity";
+import { DB_DUPLICATE_ERROR_CODE } from "../../common/constants/db.constants";
 
 @Injectable()
 export class DecksService {
@@ -121,11 +122,26 @@ export class DecksService {
         if (deck.authorId === userId) {
             throw new BadRequestException("You can't add your own deck to favorites");
         }
-        const userDeck = await this.userDecksRepository.save({
-            deck,
-            user: { id: userId },
-        });
-        return userDeck;
+
+        try {
+            await this.userDecksRepository.save({
+                deck,
+                user: { id: userId },
+            });
+        } catch (error) {
+            if (error.code !== DB_DUPLICATE_ERROR_CODE) {
+                throw error;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Deletes a deck from user's favorites
+     */
+    async deleteFavoriteDeck(deckId: number, userId: number) {
+        await this.userDecksRepository.delete({ deckId, userId });
     }
 
     /**

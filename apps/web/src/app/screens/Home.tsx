@@ -83,6 +83,19 @@ export default function Home() {
         }
     }, [userResult, openPractice]);
 
+    const myDecks = useMemo(() => {
+        if (!userResult) return [];
+        return userResult.decks
+            .filter((deck) => deck.authorId === userResult.user.id)
+            .sort((a, b) => {
+                if (!a.progress?.lastReviewAt || !b.progress?.lastReviewAt) return 0;
+                return (
+                    new Date(a.progress.lastReviewAt).getTime() - new Date(b.progress!.lastReviewAt).getTime()
+                );
+            })
+            .slice(0, 3);
+    }, [userResult]);
+
     const handleDeckClick = (deck: DeckSchema) => {
         navigate(replaceRouteParams(ROUTES.DECKS_REVIEW, { id: deck.id }), {
             state: { deck },
@@ -110,8 +123,8 @@ export default function Home() {
             </header>
             <Section>
                 <SectionHeader title="My decks" onViewAllClick={() => navigate(ROUTES.LIBRARY)} />
-                {userResult?.decks?.length ? (
-                    <DeckListBlock decks={userResult.decks} onDeckClick={handleDeckClick} />
+                {myDecks.length ? (
+                    <DeckListBlock decks={myDecks} onDeckClick={handleDeckClick} />
                 ) : (
                     <SectionEmptyContent>No decks available</SectionEmptyContent>
                 )}

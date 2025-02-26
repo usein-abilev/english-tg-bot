@@ -2,17 +2,23 @@ import React from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
-    padding: var(--app-screen-padding);
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 
     .page-title {
         font-size: 32px;
         font-weight: bold;
         color: var(--app-title-text-color);
-        padding: 0 12px;
+        padding: 24px 16px 0 28px;
     }
 
     .page-content {
-        margin-top: 12px;
+        overflow: hidden;
+        box-sizing: border-box;
+        height: 100%;
     }
 `;
 

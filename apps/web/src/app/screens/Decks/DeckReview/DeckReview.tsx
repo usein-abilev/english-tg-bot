@@ -1,11 +1,16 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { motion } from "framer-motion";
 import { replaceRouteParams, ROUTES } from "../../../../constants/routes";
 import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getDecksCardsInfinityQuery } from "../../../../features/api/cards";
 import CenterInfoFallback from "../../../../components/CenterInfoFallback/CenterInfoFallback";
-import { getDeckByIdQuery, useDeleteDeckMutation } from "../../../../features/api/decks";
+import {
+    getDeckByIdQuery,
+    useDeleteDeckMutation,
+    useFavoriteDeckMutation,
+} from "../../../../features/api/decks";
 import CardBlock from "../../../../components/Card/CardBlock";
 import { createUserQuery } from "../../../../features/api/user";
 import Button from "../../../../components/Button/Button";
@@ -13,6 +18,7 @@ import SVGIcon from "../../../../components/SVGIcon/SVGIcon";
 import DropdownMenu from "../../../../components/Modals/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "../../../../components/Modals/DropdownMenu/DropdownMenuItem";
 import CardFormModal from "../../../../components/Card/CardFormModal";
+import CardList from "./CardList";
 
 const StyledDeckReview = styled.div`
     overflow: hidden;
@@ -151,16 +157,35 @@ const StyledDeckReview = styled.div`
 
         height: 100%;
         overflow-y: auto;
-
-        .cards-list {
-            margin-top: 16px;
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
     }
 `;
+
+const paths = {
+    plus: "M1.5 9.5H16.5M9 2V17",
+    check: "M3 10 L8 15 L16 5",
+};
+
+function AnimatedFavoriteIcon({ checked }: { checked?: boolean }) {
+    return (
+        <svg
+            viewBox="0 0 18 19"
+            width="18"
+            height="19"
+            stroke="#F5F5F5"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            style={{ cursor: "pointer" }}
+        >
+            <motion.path
+                d={checked ? paths.check : paths.plus}
+                animate={{ d: checked ? paths.check : paths.plus }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+            />
+        </svg>
+    );
+}
 
 function DeckReview() {
     const { id } = useParams<{ id: string }>();
@@ -169,46 +194,19 @@ function DeckReview() {
 
     const { data: userData } = useSuspenseQuery(createUserQuery());
     const { data: deck } = useSuspenseQuery(getDeckByIdQuery(Number(id), location.state?.deck));
+
     const deleteDeckMutation = useDeleteDeckMutation();
+    const favoriteDeckMutation = useFavoriteDeckMutation();
 
     const isAuthor = deck?.authorId === userData.user.id;
-
-    const {
-        data: cardsPagesResult,
-        hasNextPage,
-        fetchNextPage,
-    } = useInfiniteQuery(
-        getDecksCardsInfinityQuery({
-            deckId: deck?.id,
-            limit: 25,
-            page: 1,
-        }),
-    );
-
-    const cards = useMemo(() => {
-        if (!cardsPagesResult) return [];
-        return cardsPagesResult.pages.flatMap((page) => page.items);
-    }, [cardsPagesResult]);
+    const isFavorite = useMemo(() => {
+        return userData.decks.some(
+            (userDeck) => userDeck.id === deck.id && userDeck.authorId !== userData.user.id,
+        );
+    }, [deck, userData]);
 
     const deckMenuDetailsRef = useRef(null);
     const [deckMenuOpen, setDeckMenuOpen] = React.useState(false);
-
-    const observerRef = useRef(null);
-
-    useEffect(() => {
-        if (!observerRef.current || !hasNextPage) return;
-
-        const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) {
-                fetchNextPage();
-            }
-        });
-
-        observer.observe(observerRef.current);
-
-        return () => observer.disconnect();
-    }, [hasNextPage, fetchNextPage]);
-
     const [addCardModal, setAddCardModal] = React.useState(false);
 
     const handleAddCard = () => {
@@ -221,6 +219,17 @@ function DeckReview() {
 
     const handleEditDeck = () => {
         navigate(replaceRouteParams(ROUTES.DECK_EDIT, { id: deck.id }));
+    };
+
+    const handleFavoriteDeck = () => {
+        if (isFavorite) {
+            Telegram.WebApp.showConfirm("Are you sure you want to remove this deck from favorites?", (ok) => {
+                if (!ok) return;
+                favoriteDeckMutation.mutate({ id: deck.id, delete: true });
+            });
+        } else {
+            favoriteDeckMutation.mutate({ id: deck.id, delete: isFavorite });
+        }
     };
 
     const handleDeleteDeck = () => {
@@ -280,7 +289,7 @@ function DeckReview() {
                         <div className="indicator-icon">
                             <SVGIcon id="cards" />
                         </div>
-                        {cardsPagesResult?.pages?.[0]?.pagination?.total || stats.total || 0}
+                        {stats.total || 0}
                     </div>
                     <div id="completed-count" className="indicator">
                         <div className="indicator-icon">
@@ -320,11 +329,10 @@ function DeckReview() {
                                 className="deck-control"
                                 size="m"
                                 mode="bezeled"
-                                onClick={() => {
-                                    console.log("Add card to favorite not implemented yet");
-                                }}
+                                disabled={favoriteDeckMutation.isPending}
+                                onClick={handleFavoriteDeck}
                             >
-                                <SVGIcon id="plus-line" />
+                                <AnimatedFavoriteIcon checked={isFavorite} />
                             </Button>
                         )}
                         <Button
@@ -341,16 +349,10 @@ function DeckReview() {
             </div>
 
             <main className="deck-main">
-                {cards.length > 0 ? (
-                    <div className="cards-list">
-                        {cards.map((item) => {
-                            return <CardBlock key={item.id} card={item} onCardClick={() => {}} />;
-                        })}
-                        <div ref={observerRef} style={{ height: 1 }} />
-                    </div>
-                ) : (
-                    <CenterInfoFallback text="No cards in this deck. Please add one" />
-                )}
+                <CardList
+                    deck={deck}
+                    fallback={<CenterInfoFallback text="No cards in this deck. Please add one" />}
+                />
             </main>
         </StyledDeckReview>
     );

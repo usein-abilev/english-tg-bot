@@ -1,5 +1,5 @@
 import { Button as TelegramButton, ButtonProps } from "@telegram-apps/telegram-ui";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 
 const ButtonStyled = styled(TelegramButton)`
@@ -31,6 +31,7 @@ function Button({ elementRef, ...props }: CustomButtonProps) {
         }
         return {};
     }, [props.mode]);
+
     return (
         <ButtonStyled {...props} ref={elementRef} style={{ ...style, ...props.style }}>
             {props.children}

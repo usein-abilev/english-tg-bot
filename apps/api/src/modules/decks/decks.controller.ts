@@ -75,6 +75,14 @@ export class DecksController {
         return this.decksService.addFavoriteDeck(id, request.initData.user.id);
     }
 
+    @Delete("/:id/favorite")
+    async deleteFavoriteDeck(
+        @Request() request: ClientRequest,
+        @Param("id", ParseIntPipe) id: number,
+    ) {
+        return this.decksService.deleteFavoriteDeck(id, request.initData.user.id);
+    }
+
     @Get("/:id/cards")
     async getCards(
         @Request() request: ClientRequest,

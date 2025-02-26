@@ -12,6 +12,8 @@ import TitledPageLayout from "../../../components/Layouts/TitledPageLayout";
 import SVGIcon from "../../../components/SVGIcon/SVGIcon";
 
 const Container = styled.div`
+    padding: 0 16px;
+
     .search-input {
         input::placeholder,
         svg {

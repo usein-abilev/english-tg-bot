@@ -43,7 +43,7 @@ export class PracticeGetDecksQueryDto {
     @Max(50)
     @Transform(({ value }) => Number(value))
     @IsNumber()
-    limit: number;
+    limit?: number;
 }
 
 export class PracticeGetCardsQueryDto extends PaginationQueryDto {
