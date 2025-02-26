@@ -91,7 +91,7 @@ export class PracticeService {
 
     async getDecksToPractice(
         userId: number,
-        params: PracticeGetDecksQueryDto,
+        params?: PracticeGetDecksQueryDto,
     ): Promise<DeckExtendedDto[]> {
         const subQuery = this.userDecksRepository
             .createQueryBuilder("inner")
@@ -126,7 +126,8 @@ export class PracticeService {
             .addSelect("stats.next_review_at", "next_review_at")
             .addSelect("stats.new_cards_count", "new_cards_count")
             .orderBy("stats.next_review_at", "ASC")
-            .limit(params.limit)
+            .where("user_deck.userId = :userId", { userId })
+            .limit(params?.limit || 0)
             .setParameters({ now: new Date(), userId });
 
         const result = await query.getRawAndEntities();
@@ -207,7 +208,10 @@ export class PracticeService {
                 "COUNT(CASE WHEN progress.nextReviewAt <= :now THEN progress.id END)",
                 "review_count",
             )
-            .addSelect("COUNT(CASE WHEN progress.repetitions IS NULL THEN 1 END)", "learn_count")
+            .addSelect(
+                "COUNT(CASE WHEN progress.repetitions IS NOT NULL THEN progress.id END)",
+                "learned_count",
+            )
             .leftJoin(CardEntity, "card", "card.deckId = user_deck.deckId")
             .leftJoin(
                 "user_card_progress",
@@ -219,12 +223,13 @@ export class PracticeService {
 
         const result = await query.getRawOne();
 
+        const cardsToLearnCount = result.total_count - result.learned_count;
         return {
+            cardsToLearnCount,
             cardsTotal: result.total_count,
-            cardsToLearnCount: result.learn_count,
             cardsToReviewCount: result.review_count,
-            cardsToPracticeCount: result.learn_count + result.review_count,
             decksToPracticeCount: result.decks_practice_count,
+            cardsToPracticeCount: cardsToLearnCount + result.review_count,
         };
     }
 
