@@ -6,7 +6,7 @@ import DropdownMenuItem from "../Modals/DropdownMenu/DropdownMenuItem";
 import { useDeleteCardMutation } from "../../features/api/cards";
 import { useNavigate } from "react-router-dom";
 import { replaceRouteParams, ROUTES } from "../../constants/routes";
-import SVGIcon from "../icons/SVGIcon";
+import SVGIcon from "../SVGIcon/SVGIcon";
 import CardFormModal from "./CardFormModal";
 
 const StyledCardBlock = styled.div`

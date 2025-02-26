@@ -2,14 +2,14 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { replaceRouteParams, ROUTES } from "../../../../constants/routes";
-import { useInfiniteQuery, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getDecksCardsInfinityQuery } from "../../../../features/api/cards";
 import CenterInfoFallback from "../../../../components/CenterInfoFallback/CenterInfoFallback";
 import { getDeckByIdQuery, useDeleteDeckMutation } from "../../../../features/api/decks";
 import CardBlock from "../../../../components/Card/CardBlock";
 import { createUserQuery } from "../../../../features/api/user";
 import Button from "../../../../components/Button/Button";
-import SVGIcon from "../../../../components/icons/SVGIcon";
+import SVGIcon from "../../../../components/SVGIcon/SVGIcon";
 import DropdownMenu from "../../../../components/Modals/DropdownMenu/DropdownMenu";
 import DropdownMenuItem from "../../../../components/Modals/DropdownMenu/DropdownMenuItem";
 import CardFormModal from "../../../../components/Card/CardFormModal";
@@ -22,8 +22,19 @@ const StyledDeckReview = styled.div`
     font-family: var(--app-font-family);
 
     .deck-header {
+        position: relative;
         background: linear-gradient(105.16deg, #161e2a 0%, #1f2632 100%);
         padding: 20px;
+
+        .deck-public-mark {
+            position: absolute;
+            right: 20px;
+            background: var(--app-secondary-button-color);
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: 400;
+            border-radius: 8px;
+        }
 
         .deck-info {
             .deck-title {
@@ -169,7 +180,7 @@ function DeckReview() {
     } = useInfiniteQuery(
         getDecksCardsInfinityQuery({
             deckId: deck?.id,
-            limit: 10,
+            limit: 25,
             page: 1,
         }),
     );
@@ -228,7 +239,7 @@ function DeckReview() {
 
     const stats = useMemo(() => {
         if (!deck?.progress) return { total: 0, completed: 0, remind: 0 };
-        const total = deck.progress.cardsCount || 0;
+        const total = deck.cardsCount || 0;
         const remind = deck.progress.cardsToReviewCount + deck.progress.cardsToLearnCount;
         const completed = total - remind;
         return { total, completed, remind };
@@ -258,6 +269,8 @@ function DeckReview() {
             </DropdownMenu>
 
             <div className="deck-header">
+                {deck?.public && <div className="deck-public-mark">Public</div>}
+
                 <div className="deck-info">
                     <div className="deck-title">{deck?.title}</div>
                     <div className="deck-description">{deck?.description}</div>
@@ -286,13 +299,13 @@ function DeckReview() {
                     <div className="left-block">
                         <div className="author-block">
                             <div className="author-image">
-                                {userData.user.photoUrl ? (
-                                    <img src={userData.user.photoUrl} alt="author" />
+                                {deck.author.photoUrl ? (
+                                    <img src={deck.author.photoUrl} alt="author" />
                                 ) : (
-                                    <span>{userData.user.firstName.charAt(0).toUpperCase()}</span>
+                                    <span>{deck.author.firstName.charAt(0).toUpperCase()}</span>
                                 )}
                             </div>
-                            <div className="author-name">{userData.user.firstName}</div>
+                            <div className="author-name">{deck.author.firstName}</div>
                         </div>
                         <div className="last-update-at">
                             Last update: {new Date(deck?.updatedAt).toLocaleDateString("uk")}

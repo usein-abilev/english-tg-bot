@@ -1,11 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import React from "react";
 import styled from "styled-components";
 import { createUserQuery } from "../../../features/api/user";
 import { Avatar } from "@telegram-apps/telegram-ui";
 import Section from "../../../components/Section/Section";
 import SectionEmptyContent from "../../../components/Section/SectionEmptyContent";
-import Button from "../../../components/Button/Button";
+import { ResponsiveContainer, Tooltip, LineChart, CartesianGrid, XAxis, YAxis, Legend, Line } from "recharts";
 
 const ProfileContainer = styled.div`
     padding: var(--app-screen-padding);
@@ -80,6 +79,41 @@ function Profile() {
 
     const fullName = `${user.firstName} ${user.lastName}`.trim();
 
+    const chartData = [
+        {
+            name: "Page A",
+            value: 4000,
+        },
+        {
+            name: "Page B",
+            value: 6000,
+        },
+        {
+            name: "Page C",
+            value: 3000,
+        },
+        {
+            name: "Page d",
+            value: 1000,
+        },
+        {
+            name: "Page d",
+            value: 3000,
+        },
+        {
+            name: "Page d",
+            value: 5000,
+        },
+        {
+            name: "Page d",
+            value: 6000,
+        },
+        {
+            name: "Page d",
+            value: 8000,
+        },
+    ];
+
     return (
         <ProfileContainer>
             <header className="profile-header">
@@ -98,12 +132,32 @@ function Profile() {
                 </div>
             </header>
             <main className="profile-content">
-                <Section>
-                    <SectionEmptyContent>
-                        <div>This content is not available in your country</div>
-                        <div>Please leave your country and try again.</div>
-                    </SectionEmptyContent>
+                <Section style={{ height: "150px" }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                            width={500}
+                            height={300}
+                            data={chartData}
+                            margin={{
+                                top: 24,
+                                right: 20,
+                                left: 20,
+                                bottom: 5,
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="5 5" strokeOpacity={0.4} />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+                        </LineChart>
+                    </ResponsiveContainer>
                 </Section>
+                <SectionEmptyContent>
+                    <div>This content is not available in your country</div>
+                    <div>Please leave your country and try again.</div>
+                </SectionEmptyContent>
             </main>
         </ProfileContainer>
     );

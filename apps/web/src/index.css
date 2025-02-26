@@ -7,12 +7,14 @@
     /* App Background Colors */
     --app-bg-color: #17191E;
     --app-secondary-bg-color: #22262E;
+    --app-tertiary-bg-color: #2A2E36;
     --app-card-bg-color: linear-gradient(92.19deg, #232832 0%, #2A323E 100%);
     --app-deck-bg-color: linear-gradient(95.49deg, #1E232D 0%, #232832 100%);
 
     /* Activity Colors */
     --app-activity-bg-blue: linear-gradient(94.03deg, #1e3c82 0%, #285aa0 100%);
     --app-activity-bg-purple: linear-gradient(94.03deg, #3c1e82 0%, #5a28a0 100%);
+    --app-activity-bg-green: linear-gradient(94.03deg, #1e823c 0%, #28a05a 100%);
 
     --app-accent-blue: #5A8CFF;
     --app-accent-green: #4EC536;
@@ -42,20 +44,22 @@
     /* Overload TGUI Theme */
     --tg-theme-bg-color: var(--app-secondary-bg-color);
     --tg-theme-text-color: var(--app-title-text-color);
-    --tg-theme-hint-color: #aaa;
-    --tg-theme-link-color: #2990ff;
-    --tg-theme-button-color: #2990ff;
+    --tg-theme-hint-color: var(--app-subtitle-text-color);
+    --tg-theme-link-color: var(--app-link-color);
+    --tg-theme-button-color: var(--app-accent-blue);
     --tg-theme-button-text-color: #fff;
     --tg-theme-secondary-bg-color: #1a1a1a;
     --tg-theme-header-bg-color: #1a1a1a;
     --tg-theme-accent-text-color: #007aff;
     --tg-theme-section-header-text-color: var(--app-section-text-color);
+}
 
-    --tgui--font-family: system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Apple Color Emoji", "Helvetica Neue", sans-serif;
+.AppRoot-component {
+    --tgui--font-family: var(--app-font-family);
 
-    --tgui--font_weight--accent1: 700;
-    --tgui--font_weight--accent2: 600;
-    --tgui--font_weight--accent3: 600;
+    --tgui--font_weight--accent1: 600;
+    --tgui--font_weight--accent2: 500;
+    --tgui--font_weight--accent3: 400;
 
     --tgui--large_title--font_size: 34px;
     --tgui--large_title--line_height: 42px;
@@ -86,10 +90,10 @@
     --tgui--border--width: 1px;
     --tgui--base--section--box_shadow: 0 1px 2px 0 rgba(0, 0, 0, .10);
 
-    --tgui--card_bg_color: #242424;
-    --tgui--secondary_hint_color: #78797e;
+    --tgui--card_bg_color: red;
+    --tgui--secondary_hint_color: red;
     --tgui--secondary_fill: rgba(41, 144, 255, .15);
-    --tgui--green: #32e55e;
+    --tgui--green: var(--app-accent-green);
     --tgui--destructive_background: rgba(255, 35, 35, .02);
     --tgui--primary_code_highlight: #2990ff;
     --tgui--secondary_code_highlight: #e937ed;
@@ -109,10 +113,11 @@
     --tgui--caption2--line_height: 13px;
 
     --tgui--bg_color: var(--app-secondary-bg-color);
-    --tgui--text_color: #FFFFFF;
-    --tgui--hint_color: #AAAAAA;
-    --tgui--link_color: #2990FF;
-    --tgui--button_color: #2990FF;
+    --tgui--text_color: var(--app-title-text-color);
+    /* --tgui--hint_color: #AAAAAA; */
+    --tgui--hint_color: var(--app-subtitle-text-color);
+    --tgui--link_color: var(--app-link-color);
+    --tgui--button_color: var(--app-accent-blue);
     --tgui--button_text_color: #FFFFFF;
     --tgui--secondary_bg_color: #0F0F0F;
     --tgui--header_bg_color: #212121;
@@ -126,19 +131,20 @@
     --tgui--divider: rgba(255, 255, 255, .05);
     --tgui--outline: rgba(255, 255, 255, .10);
     --tgui--surface_primary: rgba(23, 23, 23, .95);
-    --tgui--tertiary_bg_color: #2A2A2A;
+    --tgui--tertiary_bg_color: var(--app-tertiary-bg-color);
     --tgui--quartenary_bg_color: #2F2F2F;
-    --tgui--segmented_control_active_bg: #2F2F2F;
+    --tgui--segmented_control_active_bg: #3a404d;
     --tgui--card_bg_color: #242424;
     --tgui--secondary_hint_color: #78797E;
     --tgui--secondary_fill: rgba(41, 144, 255, .15);
-    --tgui--green: #32E55E;
+    --tgui--green: var(--app-accent-green);
     --tgui--destructive_background: rgba(255, 35, 35, .02);
     --tgui--primary_code_highlight: #2990FF;
     --tgui--secondary_code_highlight: #E937ED;
     --tgui--tertiary_code_highlight: #5AE536;
     --tgui--plain_background: rgba(255, 255, 255, .08);
     --tgui--plain_foreground: rgba(255, 255, 255, .95);
+    --tgui--surface_dark: var(--app-tertiary-bg-color);
 }
 
 html, body, #root {

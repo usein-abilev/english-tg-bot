@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { CardSchema } from "../../../features/types/deck.types";
 import Button from "../../../components/Button/Button";
 import { AnimatePresence, motion } from "framer-motion";
-import SVGIcon from "../../../components/icons/SVGIcon";
+import SVGIcon from "../../../components/SVGIcon/SVGIcon";
 import CardFlipper from "../../../components/Card/CardFlipper";
 
 export interface CardPracticeRateProps {

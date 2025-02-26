@@ -7,10 +7,10 @@ import { PaginationQueryDto } from "../../common/dto/pagination.dto";
  * Combined DeckEntity and UserDeckEntity for the sake of simplicity on the client side.
  */
 export interface DeckExtendedDto extends DeckEntity {
+    cardsCount?: number;
     progress?: {
         lastReviewAt?: Date;
         nextReviewAt?: Date;
-        cardsCount: number;
         cardsToLearnCount: number;
         cardsToReviewCount: number;
     };

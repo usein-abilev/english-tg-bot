@@ -13,6 +13,8 @@ import { TgInitDataGuard } from "../../common/guards/tg.guard";
 import { ClientRequest } from "../../common/types/request.types";
 import {
     BatchRateCardQueryDto,
+    FinalizePracticeQueryDto,
+    GetPracticeStatsQueryDto,
     PracticeGetCardsQueryDto,
     PracticeGetDecksQueryDto,
 } from "./practice.dto";
@@ -21,6 +23,24 @@ import {
 @UseGuards(TgInitDataGuard)
 export class PracticeController {
     constructor(private readonly practiceService: PracticeService) {}
+
+    @Get("/stats")
+    async getPracticeStats(
+        @Request() request: ClientRequest,
+        @Query() query: GetPracticeStatsQueryDto,
+    ) {
+        const userId = request.initData.user.id;
+        return this.practiceService.getPracticeStats({ ...query, userId });
+    }
+
+    @Post("/finalize")
+    async finalizePractice(
+        @Request() request: ClientRequest,
+        @Body() body: FinalizePracticeQueryDto,
+    ) {
+        const userId = request.initData.user.id;
+        return this.practiceService.finalizePractice({ ...body, userId });
+    }
 
     @Get("/decks")
     async getDecksToPractice(

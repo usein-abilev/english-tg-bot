@@ -2,11 +2,12 @@ import React, { FC, useMemo } from "react";
 import styled from "styled-components";
 import { DeckSchema } from "../../features/types/deck.types";
 import CircularProgress from "../Feedback/CircularProgress/CircularProgress";
-import { Progress } from "@telegram-apps/telegram-ui";
-import SVGIcon from "../icons/SVGIcon";
+import SVGIcon from "../SVGIcon/SVGIcon";
+import { Avatar } from "@telegram-apps/telegram-ui";
 
 interface DeckBlockProps {
     deck: DeckSchema;
+    showAuthor?: boolean;
     onClick?: (deck: DeckSchema) => void;
 }
 
@@ -26,6 +27,7 @@ const DeckBlockStyled = styled.div`
         display: flex;
         flex-direction: column;
         gap: 6px;
+        user-select: none;
 
         .deck-title {
             font-style: normal;
@@ -42,28 +44,43 @@ const DeckBlockStyled = styled.div`
 
         .deck-footer {
             margin-top: 4px;
+            display: flex;
+            gap: 12px;
 
-            .deck-cards-count {
+            .deck-author {
                 display: flex;
                 align-items: center;
                 gap: 4px;
-                color: var(--app-secondary-text-color);
-                stroke: var(--app-secondary-text-color);
+                font-size: 12px;
+                color: var(--app-subtitle-text-color);
+            }
 
-                .cards-count {
-                    font-size: 13px;
-                    font-weight: 500;
+            .indicators {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .indicator {
+                font-size: 14px;
+                color: var(--app-subtitle-text-color);
+                display: flex;
+                gap: 4px;
+                font-size: 13px;
+                font-weight: 500;
+
+                .indicator-icon {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                &#cards-count {
+                    color: var(--app-secondary-text-color);
                 }
             }
         }
     }
-
-    /* 
-    .deck-progress {
-        margin-top: 4px;
-        background: rgba(41, 144, 255, 0.2);
-        border-radius: 2px;
-    } */
 
     &:hover {
         cursor: pointer;
@@ -74,12 +91,14 @@ const DeckBlockStyled = styled.div`
     }
 `;
 
-const DeckBlock: FC<DeckBlockProps> = ({ deck, onClick }) => {
-    const progressValue = useMemo(() => {
-        if (!deck.progress?.cardsCount) return 0;
-        const learn = deck.progress.cardsToLearnCount + deck.progress.cardsToReviewCount;
-        return (1 - learn / deck.progress.cardsCount) * 100;
-    }, [deck]);
+const DeckBlock: FC<DeckBlockProps> = ({ deck, onClick, showAuthor = false }) => {
+    const remindCount = deck.progress
+        ? deck.progress.cardsToLearnCount + deck.progress.cardsToReviewCount
+        : 0;
+    const progressValue = deck.progress ? (1 - remindCount / (deck.cardsCount || 1)) * 100 : 0;
+
+    const remindIndicatorColor =
+        remindCount > 0 ? "var(--app-accent-yellow)" : "var(--app-secondary-text-color)";
 
     return (
         <DeckBlockStyled className="deck-block" onClick={() => onClick?.(deck)}>
@@ -89,9 +108,31 @@ const DeckBlock: FC<DeckBlockProps> = ({ deck, onClick }) => {
                 {deck.description && <div className="deck-description">{deck.description}</div>}
 
                 <div className="deck-footer">
-                    <div className="deck-cards-count">
-                        <SVGIcon id="cards" />
-                        <span className="cards-count">{deck.progress?.cardsCount ?? "-"}</span>
+                    {showAuthor && deck.author && (
+                        <div className="deck-author">
+                            <Avatar size={20} src={deck.author.photoUrl} />
+                            <span>{deck.author.firstName || deck.author.username}</span>
+                        </div>
+                    )}
+                    <div className="indicators">
+                        <div id="cards-count" className="indicator">
+                            <div className="indicator-icon">
+                                <SVGIcon id="cards" />
+                            </div>
+                            {deck.cardsCount ?? "-"}
+                        </div>
+                        {remindCount > 0 && (
+                            <div
+                                id="remind-count"
+                                className="indicator"
+                                style={{ color: remindIndicatorColor }}
+                            >
+                                <div className="indicator-icon">
+                                    <SVGIcon id="remind-cards" />
+                                </div>
+                                {remindCount}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

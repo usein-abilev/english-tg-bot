@@ -13,19 +13,32 @@ const decksRoute: RouteObject = {
         },
         {
             path: ROUTES.DECKS_REVIEW,
-            element: <DeckReview />,
+            // element: <DeckReview />,
+            lazy: async () => {
+                const { default: DeckReview } = await import("./DeckReview/DeckReview");
+                return { element: <DeckReview /> };
+            },
         },
         {
             path: ROUTES.DECK_CREATE,
-            element: <DeckCreate />,
+            lazy: async () => {
+                const { default: DeckCreate } = await import("./DeckCreate/DeckCreate");
+                return { element: <DeckCreate /> };
+            },
         },
         {
             path: ROUTES.DECK_EDIT,
-            element: <DeckEdit />,
+            lazy: async () => {
+                const { default: DeckEdit } = await import("./DeckEdit/DeckEdit");
+                return { element: <DeckEdit /> };
+            },
         },
         {
             path: ROUTES.DECK_CARD_REVIEW,
-            element: <DeckCardReview />,
+            lazy: async () => {
+                const { default: DeckCardReview } = await import("./DeckCardReview/DeckCardReview");
+                return { element: <DeckCardReview /> };
+            },
         },
     ],
 };

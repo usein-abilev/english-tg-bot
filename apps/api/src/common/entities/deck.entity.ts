@@ -12,6 +12,7 @@ import {
 import { CardEntity } from "./card.entity";
 import { UserEntity } from "./user.entity";
 import { UserDeckEntity } from "./userDeck.entity";
+import { Expose } from "class-transformer";
 
 @Entity({ name: "decks" })
 export class DeckEntity {
@@ -50,4 +51,7 @@ export class DeckEntity {
 
     @UpdateDateColumn()
     updatedAt!: Date;
+
+    @Expose()
+    cardsCount?: number;
 }

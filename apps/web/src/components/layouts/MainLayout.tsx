@@ -3,7 +3,7 @@ import styled from "styled-components";
 import NavigationBar from "../NavigationBar/NavigationBar";
 import { useBackButton } from "../../hooks/useBackButton";
 import { Outlet, useLoaderData } from "react-router-dom";
-import { SVGIconRoot } from "../icons/SVGIcon";
+import { SVGIconRoot } from "../SVGIcon/SVGIcon";
 
 const StyledContainer = styled.div`
     display: flex;

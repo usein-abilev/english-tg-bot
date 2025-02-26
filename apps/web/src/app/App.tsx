@@ -7,12 +7,7 @@ import { createUserQuery } from "../features/api/user";
 import { ROUTES } from "../constants/routes";
 import { MainLayout } from "../components/Layouts";
 import { ErrorRecoveryScreen } from "./screens/Error";
-import Home from "./screens/Home";
-import CardPractice from "./screens/Practice/CardPractice";
 import decksRoute from "./screens/Decks/decksRoute";
-import Profile from "./screens/Profile/Profile";
-import Library from "./screens/Library/Library";
-import Explore from "./screens/Explore/Explore";
 
 const loader = async () => {
     return queryClient.ensureQueryData(createUserQuery());
@@ -24,34 +19,75 @@ const router = createBrowserRouter([
         loader,
         element: <MainLayout />,
         errorElement: <ErrorRecoveryScreen />,
-        children: [{ path: "", element: <Home /> }, decksRoute],
+        children: [
+            {
+                path: "",
+                lazy: async () => {
+                    const { default: Component } = await import("./screens/Home");
+                    return { element: <Component /> };
+                },
+            },
+            decksRoute,
+        ],
     },
     {
         path: ROUTES.PRACTICE,
         loader,
         element: <MainLayout />,
-        children: [{ path: "", element: <CardPractice /> }],
+        children: [
+            {
+                path: "",
+                lazy: async () => {
+                    const { default: Component } = await import("./screens/Practice/CardPractice");
+                    return { element: <Component /> };
+                },
+            },
+        ],
         errorElement: <ErrorRecoveryScreen />,
     },
     {
         path: ROUTES.PROFILE,
         loader,
         element: <MainLayout />,
-        children: [{ path: "", element: <Profile /> }],
+        children: [
+            {
+                path: "",
+                lazy: async () => {
+                    const { default: Component } = await import("./screens/Profile/Profile");
+                    return { element: <Component /> };
+                },
+            },
+        ],
         errorElement: <ErrorRecoveryScreen />,
     },
     {
         path: ROUTES.LIBRARY,
         loader,
         element: <MainLayout />,
-        children: [{ path: "", element: <Library /> }],
+        children: [
+            {
+                path: "",
+                lazy: async () => {
+                    const { default: Component } = await import("./screens/Library/Library");
+                    return { element: <Component /> };
+                },
+            },
+        ],
         errorElement: <ErrorRecoveryScreen />,
     },
     {
         path: ROUTES.EXPLORE,
         loader,
         element: <MainLayout />,
-        children: [{ path: "", element: <Explore /> }],
+        children: [
+            {
+                path: "",
+                lazy: async () => {
+                    const { default: Component } = await import("./screens/Explore/Explore");
+                    return { element: <Component /> };
+                },
+            },
+        ],
         errorElement: <ErrorRecoveryScreen />,
     },
     {
@@ -62,7 +98,7 @@ const router = createBrowserRouter([
 
 function App() {
     return (
-        <AppRoot appearance="dark" platform="ios">
+        <AppRoot appearance="dark" platform="ios" className="AppRoot-component">
             <React.Suspense fallback={<div className="">Loading...</div>}>
                 <QueryClientProvider client={queryClient}>
                     <RouterProvider fallbackElement={<div>LOADING</div>} router={router} />

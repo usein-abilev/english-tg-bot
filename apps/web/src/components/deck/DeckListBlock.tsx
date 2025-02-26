@@ -5,6 +5,7 @@ import DeckBlock from "./DeckBlock";
 
 interface DeckListBlockProps {
     decks: DeckSchema[];
+    showAuthor?: boolean;
     onDeckClick?: (deck: DeckSchema) => void;
 }
 
@@ -14,11 +15,11 @@ const DeckListBlockStyled = styled.div`
     gap: 10px;
 `;
 
-const DeckListBlock: FC<DeckListBlockProps> = ({ decks, onDeckClick }) => {
+const DeckListBlock: FC<DeckListBlockProps> = ({ decks, onDeckClick, showAuthor }) => {
     return (
         <DeckListBlockStyled className="decks-list">
             {decks.map((deck) => (
-                <DeckBlock key={deck.id} deck={deck} onClick={onDeckClick} />
+                <DeckBlock key={deck.id} deck={deck} showAuthor={showAuthor} onClick={onDeckClick} />
             ))}
         </DeckListBlockStyled>
     );

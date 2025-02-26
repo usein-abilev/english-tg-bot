@@ -4,7 +4,7 @@ import {
     Injectable,
     NotFoundException,
 } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeckEntity } from "../../common/entities/deck.entity";
 import {
@@ -33,18 +33,28 @@ export class DecksService {
     ) {}
 
     async get(deckId: number, userId: number): Promise<DeckExtendedDto> {
-        const deck = await this.decksRepository.findOneBy({ id: deckId });
+        const deck = await this.decksRepository
+            .createQueryBuilder("deck")
+            .leftJoinAndSelect("deck.author", "author")
+            .loadRelationCountAndMap("deck.cardsCount", "deck.cards")
+            .where("deck.id = :deckId", { deckId })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where("deck.public = :public", { public: true }).orWhere(
+                        "deck.authorId = :userId",
+                        { userId },
+                    );
+                }),
+            )
+            .getOne();
+
         if (!deck) {
             throw new NotFoundException("Deck not found");
         }
 
         const progressData = await this.userDecksRepository
             .createQueryBuilder("user_deck")
-            .addSelect("COUNT(card.id)", "cards_count")
-            .addSelect(
-                "COUNT(CASE WHEN progress.nextReviewAt <= :now THEN 1 END)",
-                "due_cards_count",
-            )
+            .select("COUNT(CASE WHEN progress.nextReviewAt <= :now THEN 1 END)", "due_cards_count")
             .addSelect(
                 "COUNT(CASE WHEN progress.repetitions IS NULL THEN 1 END)",
                 "new_cards_count",
@@ -66,12 +76,8 @@ export class DecksService {
         return {
             ...deck,
             progress: progressData && {
-                cardsCount: progressData.cards_count,
-                cardsToLearnCount: Math.min(progressData.cards_count, progressData.new_cards_count),
-                cardsToReviewCount: Math.min(
-                    progressData.cards_count,
-                    progressData.due_cards_count,
-                ),
+                cardsToLearnCount: Math.min(deck.cardsCount!, progressData.new_cards_count),
+                cardsToReviewCount: Math.min(deck.cardsCount!, progressData.due_cards_count),
                 lastReviewAt: progressData.user_deck_lastReviewAt,
                 nextReviewAt: progressData.next_review_at,
             },
@@ -81,14 +87,18 @@ export class DecksService {
     /**
      * Find public decks with pagination
      */
-    async find(params: FindDecksQueryDto): Promise<GetElementsResponse<DeckEntity>> {
+    async find(params: FindDecksQueryDto): Promise<GetElementsResponse<DeckExtendedDto>> {
         const { page = 0, limit = 50 } = params;
 
-        const [items, total] = await this.decksRepository.findAndCount({
-            where: { public: true },
-            skip: page * limit,
-            take: limit,
-        });
+        const query = this.decksRepository
+            .createQueryBuilder("deck")
+            .leftJoinAndSelect("deck.author", "author")
+            .loadRelationCountAndMap("deck.cardsCount", "deck.cards")
+            .where("deck.public = :public", { public: true })
+            .skip(page * limit)
+            .take(limit);
+
+        const [items, total] = await query.getManyAndCount();
 
         return {
             items,
@@ -156,7 +166,7 @@ export class DecksService {
                 user: { id: params.userId },
             });
             await queryRunner.commitTransaction();
-            return deck;
+            return { ...deck, cardsCount: 0 };
         } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;

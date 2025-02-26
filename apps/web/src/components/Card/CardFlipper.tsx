@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CardSchema } from "../../features/types/deck.types";
-import SVGIcon from "../icons/SVGIcon";
+import SVGIcon from "../SVGIcon/SVGIcon";
 import styled from "styled-components";
 
 const CardContainer = styled.div`

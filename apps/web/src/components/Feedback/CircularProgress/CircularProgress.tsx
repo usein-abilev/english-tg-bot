@@ -24,6 +24,8 @@ const Container = styled.div`
         font-size: 24px;
         font-weight: 500;
         color: var(--app-text-color);
+
+        user-select: none;
     }
 `;
 

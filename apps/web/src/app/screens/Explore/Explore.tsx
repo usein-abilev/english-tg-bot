@@ -5,12 +5,23 @@ import { DeckListBlock } from "../../../components/Deck";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { findDecksInfinityQuery } from "../../../features/api/decks";
 import { DeckSchema } from "../../../features/types/deck.types";
-import { Pagination } from "@telegram-apps/telegram-ui";
+import { Input } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../constants/routes";
+import TitledPageLayout from "../../../components/Layouts/TitledPageLayout";
+import SVGIcon from "../../../components/SVGIcon/SVGIcon";
 
 const Container = styled.div`
-    padding: var(--app-screen-padding);
+    .search-input {
+        input::placeholder,
+        svg {
+            color: var(--app-secondary-text-color);
+        }
+    }
+
+    .explore-content {
+        margin-top: 12px;
+    }
 `;
 
 interface ExploreProps {}
@@ -37,15 +48,18 @@ function Explore(props: ExploreProps) {
     };
 
     return (
-        <Container>
-            <h1>Public Decks</h1>
-
-            {!!decksPagesResult?.pages?.length ? (
-                <DeckListBlock decks={decks} onDeckClick={handleDeckClick} />
-            ) : (
-                <SectionEmptyContent>No public decks</SectionEmptyContent>
-            )}
-        </Container>
+        <TitledPageLayout title="Explore">
+            <Container>
+                <Input className="search-input" placeholder="Search decks" before={<SVGIcon id="search" />} />
+                <div className="explore-content">
+                    {!!decksPagesResult?.pages?.length ? (
+                        <DeckListBlock showAuthor decks={decks} onDeckClick={handleDeckClick} />
+                    ) : (
+                        <SectionEmptyContent>No public decks</SectionEmptyContent>
+                    )}
+                </div>
+            </Container>
+        </TitledPageLayout>
     );
 }
 

@@ -70,9 +70,17 @@ export default function Home() {
                     onClick: openPractice,
                 },
             ];
+        } else {
+            return [
+                {
+                    type: "promote",
+                    title: "🌟 Exclusive AI Training",
+                    description: "Try our AI-powered tutor for a personalized learning experience!",
+                    buttonText: "Try it out",
+                    onClick: () => console.log("Start"),
+                },
+            ];
         }
-
-        return [];
     }, [userResult, openPractice]);
 
     const handleDeckClick = (deck: DeckSchema) => {

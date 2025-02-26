@@ -6,9 +6,10 @@ const ActivityContainer = styled.div`
     background: var(--app-activity-bg-blue);
     padding: 12px 16px;
     border-radius: 18px;
+    user-select: none;
 
     &[data-type="promote"] {
-        background: var(--app-activity-bg-purple);
+        background: var(--app-activity-bg-green);
     }
 
     .activity-header {

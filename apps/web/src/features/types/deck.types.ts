@@ -10,10 +10,10 @@ export interface DeckSchema {
     public: boolean;
     createdAt: Date;
     updatedAt: Date;
+    cardsCount?: number;
     progress?: {
         lastReviewAt?: Date;
         nextReviewAt?: Date;
-        cardsCount: number;
         cardsToLearnCount: number;
         cardsToReviewCount: number;
     };

@@ -6,6 +6,8 @@ import { CardSchema } from "../types/deck.types";
 import { formatQueryParams } from "../../utils/queryParams.util";
 import { queryClient } from "../reactQuery";
 import { USER_QUERY_KEY } from "./user";
+import { DeckPracticeSessionSchema } from "../types/practice.types";
+import { MakePropertyOptional } from "../../types/makePropertyOptional.type";
 
 export const PRACTICE_QUERY_KEY = "practice";
 
@@ -23,6 +25,46 @@ const rateCards = async (params: RateCardsParams) => {
         method: "POST",
         body: JSON.stringify(params),
         headers: { "content-type": "application/json" },
+    });
+};
+
+export interface FinalizePracticeParams {
+    deckIds: number[];
+}
+
+type DeckPracticeSessionPartial = MakePropertyOptional<DeckPracticeSessionSchema, "createdAt" | "id">;
+export type FinalizePracticeResult = {
+    deckId: number;
+    current: DeckPracticeSessionPartial;
+    improvement: Omit<
+        DeckPracticeSessionPartial,
+        "deck" | "user" | "deckId" | "userId" | "totalCardsCount"
+    > & {
+        learnedCardsPercent: number;
+        averageGradePercent: number;
+        difficultCardsPercent: number;
+    };
+}[];
+
+const finalizePractice = (params: FinalizePracticeParams): Promise<FinalizePracticeResult> => {
+    const url = new URL(`${API_URL}/practice/finalize`);
+    return fetchAPI(url, {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: { "content-type": "application/json" },
+    });
+};
+
+export const useFinalizePracticeMutation = () => {
+    return useMutation({
+        mutationKey: ["finalizePractice"],
+        mutationFn: finalizePractice,
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
+            variables.deckIds.forEach((deckId) => {
+                queryClient.invalidateQueries({ queryKey: [PRACTICE_QUERY_KEY, "cards", deckId] });
+            });
+        },
     });
 };
 
