@@ -64,5 +64,6 @@ const parseTelegramInitData = (data: Record<string, string>): TgInitData => {
         },
         authDate: data.auth_date,
         chatInstance: data.chat_instance,
+        fromBot: data.from_bot === "1",
     };
 };

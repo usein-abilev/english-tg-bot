@@ -18,8 +18,12 @@ export class UsersController {
     @Get("/me")
     @UseGuards(TgInitDataGuard)
     async getUser(@Request() request) {
-        const { user: telegramUser } = request.initData as TgInitData;
-        const user = await this.usersService.getOrCreateFromApp(telegramUser);
+        const { user: telegramUser, fromBot } = request.initData as TgInitData;
+        const user = await this.usersService.getOrCreate(telegramUser, !fromBot);
+        if (fromBot) {
+            return { user };
+        }
+
         const userDecks = await this.practiceService.getDecksToPractice(user.id);
         const practiceCounters = await this.practiceService.getUserPracticeCounters(user.id);
         this.logger.debug(`User ${user.id} requested his data`, user);

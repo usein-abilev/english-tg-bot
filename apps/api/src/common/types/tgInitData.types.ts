@@ -19,4 +19,5 @@ export interface TgInitData {
     user: TgInitDataUser;
     authDate: string;
     chatInstance: string;
+    fromBot: boolean;
 }

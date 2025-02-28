@@ -8,6 +8,7 @@
     "serve": "turbo dev",
     "serve:api": "turbo dev --filter=@eng-bot/api",
     "serve:web": "turbo dev --filter=@eng-bot/web",
+    "serve:bot": "turbo dev --filter=@eng-bot/bot",
     "build": "turbo build",
     "lint": "turbo lint",
     "lint:fix": "turbo lint -- --fix"

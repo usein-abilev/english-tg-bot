@@ -29,6 +29,9 @@ export class UserEntity {
     @Column()
     allowsWriteToPm: boolean;
 
+    @Column()
+    isAppVisited: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 

@@ -1,5 +1,5 @@
 build/
-/apps/api/dist/
+/apps/*/dist/
 node_modules/
 
 # Libretranslate session files

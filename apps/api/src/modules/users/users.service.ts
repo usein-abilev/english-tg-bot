@@ -15,19 +15,29 @@ export class UsersService {
         return this.usersRepository.findOneBy({ id });
     }
 
-    async getOrCreateFromApp(params: TgInitDataUser): Promise<UserEntity> {
+    async getOrCreate(params: TgInitDataUser, fromApp: boolean): Promise<UserEntity> {
         const user = await this.getById(+params.id);
-        if (user) return user;
-        const newUser = this.usersRepository.create({
-            id: +params.id,
-            username: params.username,
-            firstName: params.firstName,
-            lastName: params.lastName,
-            languageCode: params.languageCode,
-            photoUrl: params.photoUrl,
-            isPremium: params.isPremium || false,
-            allowsWriteToPm: params.allowsWriteToPm,
-        });
-        return this.usersRepository.save(newUser);
+
+        if (!user) {
+            const newUser = this.usersRepository.create({
+                id: +params.id,
+                username: params.username,
+                firstName: params.firstName,
+                lastName: params.lastName,
+                languageCode: params.languageCode,
+                photoUrl: params.photoUrl,
+                isPremium: params.isPremium || false,
+                allowsWriteToPm: params.allowsWriteToPm,
+                isAppVisited: false,
+            });
+            return this.usersRepository.save(newUser);
+        }
+
+        if (fromApp && !user.isAppVisited) {
+            user.isAppVisited = true;
+            await this.usersRepository.update(user.id, { isAppVisited: true });
+        }
+
+        return user;
     }
 }
