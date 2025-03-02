@@ -108,11 +108,11 @@ const CardContainer = styled.div`
     }
 `;
 
-interface CardFlipperProps {
+interface CardFlipperProps extends React.HTMLAttributes<HTMLDivElement> {
     card: CardSchema;
 }
 
-function CardFlipper({ card }: CardFlipperProps) {
+function CardFlipper({ card, ...props }: CardFlipperProps) {
     const [flipped, setFlipped] = React.useState(false);
 
     const isDefinitionScrollable = useMemo(() => {
@@ -125,7 +125,7 @@ function CardFlipper({ card }: CardFlipperProps) {
     }, [card]);
 
     return (
-        <CardContainer>
+        <CardContainer {...props}>
             <AnimatePresence mode="wait">
                 <motion.div
                     key={card.id}

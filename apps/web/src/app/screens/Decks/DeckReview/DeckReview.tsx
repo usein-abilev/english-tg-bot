@@ -3,8 +3,7 @@ import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { replaceRouteParams, ROUTES } from "../../../../constants/routes";
-import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { getDecksCardsInfinityQuery } from "../../../../features/api/cards";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import CenterInfoFallback from "../../../../components/CenterInfoFallback/CenterInfoFallback";
 import {
     getDeckByIdQuery,
@@ -19,6 +18,8 @@ import DropdownMenu from "../../../../components/Modals/DropdownMenu/DropdownMen
 import DropdownMenuItem from "../../../../components/Modals/DropdownMenu/DropdownMenuItem";
 import CardFormModal from "../../../../components/Card/CardFormModal";
 import CardList from "./CardList";
+import DeckCardViewModal from "./DeckCardViewModal";
+import ModalOverlay from "../../../../components/Modals/ModalOverlay/ModalOverlay";
 
 const StyledDeckReview = styled.div`
     overflow: hidden;
@@ -209,12 +210,18 @@ function DeckReview() {
     const [deckMenuOpen, setDeckMenuOpen] = React.useState(false);
     const [addCardModal, setAddCardModal] = React.useState(false);
 
+    const [cardsViewOpen, setCardsViewOpen] = useState(false);
+
     const handleAddCard = () => {
         setAddCardModal(true);
     };
 
     const handlePractice = () => {
-        navigate(ROUTES.PRACTICE, { state: { deckId: deck.id } });
+        navigate(replaceRouteParams(ROUTES.PRACTICE, { deckId: deck.id }));
+    };
+
+    const handleWatchCards = () => {
+        setCardsViewOpen(true);
     };
 
     const handleEditDeck = () => {
@@ -256,6 +263,9 @@ function DeckReview() {
 
     return (
         <StyledDeckReview className="deck-layout">
+            <ModalOverlay open={cardsViewOpen} onClose={() => setCardsViewOpen(false)}>
+                <DeckCardViewModal deck={deck} onClose={() => setCardsViewOpen(false)} />
+            </ModalOverlay>
             <CardFormModal deckId={deck?.id} open={addCardModal} setOpen={setAddCardModal} />
             <DropdownMenu
                 buttonRef={deckMenuDetailsRef}
@@ -264,6 +274,7 @@ function DeckReview() {
             >
                 {isAuthor && (
                     <>
+                        <DropdownMenuItem onClick={handlePractice}>Practice this set</DropdownMenuItem>
                         <DropdownMenuItem onClick={handleAddCard}>Add card</DropdownMenuItem>
                         <DropdownMenuItem onClick={handleEditDeck}>Edit</DropdownMenuItem>
                         <DropdownMenuItem
@@ -321,8 +332,8 @@ function DeckReview() {
                         </div>
                     </div>
                     <div className="deck-controls">
-                        <Button className="deck-control" size="m" mode="filled" onClick={handlePractice}>
-                            {!isAuthor ? <SVGIcon id="play-line" /> : "Start"}
+                        <Button className="deck-control" size="m" mode="filled" onClick={handleWatchCards}>
+                            {!isAuthor ? <SVGIcon id="play-line" /> : "Watch"}
                         </Button>
                         {!isAuthor && (
                             <Button
