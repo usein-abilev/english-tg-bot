@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { replaceRouteParams, ROUTES } from "../../../../constants/routes";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import CenterInfoFallback from "../../../../components/CenterInfoFallback/CenterInfoFallback";
 import {
     getDeckByIdQuery,
     useDeleteDeckMutation,
     useFavoriteDeckMutation,
 } from "../../../../features/api/decks";
-import CardBlock from "../../../../components/Card/CardBlock";
 import { createUserQuery } from "../../../../features/api/user";
 import Button from "../../../../components/Button/Button";
 import SVGIcon from "../../../../components/SVGIcon/SVGIcon";
@@ -332,7 +330,13 @@ function DeckReview() {
                         </div>
                     </div>
                     <div className="deck-controls">
-                        <Button className="deck-control" size="m" mode="filled" onClick={handleWatchCards}>
+                        <Button
+                            className="deck-control"
+                            size="m"
+                            mode="filled"
+                            disabled={!deck?.cardsCount}
+                            onClick={handleWatchCards}
+                        >
                             {!isAuthor ? <SVGIcon id="play-line" /> : "Watch"}
                         </Button>
                         {!isAuthor && (
@@ -360,10 +364,7 @@ function DeckReview() {
             </div>
 
             <main className="deck-main">
-                <CardList
-                    deck={deck}
-                    fallback={<CenterInfoFallback text="No cards in this deck. Please add one" />}
-                />
+                <CardList deck={deck} />
             </main>
         </StyledDeckReview>
     );

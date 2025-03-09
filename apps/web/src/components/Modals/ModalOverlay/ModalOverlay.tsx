@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
+import SVGIcon from "../../SVGIcon/SVGIcon";
 
 const ModalOverlayStyled = styled(motion.div)`
     position: fixed;
@@ -26,6 +27,19 @@ const ModalOverlayStyled = styled(motion.div)`
 
         background: var(--app-bg-color);
         padding: 24px;
+
+        .close-button {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            cursor: pointer;
+
+            color: var(--app-subtitle-text-color);
+
+            :active {
+                color: var(--app-secondary-text-color);
+            }
+        }
     }
 `;
 
@@ -50,10 +64,16 @@ function ModalOverlay({ children, open, onClose, ...props }: ModalOverlayProps) 
                         initial={{ x: "100vw" }}
                         animate={{ x: 0 }}
                         exit={{ x: "100vw" }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        transition={{
+                            ease: "anticipate",
+                            duration: 0.3,
+                        }}
                         className="modal-content"
                         onClick={(e) => e.stopPropagation()}
                     >
+                        <div className="close-button" onClick={onClose}>
+                            <SVGIcon id="close" />
+                        </div>
                         {children}
                     </motion.div>
                 </ModalOverlayStyled>

@@ -4,8 +4,9 @@ import { getDecksCardsInfinityQuery } from "../../../../features/api/cards";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { DeckSchema } from "../../../../features/types/deck.types";
 import CardBlock from "../../../../components/Card/CardBlock";
+import ContinuousList from "../../../../components/ContinuousList/ContinuousList";
 
-const CardListContainer = styled.div`
+const CardListContainer = styled(ContinuousList)`
     margin-top: 16px;
     margin-bottom: 16px;
     display: flex;
@@ -15,14 +16,14 @@ const CardListContainer = styled.div`
 
 interface CardListProps {
     deck: DeckSchema;
-    fallback?: React.ReactNode;
 }
 
-function CardList({ deck, fallback }: CardListProps) {
+function CardList({ deck }: CardListProps) {
     const {
         data: cardsPagesResult,
         hasNextPage,
         fetchNextPage,
+        isFetchingNextPage,
     } = useInfiniteQuery(
         getDecksCardsInfinityQuery({
             deckId: deck.id,
@@ -36,32 +37,37 @@ function CardList({ deck, fallback }: CardListProps) {
         return cardsPagesResult.pages.flatMap((page) => page.items);
     }, [cardsPagesResult]);
 
-    const observerRef = useRef(null);
-
-    useEffect(() => {
-        if (!observerRef.current || !hasNextPage) return;
-
-        const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) {
-                fetchNextPage();
-            }
-        });
-
-        observer.observe(observerRef.current);
-
-        return () => observer.disconnect();
-    }, [hasNextPage, fetchNextPage]);
-
     if (!cards.length && !hasNextPage) {
-        return fallback || null;
+        return (
+            <div
+                className="info-block"
+                style={{
+                    fontFamily: "var(--app-font-family)",
+                    fontSize: "16px",
+                    color: "var(--app-secondary-text-color)",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    userSelect: "none",
+                }}
+            >
+                No cards in this deck. Please add one
+            </div>
+        );
     }
 
     return (
-        <CardListContainer className="cards-list">
+        <CardListContainer
+            className="cards-list"
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+        >
             {cards.map((item) => {
                 return <CardBlock key={item.id} card={item} onCardClick={() => {}} />;
             })}
-            <div ref={observerRef} style={{ height: 1 }} />
         </CardListContainer>
     );
 }

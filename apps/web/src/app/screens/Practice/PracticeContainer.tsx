@@ -39,11 +39,11 @@ const PracticeContainer = styled.div`
     }
 
     .vote-caption {
-        margin-top: 32px;
+        margin-top: 12px;
         font-size: 16px;
         line-height: 18px;
         text-align: center;
-        color: var(--tgui--secondary_hint_color);
+        color: var(--app-subtitle-text-color);
     }
 
     .card-controls {

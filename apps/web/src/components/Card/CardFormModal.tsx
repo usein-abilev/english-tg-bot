@@ -7,9 +7,12 @@ import { useCreateCardMutation, useUpdateCardMutation } from "../../features/api
 import { CardSchema } from "../../features/types/deck.types";
 import Button from "../Button/Button";
 import { Controller, useForm } from "react-hook-form";
+import { useFindDefinitionsMutation, useFindSuggestionsMutation } from "../../features/api/dictionary";
+import useDebounce from "../../hooks/useDebounce";
 
 const ModalStyled = styled(Modal)`
     .form-input {
+        position: relative;
         margin-bottom: 12px;
 
         .input-label {
@@ -17,6 +20,36 @@ const ModalStyled = styled(Modal)`
             font-size: 16px;
             font-weight: 500;
             margin-bottom: 6px;
+        }
+
+        .form-input-suggestions {
+            margin-top: 12px;
+
+            background: var(--app-tertiary-bg-color);
+            border-radius: 8px;
+            /* box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); */
+
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+            overflow: hidden;
+
+            .suggestion {
+                padding: 8px 12px;
+                border-bottom: 2px solid var(--app-secondary-bg-color);
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+
+                &:active {
+                    background: var(--app-secondary-bg-color);
+                }
+            }
+
+            .suggestion:last-child {
+                border-bottom: none;
+            }
         }
     }
 `;
@@ -36,6 +69,41 @@ const schema = yup
     })
     .required();
 
+function createFlashcard(response: any) {
+    const wordData = response.definitions[0];
+    const word = wordData.word;
+    const phonetic = wordData.phonetic || "";
+    const translation = response.translation || null;
+
+    const frontSide = `${word}${phonetic ? ` ${phonetic}` : ""}`;
+
+    let backSide = "";
+
+    wordData.meanings.forEach((meaning: any) => {
+        backSide += `${meaning.partOfSpeech}:\n`;
+
+        meaning.definitions.forEach((def: any, index: number) => {
+            backSide += `${index + 1}. ${def.definition || "No definition provided"}\n`;
+            if (def.example) {
+                backSide += `   - Example: ${def.example}\n`;
+            }
+        });
+        backSide += "\n";
+    });
+
+    if (translation) {
+        backSide += `Translations (ru):\n`;
+        backSide += `- ${translation.translatedText}\n`;
+        if (translation.alternatives && translation.alternatives.length > 0) {
+            backSide += `- Alternatives: ${translation.alternatives.join(", ")}\n`;
+        }
+    } else {
+        backSide += "Translations: Not available\n";
+    }
+
+    return { frontSide, backSide };
+}
+
 const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) => {
     const isEditing = !!card;
 
@@ -44,6 +112,8 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
         handleSubmit,
         reset,
         formState: { isDirty, isSubmitting },
+        getValues,
+        setValue,
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
@@ -57,6 +127,61 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
     const updateMutation = useUpdateCardMutation();
     const loading = createMutation.isPending || updateMutation.isPending || isSubmitting;
 
+    const [termSuggestions, setTermSuggestions] = React.useState<string[]>([]);
+
+    const findSuggestionMutation = useFindSuggestionsMutation();
+    const mutateFindSuggestion = useDebounce(() => {
+        const formValues = getValues();
+        const term = formValues.term;
+        if (term.length < 3) return;
+
+        findSuggestionMutation.mutate(
+            {
+                term: formValues.term,
+                limit: 3,
+            },
+            {
+                onSuccess: (data) => {
+                    console.log("suggestion data:", data);
+                    setTermSuggestions(data);
+                },
+                onError: (error) => {
+                    console.error("Find Suggestion Error", error);
+                },
+            },
+        );
+    }, 650);
+
+    const [definitionSuggestions, setDefinitionSuggestions] = React.useState<string[]>([]);
+    const findDefinitions = useFindDefinitionsMutation();
+
+    const handleDefinitionRequest = () => {
+        const formValues = getValues();
+        const term = formValues.term;
+        if (term?.length < 3) return;
+
+        findDefinitions.mutate(
+            {
+                term: formValues.term,
+                targetLanguage: "ru",
+                limit: 3,
+            },
+            {
+                onSuccess: (data) => {
+                    console.log("definition data:", data);
+                    if (data.translation) {
+                        const { translatedText, alternatives } = data.translation;
+                        const definitions = [translatedText, ...alternatives];
+                        setDefinitionSuggestions(definitions);
+                    }
+                },
+                onError: (error) => {
+                    console.error("Find Definitions Error", error);
+                },
+            },
+        );
+    };
+
     const onSubmit = async (data: any) => {
         if (loading) return;
 
@@ -68,7 +193,6 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
 
         try {
             const result = await mutation;
-            console.log("Card changed:", isEditing, result);
             setOpen(false);
         } catch (error) {
             console.log("Error happened during card processing:", error);
@@ -100,10 +224,33 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                                 disabled={loading}
                                 value={field.value}
                                 placeholder="E.g. pick up"
-                                onChange={(event) => field.onChange(event.target.value)}
+                                onChange={(event) => {
+                                    field.onChange(event.target.value);
+                                    if (event.target.value.length < 3) {
+                                        setTermSuggestions([]);
+                                        return;
+                                    }
+                                    mutateFindSuggestion();
+                                }}
                             />
                         )}
                     />
+                    {termSuggestions.length > 0 && (
+                        <div className="form-input-suggestions">
+                            {termSuggestions.map((suggestion) => (
+                                <div
+                                    key={suggestion}
+                                    className="suggestion"
+                                    onClick={() => {
+                                        setValue("term", suggestion);
+                                        setTermSuggestions([]);
+                                    }}
+                                >
+                                    {suggestion}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div className="form-input">
                     <div className="input-label">Back side</div>
@@ -117,9 +264,26 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                                 value={field.value}
                                 placeholder="E.g. to lift something off the ground"
                                 onChange={(event) => field.onChange(event.target.value)}
+                                onFocus={() => handleDefinitionRequest()}
                             />
                         )}
                     />
+                    {definitionSuggestions.length > 0 && (
+                        <div className="form-input-suggestions">
+                            {definitionSuggestions.map((suggestion) => (
+                                <div
+                                    key={suggestion}
+                                    className="suggestion"
+                                    onClick={() => {
+                                        setValue("definition", suggestion);
+                                        setDefinitionSuggestions([]);
+                                    }}
+                                >
+                                    {suggestion}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <Button
                     loading={loading}

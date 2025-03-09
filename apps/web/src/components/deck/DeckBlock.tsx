@@ -12,6 +12,8 @@ interface DeckBlockProps {
 }
 
 const DeckBlockStyled = styled.div`
+    width: 100%;
+    box-sizing: border-box;
     padding: 12px 16px;
     font-family: var(--app-font-family);
     color: var(--tgui--text_color);

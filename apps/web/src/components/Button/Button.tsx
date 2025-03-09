@@ -10,6 +10,10 @@ const ButtonStyled = styled(TelegramButton)`
         align-items: center;
         justify-content: center;
     }
+
+    &[disabled] {
+        pointer-events: none;
+    }
 `;
 
 interface CustomButtonProps extends ButtonProps {

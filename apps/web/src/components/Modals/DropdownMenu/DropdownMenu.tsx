@@ -84,12 +84,10 @@ const DropdownMenu: FC<DropdownMenuProps> = ({ buttonRef, isOpen, onClose, child
         };
 
         document.addEventListener("mouseup", handleClickOutside);
-        document.addEventListener("touchend", handleClickOutside);
         document.addEventListener("scroll", handleScroll, { passive: true });
 
         return () => {
             document.removeEventListener("mouseup", handleClickOutside);
-            document.removeEventListener("touchend", handleClickOutside);
             document.removeEventListener("scroll", handleScroll);
         };
     }, [isOpen, onClose, buttonRef]);

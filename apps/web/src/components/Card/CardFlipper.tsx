@@ -69,6 +69,7 @@ const CardContainer = styled.div`
             position: absolute;
             right: 16px;
             top: 12px;
+            z-index: 101;
 
             display: flex;
             justify-content: flex-end;
@@ -86,9 +87,10 @@ const CardContainer = styled.div`
         }
 
         .definition-content {
+            z-index: 100;
             position: absolute;
             top: 0;
-            padding-top: 12px;
+            padding: 24px;
             box-sizing: border-box;
 
             height: 100%;

@@ -70,17 +70,16 @@ function Library(props: LibraryProps) {
                 </div>
 
                 <div className="tab-content">
-                    {userData?.decks.length === 0 && (
-                        <SectionEmptyContent style={{ marginTop: "12px" }}>
-                            <p>Library is empty</p>
-                            <p>Please create a deck or add a deck from the explore section</p>
-                        </SectionEmptyContent>
-                    )}
                     {selectedTab === "my" && (
                         <DeckListBlock
                             decks={userDeckTabs.my}
                             onDeckClick={onDeckClick}
-                            fallback={<SectionEmptyContent>No decks created</SectionEmptyContent>}
+                            fallback={
+                                <SectionEmptyContent style={{ marginTop: "12px" }}>
+                                    <p>Library is empty</p>
+                                    <p>Please create a deck or add a deck from the explore section</p>
+                                </SectionEmptyContent>
+                            }
                         />
                     )}
                     {selectedTab === "favorite" && (
@@ -88,7 +87,12 @@ function Library(props: LibraryProps) {
                             decks={userDeckTabs.favorite}
                             showAuthor
                             onDeckClick={onDeckClick}
-                            fallback={<SectionEmptyContent>No decks added</SectionEmptyContent>}
+                            fallback={
+                                <SectionEmptyContent style={{ marginTop: "12px" }}>
+                                    <p>Library is empty</p>
+                                    <p>Please create a deck or add a deck from the explore section</p>
+                                </SectionEmptyContent>
+                            }
                         />
                     )}
                 </div>

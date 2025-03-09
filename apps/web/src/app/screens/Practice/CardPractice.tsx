@@ -17,12 +17,13 @@ const CardPractice: FC<CardPracticeProps> = () => {
     const location = useLocation();
     const state = (location.state as { deckId?: number }) || {};
 
-    const [practiceSessionState, setPracticeSessionState] = useState({
+    const practiceSessionStateRef = useRef({
         isDirty: false,
         isSessionEnded: false,
     });
 
     useBlocker(({ currentLocation, nextLocation }) => {
+        const { current: practiceSessionState } = practiceSessionStateRef;
         if (!practiceSessionState.isDirty || practiceSessionState.isSessionEnded) {
             return false;
         }
@@ -48,6 +49,7 @@ const CardPractice: FC<CardPracticeProps> = () => {
     const rateCardBatchMutation = useRateCardBatchMutation();
 
     const onPracticeEnd = async () => {
+        console.log("On practice end", practiceSessionStateRef);
         queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
 
         if (affectedDeckIds.current.length > 0) {
@@ -70,9 +72,9 @@ const CardPractice: FC<CardPracticeProps> = () => {
             { cards: ratings },
             {
                 onSuccess: async (rates) => {
-                    console.log("CardPractice card rated:", rates, practiceSessionState);
+                    console.log("CardPractice card rated:", rates, practiceSessionStateRef);
 
-                    if (practiceSessionState.isSessionEnded) {
+                    if (practiceSessionStateRef.current.isSessionEnded) {
                         // Practice session has ended
                         await onPracticeEnd();
                     }
@@ -87,12 +89,12 @@ const CardPractice: FC<CardPracticeProps> = () => {
             return;
         }
 
-        if (practiceSessionState.isSessionEnded) {
+        if (practiceSessionStateRef.current.isSessionEnded) {
             console.error("[CardPractice]: Session has ended.");
             return;
         }
 
-        setPracticeSessionState((prev) => ({ ...prev, isDirty: true }));
+        practiceSessionStateRef.current.isDirty = true;
 
         if (!affectedDeckIds.current.includes(card.deckId)) {
             affectedDeckIds.current.push(card.deckId);
@@ -110,7 +112,7 @@ const CardPractice: FC<CardPracticeProps> = () => {
 
         if (cardIndex >= total - 1) {
             console.log("[CardPractice]: Flushing ratings");
-            setPracticeSessionState((prev) => ({ ...prev, isSessionEnded: true }));
+            practiceSessionStateRef.current.isSessionEnded = true;
             deferredRate.addRate(card.id, grade);
             deferredRate.flush(true);
         } else {

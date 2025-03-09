@@ -72,19 +72,23 @@ export const getDeckByIdQuery = (id: number, initialData?: DeckSchema) => {
 export interface FindDecksParams {
     limit: number;
     page: number;
+    query?: string;
 }
 
 const findDecks = async (params: FindDecksParams): Promise<GetElementsResponse<DeckSchema>> => {
     const url = new URL(`${API_URL}/decks`);
     url.searchParams.append("limit", params.limit.toString());
     url.searchParams.append("page", params.page.toString());
+    if (params.query) {
+        url.searchParams.append("query", params.query);
+    }
     const response = await fetchAPI(url);
     return response;
 };
 
 export const findDecksInfinityQuery = (params: FindDecksParams) => {
     return infiniteQueryOptions({
-        queryKey: [DECKS_QUERY_KEY],
+        queryKey: [DECKS_QUERY_KEY, JSON.stringify(params)],
         queryFn: ({ pageParam }) => {
             return findDecks({ ...params, page: pageParam });
         },

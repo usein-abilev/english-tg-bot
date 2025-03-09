@@ -36,13 +36,6 @@ const ModalOverlayContent = styled.div`
             }
         }
 
-        .close-button {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            cursor: pointer;
-        }
-
         margin-bottom: 24px;
     }
 
@@ -80,14 +73,29 @@ function DeckCardViewModal({ deck, onClose }: DeckCardViewModalProps) {
                         <div className="title">{deck.title}</div>
                         <div className="progress">
                             <div className="progress-description">
-                                {cardIndex + 1}/{total}
+                                {Math.min(total, cardIndex + 1)}/{total}
                             </div>
                         </div>
-                        <div className="close-button" onClick={onClose}>
-                            <SVGIcon id="close" />
-                        </div>
                     </header>
-                    <CardFlipper card={card} className="card-flipper" />
+                    {card ? (
+                        <CardFlipper card={card} className="card-flipper" />
+                    ) : (
+                        <div
+                            className="info-block"
+                            style={{
+                                fontFamily: "var(--app-font-family)",
+                                fontSize: "16px",
+                                color: "var(--app-secondary-text-color)",
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                        >
+                            <div className="info-block-title">No cards to review</div>
+                        </div>
+                    )}
                     <div className="card-controls">
                         <Button size="m" style={{ width: "100%" }} onClick={handleNextCard}>
                             {isLast ? "Close" : "Next card"}
