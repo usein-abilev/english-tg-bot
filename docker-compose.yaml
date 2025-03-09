@@ -14,16 +14,20 @@ services:
     ports:
       - "5432:5432"
 
-  # libretranslate:
-  #   container_name: libretranslate
-  #   image: libretranslate/libretranslate:v1.6.1
-  #   ports:
-  #     - "5000:5000"
-  #   restart: unless-stopped
-  #   # by default, no python packages are installed
-  #   # if it your first time running, you need to install the required packages
-  #   # command: pip install -e . && python ./main.py
-  #   environment:
-  #     - LT_UPDATE_MODELS=1
-  #     - LT_DEBUG=1
-  #     - LT_LOAD_ONLY=ru,en
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - LT_DEBUG=false
+      - LT_LOAD_ONLY=de,en,ru
+    volumes:
+      - libretranslate-data:/home/libretranslate/.local
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+volumes:
+  libretranslate-data:
