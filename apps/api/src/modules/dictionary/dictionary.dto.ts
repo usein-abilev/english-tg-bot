@@ -1,8 +1,26 @@
-import { IsString } from "class-validator";
+import { IsIn, IsString, Max } from "class-validator";
+import { IsStringNumber } from "../../common/decorators/validate.decorators";
 
-export class DictionaryRevealDto {
+export class DictionaryFindSuggestionsDto {
     @IsString()
     term: string;
+
+    @IsStringNumber()
+    @Max(5)
+    limit: number;
+}
+
+export class DictionaryFindDefinitionsDto {
+    @IsString()
+    term: string;
+
+    @IsStringNumber()
+    @Max(5)
+    limit: number;
+
+    @IsString()
+    @IsIn(["ru", "en"])
+    targetLanguage: string;
 }
 
 export interface DictionaryResponseItemDto {

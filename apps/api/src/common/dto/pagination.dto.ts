@@ -1,12 +1,9 @@
-import { Transform } from "class-transformer";
-import { IsNumber } from "class-validator";
+import { IsStringNumber } from "../decorators/validate.decorators";
 
 export class PaginationQueryDto {
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
+    @IsStringNumber()
     page: number;
 
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
+    @IsStringNumber()
     limit: number;
 }

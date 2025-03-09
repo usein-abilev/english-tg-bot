@@ -34,8 +34,16 @@ export class UsersService {
         }
 
         if (fromApp && !user.isAppVisited) {
+            // Since the user picture is available only in app
+            // we need to update the user entity after the first visit
             user.isAppVisited = true;
-            await this.usersRepository.update(user.id, { isAppVisited: true });
+            user.photoUrl = params.photoUrl;
+            user.allowsWriteToPm = params.allowsWriteToPm;
+            await this.usersRepository.update(user.id, {
+                isAppVisited: true,
+                photoUrl: params.photoUrl,
+                allowsWriteToPm: params.allowsWriteToPm,
+            });
         }
 
         return user;

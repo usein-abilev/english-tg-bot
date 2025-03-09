@@ -46,7 +46,11 @@ export class UpdateDeckQueryDto {
     public?: boolean;
 }
 
-export class FindDecksQueryDto extends PaginationQueryDto {}
+export class FindDecksQueryDto extends PaginationQueryDto {
+    @IsString()
+    @IsOptional()
+    query?: string;
+}
 
 export class UpdateDeckDto extends UpdateDeckQueryDto {
     userId: number;

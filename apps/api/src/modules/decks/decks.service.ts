@@ -99,6 +99,20 @@ export class DecksService {
             .skip(page * limit)
             .take(limit);
 
+        if (params.query) {
+            query.andWhere(
+                new Brackets((qb) => {
+                    qb.where("deck.title ILIKE :query", { query: params.query }).orWhere(
+                        "deck.description ILIKE :query",
+                        { query: params.query },
+                    );
+                }),
+                {
+                    query: `%${params.query}%`,
+                },
+            );
+        }
+
         const [items, total] = await query.getManyAndCount();
 
         return {
