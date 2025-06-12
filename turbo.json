@@ -9,6 +9,18 @@
     },
     "dev": {
       "cache": false
+    },
+    "migration:generate": {
+      "dependsOn": ["^apps/api:migration:generate"]
+    },
+    "migration:create": {
+      "dependsOn": ["^apps/api:migration:create"]
+    },
+    "migration:run": {
+      "dependsOn": ["^apps/api:migration:run"]
+    },
+    "migration:revert": {
+      "dependsOn": ["^apps/api:migration:revert"]
     }
   }
 }
