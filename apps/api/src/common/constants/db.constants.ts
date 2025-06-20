@@ -1,0 +1,1 @@
+export const DB_DUPLICATE_ERROR_CODE = "23505";

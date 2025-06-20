@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "allowJs": false,
+        "esModuleInterop": false,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "types": [
+            "vite/client",
+            "@types/telegram-web-app"
+        ],
+        "lib": [
+            "es2021",
+            "dom"
+        ]
+    }
+}
