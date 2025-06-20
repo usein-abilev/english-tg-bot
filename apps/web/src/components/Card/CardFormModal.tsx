@@ -69,41 +69,6 @@ const schema = yup
     })
     .required();
 
-function createFlashcard(response: any) {
-    const wordData = response.definitions[0];
-    const word = wordData.word;
-    const phonetic = wordData.phonetic || "";
-    const translation = response.translation || null;
-
-    const frontSide = `${word}${phonetic ? ` ${phonetic}` : ""}`;
-
-    let backSide = "";
-
-    wordData.meanings.forEach((meaning: any) => {
-        backSide += `${meaning.partOfSpeech}:\n`;
-
-        meaning.definitions.forEach((def: any, index: number) => {
-            backSide += `${index + 1}. ${def.definition || "No definition provided"}\n`;
-            if (def.example) {
-                backSide += `   - Example: ${def.example}\n`;
-            }
-        });
-        backSide += "\n";
-    });
-
-    if (translation) {
-        backSide += `Translations (ru):\n`;
-        backSide += `- ${translation.translatedText}\n`;
-        if (translation.alternatives && translation.alternatives.length > 0) {
-            backSide += `- Alternatives: ${translation.alternatives.join(", ")}\n`;
-        }
-    } else {
-        backSide += "Translations: Not available\n";
-    }
-
-    return { frontSide, backSide };
-}
-
 const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) => {
     const isEditing = !!card;
 
@@ -204,6 +169,36 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
             reset();
         }
     }, [open, card, reset]);
+
+    useEffect(() => {
+        if (!open) return;
+
+        Telegram.WebApp.MainButton.show();
+        Telegram.WebApp.MainButton.setText(isEditing ? "Save card" : "Add card");
+
+        const onMainButtonClick = () => {
+            console.log("Main button clicked");
+        };
+
+        Telegram.WebApp.MainButton.onClick(onMainButtonClick);
+
+        if (!isDirty) {
+            Telegram.WebApp.MainButton.enable();
+        } else {
+            Telegram.WebApp.MainButton.disable();
+        }
+
+        if (loading) {
+            Telegram.WebApp.MainButton.showProgress();
+        } else {
+            Telegram.WebApp.MainButton.hideProgress();
+        }
+
+        return () => {
+            Telegram.WebApp.MainButton.hide();
+            Telegram.WebApp.MainButton.offClick(onMainButtonClick);
+        };
+    }, [open, isDirty, loading, isEditing]);
 
     return (
         <ModalStyled
