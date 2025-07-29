@@ -132,7 +132,7 @@ function Profile() {
                 </div>
             </header>
             <main className="profile-content">
-                <Section style={{ height: "150px" }}>
+                {/* <Section style={{ height: "150px" }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             width={500}
@@ -153,7 +153,7 @@ function Profile() {
                             <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>
-                </Section>
+                </Section> */}
                 <SectionEmptyContent>
                     <div>This content is not available in your country</div>
                     <div>Please leave your country and try again.</div>

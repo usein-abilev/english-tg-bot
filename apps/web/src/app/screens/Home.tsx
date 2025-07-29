@@ -71,15 +71,16 @@ export default function Home() {
                 },
             ];
         } else {
-            return [
-                {
-                    type: "promote",
-                    title: "🌟 Exclusive AI Training",
-                    description: "Try our AI-powered tutor for a personalized learning experience!",
-                    buttonText: "Try it out",
-                    onClick: () => console.log("Start"),
-                },
-            ];
+            return [];
+            // return [
+            //     {
+            //         type: "promote",
+            //         title: "🌟 Exclusive AI Training",
+            //         description: "Try our AI-powered tutor for a personalized learning experience!",
+            //         buttonText: "Try it out",
+            //         onClick: () => console.log("Start"),
+            //     },
+            // ];
         }
     }, [userResult, openPractice]);
 
@@ -129,14 +130,16 @@ export default function Home() {
                     <SectionEmptyContent>No decks available</SectionEmptyContent>
                 )}
             </Section>
+            {/*
             <Section>
-                <SectionHeader title="For you" onViewAllClick={() => navigate(ROUTES.EXPLORE)} />
-                <SectionEmptyContent>Not available yet</SectionEmptyContent>
+            <SectionHeader title="For you" onViewAllClick={() => navigate(ROUTES.EXPLORE)} />
+            <SectionEmptyContent>Not available yet</SectionEmptyContent>
             </Section>
             <Section>
-                <SectionHeader title="Recent activity" onViewAllClick={() => {}} />
-                <SectionEmptyContent>Not available yet</SectionEmptyContent>
+            <SectionHeader title="Recent activity" onViewAllClick={() => {}} />
+            <SectionEmptyContent>Not available yet</SectionEmptyContent>
             </Section>
+            */}
         </ListStyled>
     );
 }

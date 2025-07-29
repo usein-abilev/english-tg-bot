@@ -215,7 +215,7 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                         control={control}
                         disabled={loading}
                         render={({ field }) => (
-                            <Input
+                            <Textarea
                                 disabled={loading}
                                 value={field.value}
                                 placeholder="E.g. pick up"

@@ -148,7 +148,7 @@ function CardFlipper({ card, ...props }: CardFlipperProps) {
                             {card.description && <div className="center-text">{card.description}</div>}
                         </div>
                         <div className="card-back">
-                            <div className="definition-header">
+                            {/* <div className="definition-header">
                                 <div
                                     className="header-icon"
                                     onClick={(event) => {
@@ -159,7 +159,7 @@ function CardFlipper({ card, ...props }: CardFlipperProps) {
                                 >
                                     <SVGIcon id="translate" />
                                 </div>
-                            </div>
+                            </div> */}
                             <div
                                 className={`definition-content ${isDefinitionScrollable ? "scrollable" : ""}`}
                             >
