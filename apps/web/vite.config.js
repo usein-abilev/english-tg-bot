@@ -13,6 +13,15 @@ export default defineConfig(({ mode }) => {
         envDir: "../../",
         build: {
             target: "esnext",
+            outDir: "dist",
+            assetsDir: "assets",
+            sourcemap: false,
+            minify: "esbuild",
+            rollupOptions: {
+                output: {
+                    manualChunks: undefined,
+                },
+            },
         },
         server: {
             port: 3000,
