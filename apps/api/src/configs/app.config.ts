@@ -1,4 +1,5 @@
 const appConfig = {
+    webURL: process.env.WEB_APP_URL as string,
     telegram: {
         token: process.env.TG_BOT_TOKEN as string,
         username: process.env.TG_BOT_USERNAME as string,

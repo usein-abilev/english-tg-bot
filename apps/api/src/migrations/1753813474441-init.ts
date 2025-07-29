@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1741523906840 implements MigrationInterface {
-    name = "Init1741523906840";
+export class Init1753813474441 implements MigrationInterface {
+    name = "Init1753813474441";
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            `CREATE TABLE "users" ("id" bigint NOT NULL, "username" character varying NOT NULL DEFAULT '', "firstName" character varying NOT NULL, "lastName" character varying NOT NULL DEFAULT '', "languageCode" character varying NOT NULL DEFAULT 'en', "photoUrl" character varying NOT NULL DEFAULT '', "isPremium" boolean NOT NULL, "allowsWriteToPm" boolean NOT NULL, "isAppVisited" boolean NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
+            `CREATE TABLE "users" ("id" bigint NOT NULL, "username" character varying NOT NULL DEFAULT '', "firstName" character varying NOT NULL, "lastName" character varying NOT NULL DEFAULT '', "languageCode" character varying NOT NULL DEFAULT 'en', "photoUrl" character varying NOT NULL DEFAULT '', "isPremium" boolean NOT NULL, "allowsWriteToPm" boolean NOT NULL, "isAppVisited" boolean NOT NULL, "lastNotificationAt" TIMESTAMP, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
         );
         await queryRunner.query(
             `CREATE UNIQUE INDEX "IDX_a3ffb1c0c8416b9fc6f907b743" ON "users" ("id") `,
@@ -17,14 +17,7 @@ export class Init1741523906840 implements MigrationInterface {
             `CREATE INDEX "IDX_5372672fbfd1677205e0ce3ece" ON "users" ("firstName") `,
         );
         await queryRunner.query(
-            `CREATE TABLE "words" (
-                "word" character varying NOT NULL, 
-                "lang" character varying NOT NULL, 
-                "pos" character varying, "definitions" text array, 
-                "examples" text array, 
-
-                CONSTRAINT "PK_97f4077909068d6e45a83289755" PRIMARY KEY ("word", "lang"))
-            `,
+            `CREATE INDEX "IDX_6720083515c275a8aae74a957a" ON "users" ("lastNotificationAt") `,
         );
         await queryRunner.query(
             `CREATE TABLE "cards" ("id" SERIAL NOT NULL, "term" character varying NOT NULL, "definition" character varying NOT NULL, "description" character varying NOT NULL DEFAULT '', "meta" jsonb, "deckId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_5f3269634705fdff4a9935860fc" PRIMARY KEY ("id"))`,
@@ -167,7 +160,7 @@ export class Init1741523906840 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "public"."IDX_8f9593fe3ff0d064de68fe0837"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_c3aaf94db6bc654c2fc2d794d8"`);
         await queryRunner.query(`DROP TABLE "cards"`);
-        await queryRunner.query(`DROP TABLE "words"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_6720083515c275a8aae74a957a"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_5372672fbfd1677205e0ce3ece"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_fe0bb3f6520ee0469504521e71"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_a3ffb1c0c8416b9fc6f907b743"`);

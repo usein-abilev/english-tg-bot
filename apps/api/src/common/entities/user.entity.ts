@@ -32,6 +32,10 @@ export class UserEntity {
     @Column()
     isAppVisited: boolean;
 
+    @Column({ type: "timestamp", default: null, nullable: true })
+    @Index()
+    lastNotificationAt: Date | null;
+
     @CreateDateColumn()
     createdAt: Date;
 
