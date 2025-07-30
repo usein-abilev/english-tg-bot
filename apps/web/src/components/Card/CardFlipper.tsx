@@ -130,9 +130,9 @@ function CardFlipper({ card, clickable = true, parentFlipped = false, ...props }
     const [flipped, setFlipped] = React.useState(false);
 
     const isDefinitionScrollable = useMemo(() => {
-        if (!card.definition) return false;
-        return card.definition.split("\n").length > 3 || card.definition.length > 200;
-    }, [card.definition]);
+        if (!card.back) return false;
+        return card.back.split("\n").length > 3 || card.back.length > 200;
+    }, [card.back]);
 
     useEffect(() => {
         setFlipped(false);
@@ -162,8 +162,7 @@ function CardFlipper({ card, clickable = true, parentFlipped = false, ...props }
                 >
                     <div className="card-inner">
                         <div className="card-front">
-                            <div className="card-term center-text">{card.term}</div>
-                            {card.description && <div className="center-text">{card.description}</div>}
+                            <div className="card-term center-text">{card.front}</div>
                         </div>
                         <div className="card-back">
                             {/* <div className="definition-header">
@@ -181,7 +180,7 @@ function CardFlipper({ card, clickable = true, parentFlipped = false, ...props }
                             <div
                                 className={`definition-content ${isDefinitionScrollable ? "scrollable" : ""}`}
                             >
-                                {card.definition}
+                                {card.back}
                             </div>
                         </div>
                     </div>

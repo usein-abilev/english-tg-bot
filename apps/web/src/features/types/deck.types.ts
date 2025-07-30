@@ -23,9 +23,8 @@ export interface CardSchema {
     id: number;
     deck?: DeckSchema;
     deckId: number;
-    term: string;
-    definition: string;
-    description: string;
+    front: string;
+    back: string;
     createdAt: Date;
     updatedAt: Date;
 }

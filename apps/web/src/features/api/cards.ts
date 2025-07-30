@@ -11,9 +11,8 @@ export const CARDS_QUERY_KEY = "cards";
 
 export interface CreateCardParams {
     deckId: number;
-    term: string;
-    definition: string;
-    description?: string;
+    front: string;
+    back: string;
 }
 
 const createCard = async (params: CreateCardParams) => {
@@ -27,9 +26,8 @@ const createCard = async (params: CreateCardParams) => {
 export interface UpdateCardParams {
     id: number;
     deckId: number;
-    term?: string;
-    definition?: string;
-    description?: string;
+    front?: string;
+    back?: string;
 }
 
 const updateCard = async ({ id, deckId, ...params }: UpdateCardParams) => {

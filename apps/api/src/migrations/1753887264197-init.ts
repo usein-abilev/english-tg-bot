@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1753813474441 implements MigrationInterface {
-    name = "Init1753813474441";
+export class Init1753887264197 implements MigrationInterface {
+    name = "Init1753887264197";
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
@@ -20,13 +20,13 @@ export class Init1753813474441 implements MigrationInterface {
             `CREATE INDEX "IDX_6720083515c275a8aae74a957a" ON "users" ("lastNotificationAt") `,
         );
         await queryRunner.query(
-            `CREATE TABLE "cards" ("id" SERIAL NOT NULL, "term" character varying NOT NULL, "definition" character varying NOT NULL, "description" character varying NOT NULL DEFAULT '', "meta" jsonb, "deckId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_5f3269634705fdff4a9935860fc" PRIMARY KEY ("id"))`,
+            `CREATE TABLE "cards" ("id" SERIAL NOT NULL, "front" character varying NOT NULL, "back" character varying NOT NULL, "meta" jsonb, "deckId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_5f3269634705fdff4a9935860fc" PRIMARY KEY ("id"))`,
         );
         await queryRunner.query(
-            `CREATE INDEX "IDX_c3aaf94db6bc654c2fc2d794d8" ON "cards" ("term") `,
+            `CREATE INDEX "IDX_6eab2517a76376e72c20752fd9" ON "cards" ("front") `,
         );
         await queryRunner.query(
-            `CREATE INDEX "IDX_8f9593fe3ff0d064de68fe0837" ON "cards" ("definition") `,
+            `CREATE INDEX "IDX_78b8d65f3262a068273eb3f935" ON "cards" ("back") `,
         );
         await queryRunner.query(
             `CREATE TABLE "decks" ("id" SERIAL NOT NULL, "title" character varying NOT NULL, "description" character varying NOT NULL, "public" boolean NOT NULL DEFAULT false, "authorId" bigint NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_981894e3f8dbe5049ac59cb1af1" PRIMARY KEY ("id"))`,
@@ -42,24 +42,6 @@ export class Init1753813474441 implements MigrationInterface {
         );
         await queryRunner.query(
             `CREATE UNIQUE INDEX "IDX_ec09055ae4908ae130d9dfaea1" ON "user_deck" ("userId", "deckId") `,
-        );
-        await queryRunner.query(
-            `CREATE TABLE "user_card_progress" ("id" SERIAL NOT NULL, "easinessFactor" real NOT NULL DEFAULT '1.3', "repetitions" integer NOT NULL DEFAULT '0', "interval" bigint NOT NULL DEFAULT '0', "nextReviewAt" TIMESTAMP NOT NULL, "lastGrade" integer, "streakCount" integer NOT NULL DEFAULT '0', "userId" bigint NOT NULL, "cardId" integer NOT NULL, "deckId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_6c643d3a44beb535d53f050c764" PRIMARY KEY ("id"))`,
-        );
-        await queryRunner.query(
-            `CREATE INDEX "IDX_f24fc1af2a3cc5f2d44efadcc7" ON "user_card_progress" ("easinessFactor") `,
-        );
-        await queryRunner.query(
-            `CREATE INDEX "IDX_9841a07f89e98e43d98e2fa223" ON "user_card_progress" ("repetitions") `,
-        );
-        await queryRunner.query(
-            `CREATE INDEX "IDX_87f2df506d5d2c05b06a7e929c" ON "user_card_progress" ("interval") `,
-        );
-        await queryRunner.query(
-            `CREATE INDEX "IDX_598bbf0e117c25d13c2b5b1bb0" ON "user_card_progress" ("nextReviewAt") `,
-        );
-        await queryRunner.query(
-            `CREATE UNIQUE INDEX "IDX_d6bb5f2256cfd77cc82246114c" ON "user_card_progress" ("userId", "cardId") `,
         );
         await queryRunner.query(
             `CREATE TABLE "deck_practice_session" ("id" SERIAL NOT NULL, "learnedCardsCount" integer NOT NULL, "difficultCardsCount" integer NOT NULL, "averageGrade" real NOT NULL, "averageEasinessFactor" real NOT NULL, "averageInterval" real NOT NULL, "totalCardsCount" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "deckId" integer NOT NULL, "userId" bigint NOT NULL, CONSTRAINT "PK_327b9707aa2ee91de595b27f1b0" PRIMARY KEY ("id"))`,
@@ -83,6 +65,24 @@ export class Init1753813474441 implements MigrationInterface {
             `CREATE INDEX "IDX_2890f89b638917f91155eeae74" ON "deck_practice_session" ("totalCardsCount") `,
         );
         await queryRunner.query(
+            `CREATE TABLE "user_card_progress" ("id" SERIAL NOT NULL, "easinessFactor" real NOT NULL DEFAULT '1.3', "repetitions" integer NOT NULL DEFAULT '0', "interval" bigint NOT NULL DEFAULT '0', "nextReviewAt" TIMESTAMP NOT NULL, "lastGrade" integer, "streakCount" integer NOT NULL DEFAULT '0', "userId" bigint NOT NULL, "cardId" integer NOT NULL, "deckId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_6c643d3a44beb535d53f050c764" PRIMARY KEY ("id"))`,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_f24fc1af2a3cc5f2d44efadcc7" ON "user_card_progress" ("easinessFactor") `,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_9841a07f89e98e43d98e2fa223" ON "user_card_progress" ("repetitions") `,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_87f2df506d5d2c05b06a7e929c" ON "user_card_progress" ("interval") `,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_598bbf0e117c25d13c2b5b1bb0" ON "user_card_progress" ("nextReviewAt") `,
+        );
+        await queryRunner.query(
+            `CREATE UNIQUE INDEX "IDX_d6bb5f2256cfd77cc82246114c" ON "user_card_progress" ("userId", "cardId") `,
+        );
+        await queryRunner.query(
             `ALTER TABLE "cards" ADD CONSTRAINT "FK_e74ee86acf2e667e38582f0a45c" FOREIGN KEY ("deckId") REFERENCES "decks"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
         );
         await queryRunner.query(
@@ -95,6 +95,12 @@ export class Init1753813474441 implements MigrationInterface {
             `ALTER TABLE "user_deck" ADD CONSTRAINT "FK_c4643845afed1399bbd77eec189" FOREIGN KEY ("deckId") REFERENCES "decks"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
         );
         await queryRunner.query(
+            `ALTER TABLE "deck_practice_session" ADD CONSTRAINT "FK_935ecdb26eba5626191cede2855" FOREIGN KEY ("deckId") REFERENCES "decks"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "deck_practice_session" ADD CONSTRAINT "FK_66ede55042ac32f655842ed7b5d" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+        );
+        await queryRunner.query(
             `ALTER TABLE "user_card_progress" ADD CONSTRAINT "FK_89e9df5f361b725084cb1c11ad0" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
         );
         await queryRunner.query(
@@ -103,21 +109,9 @@ export class Init1753813474441 implements MigrationInterface {
         await queryRunner.query(
             `ALTER TABLE "user_card_progress" ADD CONSTRAINT "FK_836de12ba4158e55e2ffb263daa" FOREIGN KEY ("deckId") REFERENCES "decks"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
         );
-        await queryRunner.query(
-            `ALTER TABLE "deck_practice_session" ADD CONSTRAINT "FK_935ecdb26eba5626191cede2855" FOREIGN KEY ("deckId") REFERENCES "decks"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-        );
-        await queryRunner.query(
-            `ALTER TABLE "deck_practice_session" ADD CONSTRAINT "FK_66ede55042ac32f655842ed7b5d" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(
-            `ALTER TABLE "deck_practice_session" DROP CONSTRAINT "FK_66ede55042ac32f655842ed7b5d"`,
-        );
-        await queryRunner.query(
-            `ALTER TABLE "deck_practice_session" DROP CONSTRAINT "FK_935ecdb26eba5626191cede2855"`,
-        );
         await queryRunner.query(
             `ALTER TABLE "user_card_progress" DROP CONSTRAINT "FK_836de12ba4158e55e2ffb263daa"`,
         );
@@ -126,6 +120,12 @@ export class Init1753813474441 implements MigrationInterface {
         );
         await queryRunner.query(
             `ALTER TABLE "user_card_progress" DROP CONSTRAINT "FK_89e9df5f361b725084cb1c11ad0"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "deck_practice_session" DROP CONSTRAINT "FK_66ede55042ac32f655842ed7b5d"`,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "deck_practice_session" DROP CONSTRAINT "FK_935ecdb26eba5626191cede2855"`,
         );
         await queryRunner.query(
             `ALTER TABLE "user_deck" DROP CONSTRAINT "FK_c4643845afed1399bbd77eec189"`,
@@ -139,6 +139,12 @@ export class Init1753813474441 implements MigrationInterface {
         await queryRunner.query(
             `ALTER TABLE "cards" DROP CONSTRAINT "FK_e74ee86acf2e667e38582f0a45c"`,
         );
+        await queryRunner.query(`DROP INDEX "public"."IDX_d6bb5f2256cfd77cc82246114c"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_598bbf0e117c25d13c2b5b1bb0"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_87f2df506d5d2c05b06a7e929c"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_9841a07f89e98e43d98e2fa223"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_f24fc1af2a3cc5f2d44efadcc7"`);
+        await queryRunner.query(`DROP TABLE "user_card_progress"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_2890f89b638917f91155eeae74"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_04bc712716364e00834adfa65d"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_aa1f226c6229a120b746125bb0"`);
@@ -146,19 +152,13 @@ export class Init1753813474441 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "public"."IDX_78bd3264968b611f7f4ea6c970"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_2666e09b09b32b31ccbb43917a"`);
         await queryRunner.query(`DROP TABLE "deck_practice_session"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_d6bb5f2256cfd77cc82246114c"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_598bbf0e117c25d13c2b5b1bb0"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_87f2df506d5d2c05b06a7e929c"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_9841a07f89e98e43d98e2fa223"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_f24fc1af2a3cc5f2d44efadcc7"`);
-        await queryRunner.query(`DROP TABLE "user_card_progress"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_ec09055ae4908ae130d9dfaea1"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_7a61ec5917d8770bf6904e8be7"`);
         await queryRunner.query(`DROP TABLE "user_deck"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_6a34783db44c9a42408e584e2c"`);
         await queryRunner.query(`DROP TABLE "decks"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_8f9593fe3ff0d064de68fe0837"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_c3aaf94db6bc654c2fc2d794d8"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_78b8d65f3262a068273eb3f935"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_6eab2517a76376e72c20752fd9"`);
         await queryRunner.query(`DROP TABLE "cards"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_6720083515c275a8aae74a957a"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_5372672fbfd1677205e0ce3ece"`);

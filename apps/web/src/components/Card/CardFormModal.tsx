@@ -80,9 +80,8 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            term: card?.term || "",
-            definition: card?.definition || "",
-            description: card?.description || "",
+            term: card?.front || "",
+            definition: card?.back || "",
         },
     });
 
