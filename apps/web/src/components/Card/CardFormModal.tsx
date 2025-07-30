@@ -63,9 +63,8 @@ interface CardFormModalProps {
 
 const schema = yup
     .object({
-        term: yup.string().trim().min(1, "Required").required("Required"),
-        definition: yup.string().trim().min(1, "Required").required("Required"),
-        description: yup.string().trim().optional(),
+        front: yup.string().trim().min(1, "Required").required("Required"),
+        back: yup.string().trim().min(1, "Required").required("Required"),
     })
     .required();
 
@@ -80,8 +79,8 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            term: card?.front || "",
-            definition: card?.back || "",
+            front: card?.front || "",
+            back: card?.back || "",
         },
     });
 
@@ -208,7 +207,7 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                 <div className="form-input">
                     <div className="input-label">Front side</div>
                     <Controller
-                        name="term"
+                        name="front"
                         control={control}
                         disabled={loading}
                         render={({ field }) => (
@@ -247,7 +246,7 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                 <div className="form-input">
                     <div className="input-label">Back side</div>
                     <Controller
-                        name="definition"
+                        name="back"
                         control={control}
                         disabled={loading}
                         render={({ field }) => (
