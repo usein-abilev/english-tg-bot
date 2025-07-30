@@ -215,7 +215,9 @@ function DeckReview() {
     };
 
     const handlePractice = () => {
-        navigate(replaceRouteParams(ROUTES.PRACTICE, { deckId: deck.id }));
+        navigate(replaceRouteParams(ROUTES.PRACTICE, { deckId: deck.id }), {
+            state: { deckId: deck.id },
+        });
     };
 
     const handleWatchCards = () => {

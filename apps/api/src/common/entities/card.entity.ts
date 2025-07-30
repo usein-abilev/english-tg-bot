@@ -16,27 +16,20 @@ export class CardEntity {
     id!: number;
 
     /**
-     * The term that the card is asking for.
+     * The front side of the card
      * E.g. take off
      */
     @Column()
     @Index()
-    term: string;
+    front: string;
 
     /**
-     * The definition of the term on the back side of the card.
+     * The back side of the card.
      * E.g. to remove something, especially a piece of clothing
      */
     @Column()
     @Index()
-    definition: string;
-
-    /**
-     * Optional description of the card.
-     * E.g. This phrasal verb is often used in the context of removing clothes.
-     */
-    @Column({ default: "" })
-    description: string;
+    back: string;
 
     /**
      * Optional meta information about the card, used language, etc.

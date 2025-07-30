@@ -184,9 +184,8 @@ export class DecksService {
                 await cardRepository.save(
                     params.cards.map((card) => ({
                         deck: { id: deck.id },
-                        term: card.term,
-                        definition: card.definition,
-                        description: card.description || "",
+                        front: card.front,
+                        back: card.back,
                     })),
                 );
             }
@@ -255,9 +254,8 @@ export class DecksService {
         const card = await this.cardsRepository.save(
             this.cardsRepository.create({
                 deck: { id: deckId },
-                term: params.term,
-                definition: params.definition,
-                description: params.description || "",
+                front: params.front,
+                back: params.back,
             }),
         );
         return card;
@@ -275,9 +273,8 @@ export class DecksService {
         await this.cardsRepository.update(
             { id },
             {
-                term: params.term,
-                definition: params.definition,
-                description: params.description,
+                front: params.front,
+                back: params.back,
             },
         );
     }

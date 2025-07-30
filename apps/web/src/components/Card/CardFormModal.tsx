@@ -2,13 +2,13 @@ import React, { FC, useEffect } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import styled from "styled-components";
-import { Modal, List, Input, Textarea } from "@telegram-apps/telegram-ui";
+import { Modal, List, Textarea } from "@telegram-apps/telegram-ui";
 import { useCreateCardMutation, useUpdateCardMutation } from "../../features/api/cards";
 import { CardSchema } from "../../features/types/deck.types";
-import Button from "../Button/Button";
 import { Controller, useForm } from "react-hook-form";
-import { useFindDefinitionsMutation, useFindSuggestionsMutation } from "../../features/api/dictionary";
-import useDebounce from "../../hooks/useDebounce";
+// import Button from "../Button/Button";
+// import { useFindDefinitionsMutation, useFindSuggestionsMutation } from "../../features/api/dictionary";
+// import useDebounce from "../../hooks/useDebounce";
 
 const ModalStyled = styled(Modal)`
     .form-input {
@@ -74,17 +74,14 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
 
     const {
         control,
-        handleSubmit,
         reset,
         formState: { isDirty, isSubmitting },
         getValues,
-        setValue,
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            term: card?.term || "",
-            definition: card?.definition || "",
-            description: card?.description || "",
+            term: card?.front || "",
+            definition: card?.back || "",
         },
     });
 
@@ -92,60 +89,60 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
     const updateMutation = useUpdateCardMutation();
     const loading = createMutation.isPending || updateMutation.isPending || isSubmitting;
 
-    const [termSuggestions, setTermSuggestions] = React.useState<string[]>([]);
+    // const [termSuggestions, setTermSuggestions] = React.useState<string[]>([]);
 
-    const findSuggestionMutation = useFindSuggestionsMutation();
-    const mutateFindSuggestion = useDebounce(() => {
-        const formValues = getValues();
-        const term = formValues.term;
-        if (term.length < 3) return;
+    // const findSuggestionMutation = useFindSuggestionsMutation();
+    // const mutateFindSuggestion = useDebounce(() => {
+    //     const formValues = getValues();
+    //     const term = formValues.term;
+    //     if (term.length < 3) return;
 
-        findSuggestionMutation.mutate(
-            {
-                term: formValues.term,
-                limit: 3,
-            },
-            {
-                onSuccess: (data) => {
-                    console.log("suggestion data:", data);
-                    setTermSuggestions(data);
-                },
-                onError: (error) => {
-                    console.error("Find Suggestion Error", error);
-                },
-            },
-        );
-    }, 650);
+    //     findSuggestionMutation.mutate(
+    //         {
+    //             term: formValues.term,
+    //             limit: 3,
+    //         },
+    //         {
+    //             onSuccess: (data) => {
+    //                 console.log("suggestion data:", data);
+    //                 setTermSuggestions(data);
+    //             },
+    //             onError: (error) => {
+    //                 console.error("Find Suggestion Error", error);
+    //             },
+    //         },
+    //     );
+    // }, 650);
 
-    const [definitionSuggestions, setDefinitionSuggestions] = React.useState<string[]>([]);
-    const findDefinitions = useFindDefinitionsMutation();
+    // const [definitionSuggestions, setDefinitionSuggestions] = React.useState<string[]>([]);
+    // const findDefinitions = useFindDefinitionsMutation();
 
-    const handleDefinitionRequest = () => {
-        const formValues = getValues();
-        const term = formValues.term;
-        if (term?.length < 3) return;
+    // const handleDefinitionRequest = () => {
+    //     const formValues = getValues();
+    //     const term = formValues.term;
+    //     if (term?.length < 3) return;
 
-        findDefinitions.mutate(
-            {
-                term: formValues.term,
-                targetLanguage: "ru",
-                limit: 3,
-            },
-            {
-                onSuccess: (data) => {
-                    console.log("definition data:", data);
-                    if (data.translation) {
-                        const { translatedText, alternatives } = data.translation;
-                        const definitions = [translatedText, ...alternatives];
-                        setDefinitionSuggestions(definitions);
-                    }
-                },
-                onError: (error) => {
-                    console.error("Find Definitions Error", error);
-                },
-            },
-        );
-    };
+    //     findDefinitions.mutate(
+    //         {
+    //             term: formValues.term,
+    //             targetLanguage: "ru",
+    //             limit: 3,
+    //         },
+    //         {
+    //             onSuccess: (data) => {
+    //                 console.log("definition data:", data);
+    //                 if (data.translation) {
+    //                     const { translatedText, alternatives } = data.translation;
+    //                     const definitions = [translatedText, ...alternatives];
+    //                     setDefinitionSuggestions(definitions);
+    //                 }
+    //             },
+    //             onError: (error) => {
+    //                 console.error("Find Definitions Error", error);
+    //             },
+    //         },
+    //     );
+    // };
 
     const onSubmit = async (data: any) => {
         if (loading) return;
@@ -177,7 +174,7 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
         Telegram.WebApp.MainButton.setText(isEditing ? "Save card" : "Add card");
 
         const onMainButtonClick = () => {
-            console.log("Main button clicked");
+            onSubmit(getValues());
         };
 
         Telegram.WebApp.MainButton.onClick(onMainButtonClick);
@@ -215,22 +212,22 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                         control={control}
                         disabled={loading}
                         render={({ field }) => (
-                            <Input
+                            <Textarea
                                 disabled={loading}
                                 value={field.value}
                                 placeholder="E.g. pick up"
                                 onChange={(event) => {
                                     field.onChange(event.target.value);
-                                    if (event.target.value.length < 3) {
-                                        setTermSuggestions([]);
-                                        return;
-                                    }
-                                    mutateFindSuggestion();
+                                    // if (event.target.value.length < 3) {
+                                    //     setTermSuggestions([]);
+                                    //     return;
+                                    // }
+                                    // mutateFindSuggestion();
                                 }}
                             />
                         )}
                     />
-                    {termSuggestions.length > 0 && (
+                    {/* {termSuggestions.length > 0 && (
                         <div className="form-input-suggestions">
                             {termSuggestions.map((suggestion) => (
                                 <div
@@ -245,7 +242,7 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                                 </div>
                             ))}
                         </div>
-                    )}
+                    )} */}
                 </div>
                 <div className="form-input">
                     <div className="input-label">Back side</div>
@@ -259,11 +256,11 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                                 value={field.value}
                                 placeholder="E.g. to lift something off the ground"
                                 onChange={(event) => field.onChange(event.target.value)}
-                                onFocus={() => handleDefinitionRequest()}
+                                // onFocus={() => handleDefinitionRequest()}
                             />
                         )}
                     />
-                    {definitionSuggestions.length > 0 && (
+                    {/* {definitionSuggestions.length > 0 && (
                         <div className="form-input-suggestions">
                             {definitionSuggestions.map((suggestion) => (
                                 <div
@@ -278,9 +275,9 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                                 </div>
                             ))}
                         </div>
-                    )}
+                    )} */}
                 </div>
-                <Button
+                {/* <Button
                     loading={loading}
                     disabled={!isDirty || loading}
                     mode="white"
@@ -289,7 +286,7 @@ const CardFormModal: FC<CardFormModalProps> = ({ deckId, open, setOpen, card }) 
                     onClick={handleSubmit(onSubmit)}
                 >
                     {isEditing ? "Save" : "Add"}
-                </Button>
+                </Button> */}
             </List>
         </ModalStyled>
     );

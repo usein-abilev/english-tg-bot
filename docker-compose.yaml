@@ -5,6 +5,8 @@ services:
     # set shared memory limit when using docker-compose
     shm_size: 128mb
     # or set shared memory limit when deploy via swarm stack
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: engbot
       POSTGRES_USER: admin
@@ -28,4 +30,5 @@ services:
           memory: 1g
 
 volumes:
+  postgres-data:
   libretranslate-data:

@@ -19,18 +19,25 @@ const StyledCardBlock = styled.div`
     justify-content: space-between;
     align-items: center;
 
-    .card-term {
-        font-size: 20px;
-        line-height: 23px;
-        font-weight: 500;
-    }
+    .info {
+        overflow: hidden;
 
-    .card-description {
-        margin-top: 8px;
-        color: var(--app-subtitle-text-color);
-        font-size: 14px;
-        line-height: 17px;
-        font-weight: 400;
+        .card-term {
+            font-size: 20px;
+            line-height: 23px;
+            font-weight: 500;
+        }
+
+        .card-description {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            margin-top: 8px;
+            color: var(--app-subtitle-text-color);
+            font-size: 14px;
+            line-height: 17px;
+            font-weight: 400;
+        }
     }
 
     .details-icon {
@@ -92,8 +99,8 @@ const CardBlock: FC<CardBlockProps> = ({ card, onCardClick }) => {
             </DropdownMenu>
 
             <div className="info">
-                <div className="card-term">{card.term}</div>
-                <div className="card-description">{card.definition}</div>
+                <div className="card-term">{card.front}</div>
+                <div className="card-description">{card.back}</div>
             </div>
             <div className="details-icon">
                 <div ref={detailsBtnRef} onClick={() => setDetailsMenuOpen(true)}>

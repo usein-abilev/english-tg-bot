@@ -98,6 +98,7 @@ const CardContainer = styled.div`
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            word-break: break-word;
 
             &.scrollable {
                 overflow-y: auto;
@@ -112,19 +113,36 @@ const CardContainer = styled.div`
 
 interface CardFlipperProps extends React.HTMLAttributes<HTMLDivElement> {
     card: CardSchema;
+
+    /**
+     * Whether the card is clickable to flip
+     */
+    clickable?: boolean;
+
+    /**
+     * In case this card should be flipped by a parent component
+     * (e.g. when showing results in a practice session)
+     */
+    parentFlipped?: boolean;
 }
 
-function CardFlipper({ card, ...props }: CardFlipperProps) {
+function CardFlipper({ card, clickable = true, parentFlipped = false, ...props }: CardFlipperProps) {
     const [flipped, setFlipped] = React.useState(false);
 
     const isDefinitionScrollable = useMemo(() => {
-        if (!card.definition) return false;
-        return card.definition.split("\n").length > 3 || card.definition.length > 200;
-    }, [card.definition]);
+        if (!card.back) return false;
+        return card.back.split("\n").length > 3 || card.back.length > 200;
+    }, [card.back]);
 
     useEffect(() => {
         setFlipped(false);
     }, [card]);
+
+    useEffect(() => {
+        if (parentFlipped !== flipped) {
+            setFlipped(parentFlipped);
+        }
+    }, [parentFlipped]);
 
     return (
         <CardContainer {...props}>
@@ -132,7 +150,7 @@ function CardFlipper({ card, ...props }: CardFlipperProps) {
                 <motion.div
                     key={card.id}
                     className={`card ${flipped ? "flipped" : ""}`}
-                    onClick={() => setFlipped(!flipped)}
+                    onClick={() => clickable && setFlipped(!flipped)}
                     initial={{ opacity: 0, x: 50, scale: 0.95 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{
@@ -144,11 +162,10 @@ function CardFlipper({ card, ...props }: CardFlipperProps) {
                 >
                     <div className="card-inner">
                         <div className="card-front">
-                            <div className="card-term center-text">{card.term}</div>
-                            {card.description && <div className="center-text">{card.description}</div>}
+                            <div className="card-term center-text">{card.front}</div>
                         </div>
                         <div className="card-back">
-                            <div className="definition-header">
+                            {/* <div className="definition-header">
                                 <div
                                     className="header-icon"
                                     onClick={(event) => {
@@ -159,11 +176,11 @@ function CardFlipper({ card, ...props }: CardFlipperProps) {
                                 >
                                     <SVGIcon id="translate" />
                                 </div>
-                            </div>
+                            </div> */}
                             <div
                                 className={`definition-content ${isDefinitionScrollable ? "scrollable" : ""}`}
                             >
-                                {card.definition}
+                                {card.back}
                             </div>
                         </div>
                     </div>

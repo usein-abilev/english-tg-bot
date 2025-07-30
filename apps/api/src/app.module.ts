@@ -10,9 +10,12 @@ import { UsersModule } from "./modules/users/users.module";
 import { DecksModule } from "./modules/decks/decks.module";
 import { PracticeModule } from "./modules/practice/practice.module";
 import { DictionaryModule } from "./modules/dictionary/dictionary.module";
+import { ScheduleModule } from "@nestjs/schedule";
+import { NotificationModule } from "./modules/notification/notification.module";
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
         TypeOrmModule.forRoot({
             parseInt8: true, // because userId is int8 in the database
             type: appConfig.database.type,
@@ -26,6 +29,7 @@ import { DictionaryModule } from "./modules/dictionary/dictionary.module";
             migrationsRun: false,
             synchronize: false,
         }),
+        NotificationModule,
         UsersModule,
         DecksModule,
         PracticeModule,

@@ -63,14 +63,10 @@ export class CreateDeckDto extends CreateDeckQueryDto {
 
 export class AddCardQueryDto {
     @IsString()
-    term: string;
+    front: string;
 
     @IsString()
-    definition: string;
-
-    @IsString()
-    @IsOptional()
-    description: string;
+    back: string;
 }
 export class AddCardDto extends AddCardQueryDto {
     userId: number;
@@ -79,15 +75,11 @@ export class AddCardDto extends AddCardQueryDto {
 export class UpdateCardQueryDto {
     @IsString()
     @IsOptional()
-    term?: string;
+    front?: string;
 
     @IsString()
     @IsOptional()
-    definition?: string;
-
-    @IsString()
-    @IsOptional()
-    description?: string;
+    back?: string;
 }
 
 export class UpdateCardDto extends UpdateCardQueryDto {
