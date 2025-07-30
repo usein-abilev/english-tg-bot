@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
+import * as path from "path";
 
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: path.join(process.cwd(), ".env") });
 
 import { Bot, session } from "grammy";
 import { hydrate } from "@grammyjs/hydrate";
