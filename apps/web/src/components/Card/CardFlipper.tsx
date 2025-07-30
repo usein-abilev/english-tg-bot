@@ -98,6 +98,7 @@ const CardContainer = styled.div`
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            word-break: break-word;
 
             &.scrollable {
                 overflow-y: auto;
@@ -112,9 +113,20 @@ const CardContainer = styled.div`
 
 interface CardFlipperProps extends React.HTMLAttributes<HTMLDivElement> {
     card: CardSchema;
+
+    /**
+     * Whether the card is clickable to flip
+     */
+    clickable?: boolean;
+
+    /**
+     * In case this card should be flipped by a parent component
+     * (e.g. when showing results in a practice session)
+     */
+    parentFlipped?: boolean;
 }
 
-function CardFlipper({ card, ...props }: CardFlipperProps) {
+function CardFlipper({ card, clickable = true, parentFlipped = false, ...props }: CardFlipperProps) {
     const [flipped, setFlipped] = React.useState(false);
 
     const isDefinitionScrollable = useMemo(() => {
@@ -126,13 +138,19 @@ function CardFlipper({ card, ...props }: CardFlipperProps) {
         setFlipped(false);
     }, [card]);
 
+    useEffect(() => {
+        if (parentFlipped !== flipped) {
+            setFlipped(parentFlipped);
+        }
+    }, [parentFlipped]);
+
     return (
         <CardContainer {...props}>
             <AnimatePresence mode="wait">
                 <motion.div
                     key={card.id}
                     className={`card ${flipped ? "flipped" : ""}`}
-                    onClick={() => setFlipped(!flipped)}
+                    onClick={() => clickable && setFlipped(!flipped)}
                     initial={{ opacity: 0, x: 50, scale: 0.95 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{
