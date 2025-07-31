@@ -47,31 +47,38 @@ export default function Home() {
 
     const activities: ActivityBlockProps[] = useMemo(() => {
         if (!userResult) return [];
+        const list: ActivityBlockProps[] = [];
+        if (userResult.decks.length === 0) {
+            list.push({
+                type: "action",
+                title: "📚 Create Your First Deck",
+                description: "Start building your vocabulary with a new deck of flashcards.",
+                buttonText: "Create Deck",
+                onClick: () => navigate(ROUTES.DECK_CREATE),
+            });
+        }
 
         const { practiceCounters } = userResult;
         if (practiceCounters.cardsToPracticeCount > 0) {
             if (practiceCounters.cardsToReviewCount === 0) {
-                return [
-                    {
-                        type: "action",
-                        title: "🧠 Test Your Memory!",
-                        description: `New ${practiceCounters.cardsToLearnCount} flashcards are ready for you. See how many you can recall!`,
-                        buttonText: "Start",
-                        onClick: openPractice,
-                    },
-                ];
-            }
-            return [
-                {
+                list.push({
+                    type: "action",
+                    title: "🧠 Test Your Memory!",
+                    description: `New ${practiceCounters.cardsToLearnCount} flashcards are ready for you. See how many you can recall!`,
+                    buttonText: "Start",
+                    onClick: openPractice,
+                });
+            } else {
+                list.push({
                     type: "action",
                     title: "🎓 Time to Practice!",
                     description: `You have ${practiceCounters.cardsToPracticeCount} words waiting for review. Sharpen your memory now!`,
                     buttonText: "Practice",
                     onClick: openPractice,
-                },
-            ];
+                });
+            }
         } else {
-            return [];
+            return list;
             // return [
             //     {
             //         type: "promote",
@@ -82,6 +89,8 @@ export default function Home() {
             //     },
             // ];
         }
+
+        return list;
     }, [userResult, openPractice]);
 
     const myDecks = useMemo(() => {
