@@ -19,6 +19,7 @@ interface UserQueryResponse {
 
 const getUserInfo = async (): Promise<UserQueryResponse> => {
     const data = await fetchAPI(`${API_URL}/users/me`);
+    console.log("getUserInfo user.ts:", data);
     return data;
 };
 

@@ -66,6 +66,7 @@ const StyledDeckReview = styled.div`
                 line-height: 16px;
                 color: var(--app-subtitle-text-color);
                 display: flex;
+                align-items: center;
                 gap: 4px;
 
                 .indicator-icon {
@@ -83,6 +84,13 @@ const StyledDeckReview = styled.div`
                 }
                 &#remind-count {
                     color: var(--app-accent-yellow);
+                }
+                &#new-cards-count {
+                    background: var(--app-primary-button-color);
+                    color: #f5f5f5;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    text-align: right;
                 }
             }
         }
@@ -254,18 +262,18 @@ function DeckReview() {
     };
 
     const stats = useMemo(() => {
-        if (!deck?.progress) return { total: 0, completed: 0, remind: 0 };
+        if (!deck?.progress) return { total: 0, completed: 0, remind: 0, newCards: 0 };
         const total = deck.cardsCount || 0;
         const remind = deck.progress.cardsToReviewCount + deck.progress.cardsToLearnCount;
         const completed = total - remind;
-        return { total, completed, remind };
+        return { total, completed, remind, newCards: deck.progress.cardsToLearnCount };
     }, [deck]);
 
     return (
         <StyledDeckReview className="deck-layout">
-            <ModalOverlay open={cardsViewOpen} onClose={() => setCardsViewOpen(false)}>
+            {/* <ModalOverlay open={cardsViewOpen} onClose={() => setCardsViewOpen(false)}>
                 <DeckCardViewModal deck={deck} onClose={() => setCardsViewOpen(false)} />
-            </ModalOverlay>
+            </ModalOverlay> */}
             <CardFormModal deckId={deck?.id} open={addCardModal} setOpen={setAddCardModal} />
             <DropdownMenu
                 buttonRef={deckMenuDetailsRef}
@@ -274,7 +282,7 @@ function DeckReview() {
             >
                 {isAuthor && (
                     <>
-                        <DropdownMenuItem onClick={handlePractice}>Practice this set</DropdownMenuItem>
+                        {/* <DropdownMenuItem onClick={handlePractice}>Practice this set</DropdownMenuItem> */}
                         <DropdownMenuItem onClick={handleAddCard}>Add card</DropdownMenuItem>
                         <DropdownMenuItem onClick={handleEditDeck}>Edit</DropdownMenuItem>
                         <DropdownMenuItem
@@ -314,6 +322,12 @@ function DeckReview() {
                         </div>
                         {stats.remind}
                     </div>
+                    {stats.newCards > 0 && (
+                        <div id="new-cards-count" className="indicator">
+                            {stats.newCards}
+                            <div className="indicator-icon">new cards</div>
+                        </div>
+                    )}
                 </div>
                 <div className="deck-header-bottom">
                     <div className="left-block">
@@ -336,10 +350,10 @@ function DeckReview() {
                             className="deck-control"
                             size="m"
                             mode="filled"
-                            disabled={!deck?.cardsCount}
-                            onClick={handleWatchCards}
+                            disabled={stats.remind === 0}
+                            onClick={handlePractice}
                         >
-                            {!isAuthor ? <SVGIcon id="play-line" /> : "Watch"}
+                            {!isAuthor ? <SVGIcon id="play-line" /> : "Study"}
                         </Button>
                         {!isAuthor && (
                             <Button

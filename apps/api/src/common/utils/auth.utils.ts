@@ -13,12 +13,20 @@ export const validateTelegramInitData = async (
 ): Promise<ValidateTelegramInitDataResult> => {
     if (!rawInitData) return { valid: false, data: null };
     const urlParams = new URLSearchParams(rawInitData);
-    const { hash: originalHash, ...entries } = Object.fromEntries(urlParams);
-    const hash = await generateTelegramHash(entries);
-    return {
-        valid: originalHash === hash,
-        data: parseTelegramInitData(entries),
-    };
+    try {
+        const { hash: originalHash, ...entries } = Object.fromEntries(urlParams);
+        const hash = await generateTelegramHash(entries);
+        const data = parseTelegramInitData(entries);
+        return {
+            valid: originalHash === hash,
+            data,
+        };
+    } catch (_) {
+        return {
+            valid: false,
+            data: null,
+        };
+    }
 };
 
 export const generateTelegramHash = async (data: Record<string, string>): Promise<string> => {

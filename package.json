@@ -1,28 +1,28 @@
 {
-  "name": "eng-bot",
-  "version": "1.0.0",
-  "description": "The Telegram Bot for learning and practicing English",
-  "private": true,
-  "packageManager": "pnpm@9.15.3",
-  "workspaces": [
-    "apps/*"
-  ],
-  "scripts": {
-    "build": "turbo build",
-    "lint": "turbo lint",
-    "lint:fix": "turbo lint -- --fix",
-    "serve": "turbo dev",
-    "serve:api": "turbo dev --filter=@eng-bot/api",
-    "serve:web": "turbo dev --filter=@eng-bot/web",
-    "serve:bot": "turbo dev --filter=@eng-bot/bot"
-  },
-  "devDependencies": {
-    "turbo": "^2.7.3"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "volta": {
-    "node": "22.16.0"
-  }
+    "name": "eng-bot",
+    "version": "1.0.0",
+    "description": "The Telegram Bot for learning and practicing English",
+    "private": true,
+    "packageManager": "pnpm@9.15.3",
+    "workspaces": [
+        "apps/*"
+    ],
+    "scripts": {
+        "build": "turbo build",
+        "lint": "turbo lint",
+        "lint:fix": "turbo lint -- --fix",
+        "serve": "turbo dev",
+        "serve:api": "turbo dev --filter=@eng-bot/api",
+        "serve:web": "turbo dev --filter=@eng-bot/web",
+        "serve:bot": "turbo dev --filter=@eng-bot/bot"
+    },
+    "devDependencies": {
+        "turbo": "^2.7.3"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "volta": {
+        "node": "22.16.0"
+    }
 }

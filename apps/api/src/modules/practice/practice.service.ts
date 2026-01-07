@@ -89,6 +89,7 @@ export class PracticeService {
         return results;
     }
 
+    // TODO: Unused right now, remove
     async getDecksToPractice(
         userId: number,
         params?: PracticeGetDecksQueryDto,
@@ -325,7 +326,7 @@ export class PracticeService {
         try {
             await queryRunner.query(`
             UPDATE user_card_progress AS ucp
-            SET 
+            SET
                 "easinessFactor" = data.easinessFactor,
                 repetitions = data.repetitions,
                 interval = data.interval,

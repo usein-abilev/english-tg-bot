@@ -1,1 +1,0 @@
-export const USER_PRACTICE_EVENT_INTERVAL = 3600 * 1000;

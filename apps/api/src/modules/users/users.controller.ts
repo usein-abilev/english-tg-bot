@@ -4,6 +4,7 @@ import { TgInitDataGuard } from "../../common/guards/tg.guard";
 import { TgInitData } from "../../common/types/tgInitData.types";
 import { DecksService } from "../decks/decks.service";
 import { PracticeService } from "../practice/practice.service";
+import { ClientRequest } from "src/common/types/request.types";
 
 @Controller("users")
 export class UsersController {
@@ -17,7 +18,7 @@ export class UsersController {
 
     @Get("/me")
     @UseGuards(TgInitDataGuard)
-    async getUser(@Request() request) {
+    async getUser(@Request() request: ClientRequest) {
         const { user: telegramUser, fromBot } = request.initData as TgInitData;
         const user = await this.usersService.getOrCreate(telegramUser, !fromBot);
         if (fromBot) {

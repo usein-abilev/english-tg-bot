@@ -9,7 +9,10 @@ export class FetchError extends Error {
     }
 }
 
-async function fetchAPIBase(input: string | URL | globalThis.Request, init?: RequestInit): Promise<Response> {
+async function fetchAPIBase(
+    input: string | URL | globalThis.Request,
+    init?: RequestInit,
+): Promise<Response> {
     const response = await fetch(input, {
         ...init,
         headers: {
@@ -27,7 +30,10 @@ async function fetchAPIBase(input: string | URL | globalThis.Request, init?: Req
     return response;
 }
 
-async function fetchAPI<T = any>(input: string | URL | globalThis.Request, init?: RequestInit): Promise<T> {
+async function fetchAPI<T = any>(
+    input: string | URL | globalThis.Request,
+    init?: RequestInit,
+): Promise<T> {
     const response = await fetchAPIBase(input, init);
     const object = await response.json();
     return object.data;

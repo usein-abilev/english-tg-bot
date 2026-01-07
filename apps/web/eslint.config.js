@@ -45,7 +45,7 @@ export default [
             "max-len": [
                 "warn",
                 {
-                    code: 110,
+                    code: 100,
                 },
             ],
             "space-in-parens": ["error", "never"],
@@ -67,7 +67,7 @@ export default [
                 {
                     endOfLine: "lf",
                     tabWidth: 4,
-                    printWidth: 110,
+                    printWidth: 100,
                 },
             ],
         },
