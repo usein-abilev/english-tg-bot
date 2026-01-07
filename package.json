@@ -17,7 +17,7 @@
     "serve:bot": "turbo dev --filter=@eng-bot/bot"
   },
   "devDependencies": {
-    "turbo": "^2.4.4"
+    "turbo": "^2.7.3"
   },
   "keywords": [],
   "author": "",

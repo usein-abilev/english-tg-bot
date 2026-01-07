@@ -1,6 +1,6 @@
-import { Request } from "express";
+import { FastifyRequest } from "fastify";
 import { TgInitData } from "./tgInitData.types";
 
-export interface ClientRequest extends Request {
+export interface ClientRequest extends FastifyRequest {
     initData: TgInitData;
 }
