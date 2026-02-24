@@ -8,18 +8,17 @@ This project is built as a monorepo using **PNPM**, **Turborepo**, **React.js**,
 
 ## ✨ Features
 
-- 📚 Create custom decks and folders to organize vocabulary
-- ➕ Add words and expressions with definitions
-- 🔁 Practice using the Spaced Repetition Algorithm (SRM)
-- 🌍 Built-in English translation support via LibreTranslate
-- 🤝 Share your decks with other users
-- 📥 Import decks shared by others
-- 📅 Daily practice reminders and review sessions
-- 🧩 Built as a Telegram WebApp for seamless UX
+- Practice using the Spaced Repetition Algorithm (SRM)
+- Create custom decks and folders to organize vocabulary
+- Add words and expressions with definitions
+- Built-in English translation support via LibreTranslate
+- Share your decks with other users
+- Import decks shared by others
+- Daily practice reminders and review sessions
 
-_Planned:_
-- 🌐 Support for additional languages (German, French, etc.)
-- 📊 Track your learning progress with statistics
+_TODO_
+- Support for additional languages (German, French, etc.)
+- Track your learning progress with statistics
 
 ## 🧰 Tech Stack
 - **Frontend**: React.js
@@ -75,11 +74,8 @@ pnpm serve
 > pnpm run serve:bot # telegram bot
 > ```
 
-## 🧪 Development
+## Development
 Use Turbo to run frontend/backend/dev tasks in parallel:
 ```bash
 pnpm turbo run dev
 ```
-
-## 🤝 Contributing
-Contributions, ideas, and bug reports are welcome! Feel free to open issues or pull requests.
